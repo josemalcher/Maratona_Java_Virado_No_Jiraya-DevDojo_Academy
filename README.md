@@ -300,6 +300,8 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte1">1 - 000 - Maratona Java Virado No Jiraya - Bem-vindo</a>
 
+https://www.youtube.com/watch?v=VKjFuX91G5Q
+
 
 
 [Voltar ao Índice](#indice)
@@ -309,7 +311,7 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte2">2 - 001 - O que esperar do curso</a>
 
-
+https://www.youtube.com/watch?v=ooCqalwSpuE&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=2
 
 [Voltar ao Índice](#indice)
 
@@ -318,7 +320,7 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte3">3 - 002 - Como Java Funciona</a>
 
-
+https://www.youtube.com/watch?v=ooCqalwSpuE&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=2
 
 [Voltar ao Índice](#indice)
 
@@ -326,6 +328,10 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 
 ## <a name="parte4">4 - 003 - Fazendo o download da JDK 15</a>
+
+https://www.youtube.com/watch?v=Tsyeybeh968&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=4
+
+https://www.codejava.net/java-se/java-se-versions-history
 
 
 
@@ -336,7 +342,7 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte5">5 - 004 - Configurando variaveis de ambiente</a>
 
-
+https://www.youtube.com/watch?v=xzAESAp_soQ&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=5
 
 [Voltar ao Índice](#indice)
 
@@ -345,7 +351,7 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte6">6 - 005 - Executando compilação manualmente</a>
 
-
+https://www.youtube.com/watch?v=E64JTsEyXCM&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=6
 
 [Voltar ao Índice](#indice)
 
@@ -354,7 +360,7 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte7">7 - 006 - Download da IDE IntelliJ Community</a>
 
-
+https://www.youtube.com/watch?v=uB5Qbm-RMyU&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=7
 
 [Voltar ao Índice](#indice)
 
@@ -363,7 +369,7 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte8">8 - 007 - Conhecendo a IDE IntelliJ Community</a>
 
-
+https://www.youtube.com/watch?v=ds3t9C2A50U&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=8
 
 [Voltar ao Índice](#indice)
 
@@ -372,7 +378,18 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte9">9 - 008 - Organizando o código em pacotes</a>
 
+https://www.youtube.com/watch?v=TnnS-R--WKc&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=9
 
+```java
+package net.josemalcher;
+
+public class OlaDevDojo {
+    public static void main(String[] args) {
+        System.out.println("Olá mundo!!");
+    }
+}
+
+```
 
 [Voltar ao Índice](#indice)
 
@@ -381,7 +398,7 @@ Créditos: Melhor, maior, e o mais completo curso de Java em português grátis 
 
 ## <a name="parte10">10 - 009 - Comentários</a>
 
-
+https://www.youtube.com/watch?v=2rMT0qRyiYs&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=10
 
 [Voltar ao Índice](#indice)
 
