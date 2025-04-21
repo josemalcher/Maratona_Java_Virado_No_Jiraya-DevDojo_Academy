@@ -407,6 +407,80 @@ https://www.youtube.com/watch?v=2rMT0qRyiYs&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 ## <a name="parte11">11 - 010 - Tipos primitivos pt 01 - convenções de variáveis</a>
 
+https://www.youtube.com/watch?v=RRHGYyJTTpQ&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=11
+
+
+Todos os valores, na verdade, são formados por bits e eles ficam na nossa memória RAM. 
+> Um pente de memória RAM de 8gb (64,000,000,000bits).
+
+Cada tipo primitivo utiliza uma quantidade fixa de bits para representar um valor na RAM. 
+O tipo 'int' usa 4 bytes para representar números. Isto é, para representar números, o 'int' utiliza 32 dígitos binários (uns e zeros): 00000000000000000000000000000000
+
+Com 32 bits, podemos representar um total de 4 bilhões e alguns milhões (2^32).
+Porém, para acomodar tanto números NEGATIVOS quanto POSITIVOS, esse valor é "partido ao meio".
+Consequentemente, uma variável do tipo 'int' pode armazenar, aproximadamente, cerca de 2 bilhões e 100 milhões:
+int num = 2100000000;
+// ou
+int num = -2100000000;
+
+Se a gente ultrapassar muito esse valor, teremos erro:
+int num = 2800000000; // error
+
+->> Esse erro ocorre porque o valor '2800000000' exige mais bits para ser representado.
+E para resolver essa questão, temos o tipo 'long'. O 'long' utiliza 8 bytes (64 bits) para armazenar valores, então, se precisarmos armazenar o número '2800000000', usaremos o tipo 'long' e não o 'int'
+
+Além disso, temos o 'byte' e o 'short'. Não vou me prolongar muito na explicação, então vou abordar apenas o tipo 'byte'.
+O 'byte' utiliza apenas 1 byte (8 bits - 00000000) para representar um valor. Portanto, variáveis do tipo 'byte' são usadas para armazenar valores muito pequenos, por exemplo:
+byte numzinho = 100 
+
+Se tentarmos armazenar o valor de 200 numa variável do tipo 'byte', teremos um erro, já que o 200 requer mais bits para ser representado
+
+FONTE: Comentário do vídeo
+
+Resumo
+
+#### ✅ Tipos Primitivos em Java
+
+Java possui **8 tipos primitivos**, que são a base para representar dados simples:
+
+```
+| Tipo      | Tamanho      | Exemplo de uso                          |
+|-----------|--------------|-----------------------------------------|
+| `byte`    | 8 bits       | Armazena números pequenos (-128 a 127)  |
+| `short`   | 16 bits      | Números inteiros maiores que `byte`     |
+| `int`     | 32 bits      | Mais usado para números inteiros        |
+| `long`    | 64 bits      | Números inteiros muito grandes          |
+| `float`   | 32 bits      | Números decimais com menos precisão     |
+| `double`  | 64 bits      | Números decimais com mais precisão      |
+| `char`    | 16 bits      | Um único caractere (ex: 'A', '9')       |
+| `boolean` | 1 bit (lógico) | Verdadeiro ou falso (`true` ou `false`) |
+```
+---
+
+## 📝 Convenções de Variáveis em Java
+
+Java é **case-sensitive** e segue algumas convenções de nomeação (não obrigatórias, mas boas práticas):
+
+- **camelCase** para nomes de variáveis e métodos:
+  ```java
+  int idadeDoUsuario;
+  boolean isAtivo;
+  ```
+
+- **UPPER_CASE** para constantes:
+  ```java
+  final int MAX_TENTATIVAS = 3;
+  ```
+
+- **Nomes claros e significativos** (evitar `x`, `y`, `z`, a não ser em exemplos matemáticos):
+  ```java
+  double salarioMensal;
+  ```
+
+- **Não usar palavras reservadas** como nome de variável (`int`, `class`, `public`, etc).
+
+
+FONTE: CHATGPT
 
 
 [Voltar ao Índice](#indice)
@@ -416,7 +490,37 @@ https://www.youtube.com/watch?v=2rMT0qRyiYs&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 ## <a name="parte12">12 - 011 - Tipos primitivos pt 02 - declaração e tamanho em memória</a>
 
+https://www.youtube.com/watch?v=veDgI_zZ7uk&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=12
 
+Declaração de variáveis primitivas: Como declarar e inicializar variáveis dos tipos byte, short, int, long, float, double, char e boolean.​
+Universidade Java
+
+Tamanho em memória: Discussão sobre o espaço que cada tipo primitivo ocupa na memória, por exemplo:
+
+byte: 1 byte (8 bits)
+
+short: 2 bytes (16 bits)
+
+int: 4 bytes (32 bits)
+
+long: 8 bytes (64 bits)
+
+float: 4 bytes (32 bits)
+
+double: 8 bytes (64 bits)
+
+char: 2 bytes (16 bits)
+
+boolean: 1 bit (valor lógico true ou false)​
+
+Importância da escolha do tipo adequado: Explicação sobre como a escolha correta do tipo primitivo pode impactar na performance e no uso eficiente da memória.​
+
+📌 Observações
+A aula enfatiza a importância de entender os tipos primitivos para uma programação eficiente e eficaz em Java.​
+
+FONTE: CHATGPT
+
+https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
 
 [Voltar ao Índice](#indice)
 
@@ -425,7 +529,89 @@ https://www.youtube.com/watch?v=2rMT0qRyiYs&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 ## <a name="parte13">13 - 012 - Tipos primitivos pt 03 - casting</a>
 
+https://www.youtube.com/watch?v=74hd4o7V328&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=13
 
+---
+
+## 🧠 CAST de Tipos Primitivos em Java
+
+### ✅ O que é *Cast*?
+
+O **casting** (ou conversão de tipos) é o processo de **converter um valor de um tipo primitivo para outro**. Existem dois tipos de cast em Java:
+
+- **Casting implícito (widening cast):** Quando convertendo de um tipo menor para um tipo maior.
+- **Casting explícito (narrowing cast):** Quando convertendo de um tipo maior para um tipo menor. Nesse caso, você precisa informar a conversão de forma explícita.
+
+---
+
+### 📈 Casting Implícito (Widening)
+
+Não precisa de código adicional. Acontece quando não há risco de perda de dados.
+
+```java
+int num = 10;
+long numeroMaior = num; // int -> long (OK)
+double numeroDecimal = numeroMaior; // long -> double (OK)
+
+System.out.println(numeroDecimal); // Saída: 10.0
+```
+
+#### ✅ Por que funciona?
+O tipo `long` pode armazenar todos os valores possíveis de um `int`, e o `double` pode armazenar todos os valores possíveis de um `long`.
+
+---
+
+### 📉 Casting Explícito (Narrowing)
+
+Precisa de conversão manual porque há risco de perda de dados.
+
+```java
+double valorDecimal = 10.99;
+int valorInteiro = (int) valorDecimal; // double -> int
+
+System.out.println(valorInteiro); // Saída: 10
+```
+
+#### ⚠️ Cuidado!
+Nesse exemplo, **o valor após o ponto é perdido**.
+
+---
+
+### 🎯 Exemplo com perda de dados
+
+```java
+int valorGrande = 130;
+byte valorPequeno = (byte) valorGrande; // int -> byte
+
+System.out.println(valorPequeno); // Saída: -126
+```
+
+> `byte` vai de -128 a 127. Como `130` está fora desse intervalo, o valor é "reciclado" e vira -126.
+
+---
+
+### 🧪 Comparação entre tipos e conversão
+
+| De         | Para       | Precisa de Cast? | Risco de perda? |
+|------------|------------|------------------|-----------------|
+| byte       | short      | Não              | Não             |
+| int        | long       | Não              | Não             |
+| long       | int        | Sim              | Sim             |
+| double     | float      | Sim              | Sim             |
+| float      | double     | Não              | Não             |
+| char       | int        | Não              | Não             |
+| int        | char       | Sim              | Sim             |
+
+---
+
+### 💡 Dica de ouro
+
+Sempre que você estiver **reduzindo o tamanho do tipo**, pense:  
+> “Estou avisando ao Java que **eu assumo o risco de perda de dados**”.
+
+---
+
+FONTE: CHATGPT
 
 [Voltar ao Índice](#indice)
 
@@ -434,6 +620,104 @@ https://www.youtube.com/watch?v=2rMT0qRyiYs&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 ## <a name="parte14">14 - 013 - Tipos primitivos pt 04 - Strings</a>
 
+https://www.youtube.com/watch?v=13VfcFXwsjw&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=14
+
+iturn0image0turn0image1turn0image3turn0image5Claro! Aqui está um resumo em formato Markdown da aula **"13 - Tipos Primitivos pt 04 - Strings"** do curso Maratona Java do DevDojo, complementado com explicações e exemplos práticos:
+
+---
+
+# Aula 13 – Tipos Primitivos pt 04: Strings
+
+📺 **Link do vídeo:** [Assista no YouTube](https://www.youtube.com/watch?v=13VfcFXwsjw)
+
+### 🧠 Conteúdo Abordado
+
+Nesta aula, o instrutor William Suane introduz o tipo `String` em Java, destacando que, embora não seja um tipo primitivo, é amplamente utilizado e possui características especiais. Os principais pontos abordados incluem:
+
+- **Declaração e inicialização de Strings:**
+  ```java
+  String nome = "DevDojo";
+  ```
+ 
+Aqui, a variável `nome` é uma referência a um objeto do tipo `String` contendo o valor `"DevDojo".
+
+- **Imutabilidade das Strings:**
+ Em Java, as Strings são objetos imutáveis. Isso significa que, uma vez criada, uma `String` não pode ser alterada. Qualquer operação que pareça modificar uma `String` na verdade cria uma nova instânci.
+
+- **Concatenação de Strings:**
+ A aula demonstra como concatenar Strings utilizando o operador `+:
+  ```java
+  String saudacao = "Olá, ";
+  String nome = "Mundo!";
+  String mensagem = saudacao + nome;
+  System.out.println(mensagem); // Saída: Olá, Mundo!
+  ```
+
+
+- **Uso de caracteres especiais:**
+ Para incluir caracteres especiais em Strings, utiliza-se a barra invertida (`\`) como caractere de escap:
+  ```java
+  String texto = "Ele disse: \"Java é incrível!\"";
+  System.out.println(texto); // Saída: Ele disse: "Java é incrível!"
+  ```
+
+
+---
+
+### 📚 Complemento: Métodos Comuns da Classe String
+
+Além dos conceitos abordados na aula, é importante conhecer alguns métodos úteis da classe `String`:
+
+- **`length()`**: Retorna o comprimento da Strig.
+  ```java
+  String texto = "Java";
+  int tamanho = texto.length(); // tamanho = 4
+  ```
+
+
+- **`toUpperCase()` e `toLowerCase()`**: Convertem a String para letras maiúsculas ou minúsculas, respectivamene.
+  ```java
+  String original = "DevDojo";
+  String maiuscula = original.toUpperCase(); // "DEVDOJO"
+  String minuscula = original.toLowerCase(); // "devdojo"
+  ```
+
+
+- **`substring(int beginIndex, int endIndex)`**: Retorna uma nova String que é uma subsequência da originl.
+  ```java
+  String texto = "Maratona Java";
+  String parte = texto.substring(9, 13); // "Java"
+  ```
+
+
+- **`equals(String anotherString)`**: Compara o conteúdo de duas Strins.
+  ```java
+  String a = "Java";
+  String b = "java";
+  boolean iguais = a.equals(b); // false
+  ```
+
+
+- **`equalsIgnoreCase(String anotherString)`**: Compara o conteúdo de duas Strings, ignorando diferenças entre maiúsculas e minúsculs.
+  ```java
+  boolean iguaisIgnorandoCase = a.equalsIgnoreCase(b); // true
+  ```
+
+
+- **`trim()`**: Remove espaços em branco do início e do fim da Strig.
+  ```java
+  String texto = "  DevDojo  ";
+  String ajustado = texto.trim(); // "DevDojo"
+  ```
+
+
+---
+
+## 🔍 Observações Importantes
+- Embora `String` não seja um tipo primitivo, é tratado de forma especial em Java devido à sua ampla utilizaão.
+- A imutabilidade das Strings é uma característica que oferece segurança e facilita o uso em ambientes concorrentes, mas pode impactar a performance em operações intensivas de concatenação. Nesses casos, é recomendável utilizar classes como `StringBuilder` ou `StringBuffr`.
+
+---
 
 
 [Voltar ao Índice](#indice)
@@ -442,6 +726,8 @@ https://www.youtube.com/watch?v=2rMT0qRyiYs&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 
 ## <a name="parte15">15 - 014 - Tipos primitivos pt 05 - Exercício</a>
+
+https://www.youtube.com/watch?v=Q0REhCVBvAg&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=15
 
 
 
