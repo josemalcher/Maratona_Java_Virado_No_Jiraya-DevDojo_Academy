@@ -531,8 +531,6 @@ https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
 
 https://www.youtube.com/watch?v=74hd4o7V328&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=13
 
----
-
 ## 🧠 CAST de Tipos Primitivos em Java
 
 ### ✅ O que é *Cast*?
@@ -738,6 +736,69 @@ https://www.youtube.com/watch?v=Q0REhCVBvAg&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 ## <a name="parte16">16 - 015 - Operadores pt 01 - Aritiméticos</a>
 
+https://www.youtube.com/watch?v=1Fsvlted69g&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=16
+
+# Aula 15 – Operadores pt 01: Aritméticos
+
+## 🧠 Conteúdo Abordado
+
+Nesta aula, o instrutor William Suane introduz os operadores aritméticos em Java, que são utilizados para realizar operações matemáticas básicas. Os principais operadores abordados incluem:
+
+- **Adição (`+`)**: Soma dois valores.
+- **Subtração (`-`)**: Subtrai o segundo valor do primeiro.
+- **Multiplicação (`*`)**: Multiplica dois valores.
+- **Divisão (`/`)**: Divide o primeiro valor pelo segundo.
+- **Módulo (`%`)**: Retorna o resto da divisão do primeiro valor pelo segundo.
+
+## 📝 Exemplos Práticos
+
+```java
+int a = 10;
+int b = 3;
+
+int soma = a + b;          // 13
+int subtracao = a - b;     // 7
+int multiplicacao = a * b; // 30
+int divisao = a / b;       // 3
+int modulo = a % b;        // 1
+
+System.out.println("Soma: " + soma);
+System.out.println("Subtração: " + subtracao);
+System.out.println("Multiplicação: " + multiplicacao);
+System.out.println("Divisão: " + divisao);
+System.out.println("Módulo: " + modulo);
+```
+
+## ⚠️ Observações Importantes
+
+- **Divisão entre inteiros**: Ao dividir dois números inteiros, o resultado também será um número inteiro, descartando qualquer parte decimal.
+- **Divisão por zero**: Tentar dividir um número inteiro por zero resultará em uma exceção (`ArithmeticException`).
+- **Uso do módulo**: O operador `%` é útil para determinar se um número é par ou ímpar, entre outras aplicações.
+
+---
+
+## 📚 Complemento: Precedência de Operadores
+
+Em expressões com múltiplos operadores, a ordem de execução segue a precedência dos operadores:
+
+1. Multiplicação (`*`), Divisão (`/`) e Módulo (`%`)
+2. Adição (`+`) e Subtração (`-`)
+
+Operadores com a mesma precedência são avaliados da esquerda para a direita.
+
+### 🧪 Exemplo de Precedência
+
+```java
+int resultado = 10 + 5 * 2; // Resultado: 20
+```
+
+Neste exemplo, a multiplicação é realizada antes da adição.
+
+Para alterar a ordem de execução, utilize parênteses:
+
+```java
+int resultado = (10 + 5) * 2; // Resultado: 30
+```
 
 
 [Voltar ao Índice](#indice)
@@ -747,6 +808,76 @@ https://www.youtube.com/watch?v=Q0REhCVBvAg&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 ## <a name="parte17">17 - 016 - Operadores pt 02 - Relacionais</a>
 
+# Aula 16 – Operadores pt 02: Relacionais
+
+📺 **Link do vídeo:** [Assista no YouTube](https://www.youtube.com/watch?v=U390IaCtOUk)
+
+## 🧠 Conteúdo Abordado
+
+Nesta aula, o instrutor William Suane apresenta os **operadores relacionais** em Java, que são utilizados para comparar dois valores e retornam um resultado booleano (`true` ou `false`).
+
+### 🔎 Operadores Relacionais em Java
+
+| Operador | Descrição         | Exemplo (`a = 10`, `b = 20`) |
+|----------|-------------------|------------------------------|
+| `==`     | Igual a           | `a == b` → `false`           |
+| `!=`     | Diferente de      | `a != b` → `true`            |
+| `>`      | Maior que         | `a > b` → `false`            |
+| `<`      | Menor que         | `a < b` → `true`             |
+| `>=`     | Maior ou igual a  | `a >= b` → `false`           |
+| `<=`     | Menor ou igual a  | `a <= b` → `true`            |
+
+Esses operadores são frequentemente utilizados em estruturas de controle, como `if`, `else if`, `while` e `for`, para tomar decisões baseadas em comparações.
+
+### 📝 Exemplos Práticos
+
+```java
+int idade = 18;
+
+if (idade >= 18) {
+    System.out.println("Você é maior de idade.");
+} else {
+    System.out.println("Você é menor de idade.");
+}
+```
+
+```java
+int numero1 = 10;
+int numero2 = 20;
+
+System.out.println(numero1 == numero2); // false
+System.out.println(numero1 != numero2); // true
+System.out.println(numero1 > numero2);  // false
+System.out.println(numero1 < numero2);  // true
+```
+
+---
+
+## 📚 Complemento: Comparação de Strings
+
+Em Java, para comparar o conteúdo de duas strings, deve-se utilizar o método `.equals()`, pois o operador `==` verifica se as referências apontam para o mesmo objeto na memória.
+
+```java
+String nome1 = "Java";
+String nome2 = "Java";
+
+System.out.println(nome1 == nome2);       // true (pode ser true devido ao pool de strings)
+System.out.println(nome1.equals(nome2));  // true
+
+String nome3 = new String("Java");
+System.out.println(nome1 == nome3);       // false
+System.out.println(nome1.equals(nome3));  // true
+```
+
+---
+
+## ⚠️ Observações Importantes
+
+- **Resultado Booleano:** Todos os operadores relacionais retornam um valor do tipo `boolean`.
+
+- **Comparação de Tipos Diferentes:** Ao comparar tipos diferentes, o Java realiza a promoção de tipos para fazer a comparação.
+
+- **Uso em Estruturas de Controle:** São amplamente utilizados em estruturas como `if`, `while`, `for`, entre outras, para controlar o fluxo do programa com base em condições.
 
 
 [Voltar ao Índice](#indice)
@@ -757,6 +888,71 @@ https://www.youtube.com/watch?v=Q0REhCVBvAg&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 ## <a name="parte18">18 - 017 - Operadores pt 03 - Lógicos AND</a>
 
 
+# Aula 17 – Operadores pt 03: Lógicos AND (`&&`)
+
+📺 **Link do vídeo:** [Assista no YouTube](https://www.youtube.com/watch?v=cT6sw-Pw4l0)
+
+## 🧠 Conteúdo Abordado
+
+Nesta aula, o instrutor William Suane apresenta o operador lógico **AND (`&&`)** em Java, que é utilizado para combinar duas expressões booleanas. O resultado será `true` apenas se **ambas** as expressões forem verdadeiras.
+
+### 🔎 Operador Lógico AND (`&&`)
+
+- **Definição:** O operador `&&` retorna `true` se **ambas** as expressões forem verdadeiras; caso contrário, retorna `false`.
+
+- **Curto-circuito:** O operador `&&` é conhecido por seu comportamento de curto-circuito. Isso significa que, se a primeira expressão for `false`, a segunda expressão **não será avaliada**, pois o resultado final já será `false`.
+
+## 📝 Exemplos Práticos
+
+```java
+int idade = 25;
+float salario = 3500.0f;
+
+boolean isAprovado = idade >= 18 && salario >= 3000;
+System.out.println("Aprovado? " + isAprovado); // true
+```
+
+```java
+int idade = 16;
+float salario = 4000.0f;
+
+boolean isAprovado = idade >= 18 && salario >= 3000;
+System.out.println("Aprovado? " + isAprovado); // false
+```
+
+## ⚠️ Observações Importantes
+
+- **Avaliação Condicional:** Devido ao comportamento de curto-circuito, é possível evitar erros em certas situações. Por exemplo:
+
+```java
+int x = 0;
+if (x != 0 && (10 / x) > 1) {
+    System.out.println("Condição verdadeira");
+}
+```
+
+Neste exemplo, a segunda condição `(10 / x) > 1` **não será avaliada** se `x != 0` for `false`, evitando assim uma divisão por zero.
+
+## 📚 Complemento: Operadores Lógicos em Java
+
+Além do operador `&&`, Java possui outros operadores lógicos:
+
+- `||` (OR lógico): Retorna `true` se **pelo menos uma** das expressões for verdadeira.
+- `!` (NOT lógico): Inverte o valor lógico da expressão.
+- `^` (XOR lógico): Retorna `true` se **apenas uma** das expressões for verdadeira.
+
+### 🧪 Exemplo com `||`:
+
+```java
+boolean temCarteira = true;
+boolean temIdade = false;
+
+if (temCarteira || temIdade) {
+    System.out.println("Pode dirigir");
+} else {
+    System.out.println("Não pode dirigir");
+}
+```
 
 [Voltar ao Índice](#indice)
 
@@ -766,6 +962,72 @@ https://www.youtube.com/watch?v=Q0REhCVBvAg&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 ## <a name="parte19">19 - 018 - Operadores pt 04 - Lógicos OR</a>
 
 
+# Aula 18 – Operadores pt 04: Lógicos OR (`||`)
+
+📺 **Link do vídeo:** [Assista no YouTube](https://www.youtube.com/watch?v=ELcO4DN7lxw)
+
+## 🧠 Conteúdo Abordado
+
+Nesta aula, o instrutor William Suane apresenta o operador lógico **OR (`||`)** em Java, que é utilizado para combinar duas expressões booleanas. O resultado será `true` se **pelo menos uma** das expressões for verdadeira.
+
+### 🔎 Operador Lógico OR (`||`)
+
+- **Definição:** O operador `||` retorna `true` se **pelo menos uma** das expressões for verdadeira; retorna `false` somente se **ambas** forem falsas.
+
+- **Curto-circuito:** O operador `||` possui comportamento de curto-circuito. Isso significa que, se a primeira expressão for `true`, a segunda expressão **não será avaliada**, pois o resultado final já será `true`.
+
+## 📝 Exemplos Práticos
+
+```java
+int idade = 16;
+float salario = 4000.0f;
+
+boolean isAprovado = idade >= 18 || salario >= 3000;
+System.out.println("Aprovado? " + isAprovado); // true
+```
+
+```java
+int idade = 16;
+float salario = 2500.0f;
+
+boolean isAprovado = idade >= 18 || salario >= 3000;
+System.out.println("Aprovado? " + isAprovado); // false
+```
+
+## ⚠️ Observações Importantes
+
+- **Avaliação Condicional:** Devido ao comportamento de curto-circuito, é possível evitar erros em certas situações. Por exemplo:
+
+```java
+String texto = null;
+if (texto != null || texto.length() > 0) {
+    System.out.println("Texto válido");
+}
+```
+
+Neste exemplo, a segunda condição `texto.length() > 0` **não será avaliada** se `texto != null` for `true`, evitando assim um `NullPointerException`.
+
+## 📚 Complemento: Operadores Lógicos em Java
+
+Além do operador `||`, Java possui outros operadores lógicos:
+
+- `&&` (AND lógico): Retorna `true` se **ambas** as expressões forem verdadeiras.
+- `!` (NOT lógico): Inverte o valor lógico da expressão.
+- `^` (XOR lógico): Retorna `true` se **apenas uma** das expressões for verdadeira.
+
+### 🧪 Exemplo com `&&`:
+
+```java
+boolean temCarteira = true;
+boolean temIdade = false;
+
+if (temCarteira && temIdade) {
+    System.out.println("Pode dirigir");
+} else {
+    System.out.println("Não pode dirigir");
+}
+```
+
 
 [Voltar ao Índice](#indice)
 
@@ -774,6 +1036,72 @@ https://www.youtube.com/watch?v=Q0REhCVBvAg&list=PL62G310vn6nFIsOCC0H-C2infYgwm8
 
 ## <a name="parte20">20 - 019 - Operadores pt 05 - Atribuição</a>
 
+# Aula 19 – Operadores pt 05: Atribuição
+
+📺 **Link do vídeo:** [Assista no YouTube](https://www.youtube.com/watch?v=EFrq1WxsL1k)
+
+## 🧠 Conteúdo Abordado
+
+Nesta aula, o instrutor William Suane apresenta os **operadores de atribuição** em Java, que são utilizados para atribuir valores a variáveis. Existem dois tipos principais:
+
+### 🔹 Atribuição Simples (`=`)
+
+- **Definição:** Atribui o valor da expressão à direita para a variável à esquerda.
+- **Exemplo:**
+
+  ```java
+  int idade = 25;
+  String nome = "João";
+  double salario = 3500.50;
+  ```
+
+### 🔹 Atribuição Composta
+
+- **Definição:** Combina um operador aritmético com a atribuição, simplificando expressões.
+- **Operadores Comuns:**
+
+  | Operador | Equivalente a     | Exemplo             |
+  |----------|-------------------|---------------------|
+  | `+=`     | `x = x + y`       | `x += y;`           |
+  | `-=`     | `x = x - y`       | `x -= y;`           |
+  | `*=`     | `x = x * y`       | `x *= y;`           |
+  | `/=`     | `x = x / y`       | `x /= y;`           |
+  | `%=`     | `x = x % y`       | `x %= y;`           |
+
+- **Exemplo:**
+
+  ```java
+  int x = 10;
+  x += 5; // x agora é 15
+  x *= 2; // x agora é 30
+  ```
+
+## ⚠️ Observações Importantes
+
+- **Tipo de Dados:** O tipo da expressão à direita deve ser compatível com o tipo da variável à esquerda.
+- **Atribuição Múltipla:** É possível realizar atribuições encadeadas:
+
+  ```java
+  int a, b, c;
+  a = b = c = 100;
+  ```
+
+  Neste exemplo, todas as variáveis `a`, `b` e `c` receberão o valor `100`.
+
+## 📚 Complemento: Operadores de Atribuição Bit a Bit
+
+Além dos operadores mencionados, Java possui operadores de atribuição bit a bit:
+
+| Operador | Descrição                 | Exemplo             |
+|----------|---------------------------|---------------------|
+| `&=`     | AND bit a bit e atribui   | `x &= y;`           |
+| `|=`     | OR bit a bit e atribui    | `x |= y;`           |
+| `^=`     | XOR bit a bit e atribui   | `x ^= y;`           |
+| `<<=`    | Desloca bits à esquerda   | `x <<= 2;`          |
+| `>>=`    | Desloca bits à direita    | `x >>= 2;`          |
+| `>>>=`   | Desloca bits à direita sem sinal | `x >>>= 2;`    |
+
+Esses operadores são úteis em operações de baixo nível, como manipulação de bits e desenvolvimento de sistemas embarcados.
 
 
 [Voltar ao Índice](#indice)
