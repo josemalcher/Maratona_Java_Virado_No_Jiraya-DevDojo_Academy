@@ -1,4 +1,4 @@
-package net.josemalcher;
+package net.josemalcher.introducao;
 
 public class Aula01OlaMundo {
     public static void main(String[] args) {

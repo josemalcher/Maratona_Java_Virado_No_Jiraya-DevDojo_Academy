@@ -2972,6 +2972,96 @@ Inicializar corretamente arrays multidimensionais em Java é essencial para a es
 
 ## <a name="parte40">40 - 039 - Orientação Objetos pt 01 - Introdução classes pt 01</a>
 
+# Aula 39 – Orientação a Objetos pt 01: Introdução a Classes (Parte 1)
+
+📺 **Vídeo:** [Orientação Objetos pt 01 - Introdução classes pt 01](https://www.youtube.com/watch?v=EyuPFLuvD7Q&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=40)
+
+## 🧠 O que foi abordado na aula?
+
+Nesta aula, foi feita uma introdução à **Programação Orientada a Objetos (POO)** em Java, com foco na **definição de classes** e **objetos**, que são os blocos fundamentais dessa abordagem.
+
+O professor explica:
+- O que é uma classe;
+- Como criar uma classe;
+- Como instanciar objetos a partir de uma classe.
+
+---
+
+## 📦 O que é uma Classe?
+
+Uma **classe** é uma estrutura que define um **tipo de objeto**, incluindo seus **atributos (variáveis)** e **comportamentos (métodos)**.
+
+```java
+public class Carro {
+    String modelo;
+    String cor;
+    int ano;
+}
+```
+
+Essa classe `Carro` define o modelo genérico de um carro, com seus atributos básicos.
+
+---
+
+## 🧍 O que é um Objeto?
+
+Um **objeto** é uma instância de uma classe. Após definir a estrutura com a classe, você pode criar objetos a partir dela:
+
+```java
+public class TesteCarro {
+    public static void main(String[] args) {
+        Carro carro1 = new Carro();
+        carro1.modelo = "Fusca";
+        carro1.cor = "Azul";
+        carro1.ano = 1975;
+
+        System.out.println("Modelo: " + carro1.modelo);
+        System.out.println("Cor: " + carro1.cor);
+        System.out.println("Ano: " + carro1.ano);
+    }
+}
+```
+
+### 🖨️ Saída:
+```
+Modelo: Fusca
+Cor: Azul
+Ano: 1975
+```
+
+---
+
+## ✍️ Atributos
+
+Os **atributos** são as variáveis que descrevem o estado de um objeto. No exemplo acima: `modelo`, `cor`, e `ano` são atributos da classe `Carro`.
+
+---
+
+## 🚀 Instanciando Objetos
+
+Para criar um objeto a partir de uma classe, usamos a palavra-chave `new`:
+
+```java
+Carro meuCarro = new Carro();
+```
+
+---
+
+## 📚 Detalhes Adicionais
+
+- Uma **classe** é como uma planta (blueprint).
+- Um **objeto** é como a construção feita a partir dessa planta.
+- Você pode criar vários objetos a partir de uma mesma classe.
+- Por padrão, os atributos de uma classe têm valores padrão (como `null` para Strings e `0` para inteiros), caso não sejam atribuídos manualmente.
+
+---
+
+## 🧠 Conclusão
+
+A introdução às classes é o primeiro passo na jornada de **Programação Orientada a Objetos** em Java. Entender como declarar classes e instanciar objetos é essencial para construir programas organizados, reutilizáveis e com maior coesão.
+
+Na próxima aula, o professor continuará com o aprofundamento em classes, adicionando **métodos** e **comportamentos**.
+
 
 
 [Voltar ao Índice](#indice)
