@@ -5,6 +5,8 @@ https://www.youtube.com/playlist?list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW
 
 Créditos: Melhor, maior, e o mais completo curso de Java em português grátis de toda Internet está de volta. Maratona Java Virado No Jiraya. Regravado desde a aula 0, com extrema qualidade, utilizando a última versão do Java, com fonte 22 e fundo branco celestial. FAQ Q. Quem criou? A. O cara com um parafuso a menos que colocou um curso desses gratuito foi esse aqui: https://www.linkedin.com/in/williamsuane/ Q. Quem editou os vídeos? A. O irmão do cara com um parafuso a menos, que também tem um parafuso a menos, já que editou de graça: https://www.linkedin.com/in/wildneisuane/
 
+FONTE RESUMO: CHATGPT e COPILOT
+
 ## <a name="indice">Índice</a>
 
 001. [000 - Maratona Java Virado No Jiraya - Bem-vindo](#parte1)
@@ -3071,6 +3073,90 @@ Na próxima aula, o professor continuará com o aprofundamento em classes, adici
 
 ## <a name="parte41">41 - 040 - Orientação Objetos - Introdução classes pt 02</a>
 
+# Aula 40 – Orientação a Objetos: Introdução a Classes (Parte 2)
+
+📺 **Vídeo:** [Orientação Objetos - Introdução classes pt 02](https://www.youtube.com/watch?v=uB7KvSz6WiA&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=41)
+
+## 🧠 O que foi abordado na aula?
+
+Nesta continuação da introdução a **classes em Java**, o professor explora:
+- Declaração de **métodos**;
+- Diferença entre **atributos** e **comportamentos**;
+- A importância de **modularizar comportamentos** dentro de métodos;
+- Criação de uma classe com atributos e métodos;
+- Instanciação de objetos que utilizam esses métodos.
+
+---
+
+## 🧱 Exemplo prático de uma classe com métodos
+
+```java
+public class Carro {
+    String modelo;
+    String cor;
+    int ano;
+
+    void ligar() {
+        System.out.println("O carro está ligado!");
+    }
+
+    void exibirDetalhes() {
+        System.out.println("Modelo: " + modelo);
+        System.out.println("Cor: " + cor);
+        System.out.println("Ano: " + ano);
+    }
+}
+```
+
+### 🧪 Classe de Teste
+
+```java
+public class TesteCarro {
+    public static void main(String[] args) {
+        Carro carro1 = new Carro();
+        carro1.modelo = "Gol";
+        carro1.cor = "Branco";
+        carro1.ano = 2020;
+
+        carro1.ligar();
+        carro1.exibirDetalhes();
+    }
+}
+```
+
+### ✅ Saída esperada:
+```
+O carro está ligado!
+Modelo: Gol
+Cor: Branco
+Ano: 2020
+```
+
+---
+
+## 📌 Conceitos reforçados na aula
+
+- **Atributos**: representam o estado do objeto;
+- **Métodos**: representam ações/comportamentos do objeto;
+- Os métodos são declarados com `void` (quando não retornam valor), seguidos pelo nome e, opcionalmente, parâmetros;
+- Os métodos ajudam a **organizar melhor o código** e **reutilizar comportamentos**.
+
+---
+
+## 🎯 Boas práticas
+
+- Nomear métodos com verbos (ex: `ligar`, `exibirDetalhes`);
+- Separar responsabilidades: cada método deve realizar uma única tarefa;
+- Criar métodos para evitar repetições de código no `main`.
+
+---
+
+## 🧠 Conclusão
+
+Nessa etapa, além dos atributos, aprendemos como **dar vida aos objetos** com métodos. O uso de métodos é essencial na Programação Orientada a Objetos, pois define o **comportamento das classes**, permitindo que elas interajam com outras partes do programa de maneira mais clara, organizada e reutilizável.
+
+Na próxima aula, o foco será na criação de **métodos com retorno**, introduzindo mais dinamismo à lógica dos objetos.
+
 
 
 [Voltar ao Índice](#indice)
@@ -3080,6 +3166,86 @@ Na próxima aula, o professor continuará com o aprofundamento em classes, adici
 
 ## <a name="parte42">42 - 041 - Orientação Objetos - Coesão</a>
 
+# Aula 41 – Orientação a Objetos: Coesão
+
+📺 **Vídeo:** [Orientação Objetos - Coesão](https://www.youtube.com/watch?v=dJLYPP1ExYY&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=42)
+
+## 🧠 O que é Coesão?
+
+**Coesão** é um dos princípios fundamentais da **Programação Orientada a Objetos (POO)** e se refere ao grau em que os elementos de uma classe estão relacionados entre si e com sua **finalidade**.
+
+- Uma classe coesa possui **atributos e métodos que fazem sentido juntos**, ou seja, **trabalham por um mesmo objetivo**.
+- **Alta coesão** resulta em classes **simples, compreensíveis e reutilizáveis**.
+- **Baixa coesão** significa que a classe está assumindo muitas responsabilidades diferentes e provavelmente precisa ser **refatorada**.
+
+---
+
+## ✅ Exemplo de Alta Coesão
+
+```java
+public class Impressora {
+    void imprimirDocumento(String texto) {
+        System.out.println("Imprimindo: " + texto);
+    }
+
+    void limparCabecote() {
+        System.out.println("Limpando cabeçote de impressão...");
+    }
+
+    void nivelTinta() {
+        System.out.println("Verificando nível de tinta...");
+    }
+}
+```
+
+Essa classe está coesa porque todos os métodos têm relação com a **função de uma impressora**.
+
+---
+
+## ❌ Exemplo de Baixa Coesão
+
+```java
+public class Util {
+    void imprimirDocumento(String texto) {
+        System.out.println("Imprimindo: " + texto);
+    }
+
+    void calcularSalario(double horas, double valorHora) {
+        double salario = horas * valorHora;
+        System.out.println("Salário: " + salario);
+    }
+
+    void enviarEmail(String destinatario) {
+        System.out.println("Enviando email para: " + destinatario);
+    }
+}
+```
+
+A classe acima tem métodos **sem relação entre si** – está lidando com impressão, cálculo de salário e envio de e-mail. Isso **quebra o princípio da coesão**.
+
+---
+
+## 📌 Por que Coesão é importante?
+
+- Facilita a **manutenção** do código;
+- Aumenta a **clareza** e legibilidade da classe;
+- Permite a **reutilização** mais eficiente;
+- Reduz o **acoplamento** entre diferentes partes do sistema;
+- Favorece o uso de **boas práticas de design**.
+
+---
+
+## 🎯 Dica do professor
+
+Pense sempre: **"Minha classe tem uma responsabilidade clara?"**
+
+Se a resposta for **não**, considere **dividir em múltiplas classes**, cada uma com seu propósito.
+
+---
+
+## 🧠 Conclusão
+
+A **coesão** é um princípio essencial na hora de construir boas classes na Programação Orientada a Objetos. Manter a coesão ajuda a criar sistemas mais organizados, fáceis de manter e evoluir.
 
 
 [Voltar ao Índice](#indice)
@@ -3089,6 +3255,90 @@ Na próxima aula, o professor continuará com o aprofundamento em classes, adici
 
 ## <a name="parte43">43 - 042 - Orientação Objetos - Exercício Classes</a>
 
+# Aula 42 – Orientação a Objetos: Exercício Classes
+
+📺 **Vídeo:** [Orientação Objetos - Exercício Classes](https://www.youtube.com/watch?v=JbL4SAFORco&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=43)
+
+## 🧠 Objetivo da Aula
+
+Nesta aula, é proposto um exercício prático para reforçar os conceitos de **criação de classes**, **instanciação de objetos**, **atributos** e **métodos** em Java, com base nos princípios de **orientação a objetos** aprendidos anteriormente.
+
+---
+
+## 🧱 Estrutura do Exercício
+
+O exercício consiste em criar uma classe que represente uma pessoa, contendo **atributos**, **métodos** e a **utilização dessa classe no método `main`**.
+
+---
+
+## 💡 Exemplo: Classe `Pessoa`
+
+```java
+public class Pessoa {
+    String nome;
+    int idade;
+
+    void apresentar() {
+        System.out.println("Olá, meu nome é " + nome + " e eu tenho " + idade + " anos.");
+    }
+}
+```
+
+---
+
+## 🚀 Utilizando a Classe no `main`
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Pessoa pessoa1 = new Pessoa();
+        pessoa1.nome = "João";
+        pessoa1.idade = 30;
+
+        Pessoa pessoa2 = new Pessoa();
+        pessoa2.nome = "Maria";
+        pessoa2.idade = 25;
+
+        pessoa1.apresentar();
+        pessoa2.apresentar();
+    }
+}
+```
+
+### 🖨️ Saída:
+```
+Olá, meu nome é João e eu tenho 30 anos.
+Olá, meu nome é Maria e eu tenho 25 anos.
+```
+
+---
+
+## 🧱 Conceitos Reforçados
+
+- Criação de **classes** com atributos e métodos.
+- Uso do operador `new` para **instanciar objetos**.
+- Acesso a atributos e métodos de objetos com o operador `.`.
+- Separação clara de **responsabilidades**: a classe `Pessoa` representa uma entidade do mundo real.
+
+---
+
+## 📌 Boas Práticas
+
+- A classe deve representar bem o seu conceito do mundo real.
+- Os nomes dos métodos e atributos devem ser **claros e descritivos**.
+- Cada classe deve ser **coesa**, ou seja, focada em uma única responsabilidade.
+
+---
+
+## ✅ Desafio
+
+Tente adaptar esse exemplo para outras entidades, como `Carro`, `Aluno`, `Produto`, entre outros. Crie novos métodos e pratique o uso de diferentes tipos de dados.
+
+---
+
+## 🧠 Conclusão
+
+Esse exercício ajuda a fixar os conceitos de orientação a objetos e preparar o terreno para conceitos mais avançados como **encapsulamento, herança e polimorfismo**.
 
 
 [Voltar ao Índice](#indice)
@@ -3097,6 +3347,89 @@ Na próxima aula, o professor continuará com o aprofundamento em classes, adici
 
 
 ## <a name="parte44">44 - 043 - Orientação Objetos - Referência de objetos</a>
+
+# Aula 43 – Orientação a Objetos: Referência de Objetos
+
+📺 **Vídeo:** [Orientação Objetos - Referência de objetos](https://www.youtube.com/watch?v=g_SGuMYHgI0&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=44)
+
+## 🧠 Objetivo da Aula
+
+Esta aula aborda como funciona a **referência de objetos** em Java. O foco é entender que quando atribuímos um objeto a outro, **ambos passam a apontar para o mesmo espaço de memória**, e **alterações feitas por um se refletem no outro**.
+
+---
+
+## 🔄 Conceito: Referência
+
+Em Java, variáveis de tipo objeto não armazenam o valor diretamente, mas sim uma **referência (endereço) para um espaço de memória** onde o objeto está armazenado.
+
+---
+
+## 💡 Exemplo: Referência Compartilhada
+
+```java
+public class Pessoa {
+    String nome;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Pessoa pessoa1 = new Pessoa();
+        pessoa1.nome = "João";
+
+        Pessoa pessoa2 = pessoa1; // pessoa2 aponta para o mesmo objeto de pessoa1
+
+        pessoa2.nome = "Maria";
+
+        System.out.println(pessoa1.nome); // Maria
+        System.out.println(pessoa2.nome); // Maria
+    }
+}
+```
+
+### 🖨️ Saída:
+```
+Maria
+Maria
+```
+
+### 📌 Explicação:
+
+- `pessoa2 = pessoa1` não cria uma nova cópia do objeto.
+- Ambas variáveis (`pessoa1` e `pessoa2`) apontam para **o mesmo objeto na memória**.
+- Alterar o atributo `nome` por meio de `pessoa2` também altera o que é visto por `pessoa1`.
+
+---
+
+## 🧪 Cuidado com Referências!
+
+Se você quiser **copiar um objeto**, precisa instanciar um novo e copiar manualmente os valores de seus atributos, ou usar técnicas como:
+
+- Construtores de cópia
+- Métodos de clonagem
+
+---
+
+## 🔁 Comparando Referências
+
+```java
+Pessoa pessoa1 = new Pessoa();
+Pessoa pessoa2 = new Pessoa();
+Pessoa pessoa3 = pessoa1;
+
+System.out.println(pessoa1 == pessoa2); // false
+System.out.println(pessoa1 == pessoa3); // true
+```
+
+### ✅ Explicação:
+- `==` verifica se duas variáveis referem-se **ao mesmo objeto** (mesmo endereço de memória), e **não o conteúdo**.
+
+---
+
+## 🧠 Conclusão
+
+Compreender como as referências funcionam em Java é essencial para evitar bugs e comportamentos inesperados em programas orientados a objetos. 
+
+Sempre que estiver manipulando objetos, lembre-se que **você está trabalhando com ponteiros para memória**, e não diretamente com os dados em si.
 
 
 
@@ -3107,6 +3440,96 @@ Na próxima aula, o professor continuará com o aprofundamento em classes, adici
 
 ## <a name="parte45">45 - 044 - Orientação Objetos - Métodos pt 01</a>
 
+# Aula 44 – Orientação a Objetos: Métodos (Parte 1)
+
+🎥 **Vídeo:** [Orientação Objetos - Métodos pt 01](https://www.youtube.com/watch?v=ZM0AJhKjLYc&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=45)
+
+## 📌 Objetivo da Aula
+
+Introdução ao conceito de **métodos** em Java no contexto da **Programação Orientada a Objetos (POO)**. A aula demonstra como criar, declarar e utilizar métodos dentro de classes, com foco na reutilização e organização de código.
+
+---
+
+## 🧠 O que é um Método?
+
+Um **método** é um bloco de código que realiza uma ação. Pode receber parâmetros (entradas) e pode retornar um valor (saída). Os métodos ajudam a manter o código organizado, reutilizável e mais fácil de manter.
+
+---
+
+## 🧱 Estrutura de um Método
+
+```java
+[modificadorDeAcesso] tipoDeRetorno nomeDoMetodo(parâmetros) {
+    // corpo do método
+}
+```
+
+### 🔹 Exemplos:
+
+```java
+public class Calculadora {
+
+    // Método sem retorno (void) e sem parâmetros
+    void exibirMensagem() {
+        System.out.println("Bem-vindo à Calculadora!");
+    }
+
+    // Método com retorno e com parâmetros
+    int somar(int a, int b) {
+        return a + b;
+    }
+}
+```
+
+---
+
+## 🚀 Usando Métodos
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Calculadora calc = new Calculadora();
+
+        calc.exibirMensagem(); // Chamada de método sem retorno
+
+        int resultado = calc.somar(10, 5); // Chamada com retorno
+        System.out.println("Resultado: " + resultado);
+    }
+}
+```
+
+### 🖨️ Saída:
+```
+Bem-vindo à Calculadora!
+Resultado: 15
+```
+
+---
+
+## ✅ Boas Práticas (Best Practices)
+
+- ✅ **Nomeie métodos de forma clara e descritiva.** Use verbos no infinitivo (ex: `calcularMedia`, `exibirMensagem`, `somarValores`).
+- ✅ **Cada método deve ter uma responsabilidade única.** A coesão é essencial para a clareza do código.
+- ✅ **Utilize parâmetros para tornar métodos reutilizáveis.**
+- ✅ **Documente métodos** (com `JavaDoc`, por exemplo) para explicar o que eles fazem.
+- ✅ **Evite duplicação de código** utilizando métodos sempre que a mesma lógica for repetida.
+
+---
+
+## ❌ Práticas a Evitar (Bad Practices)
+
+- ❌ **Métodos muito longos** e que fazem muitas coisas (baixa coesão).
+- ❌ **Usar nomes genéricos** como `fazerAlgo()` ou `coisa()`.
+- ❌ **Ignorar o uso de retorno** quando ele pode ser útil para reutilização de resultados.
+- ❌ **Misturar regras de negócio com exibição de dados** em um mesmo método (ex: `calcularResultadoEImprimirNaTela()`).
+- ❌ **Criar métodos estáticos sem necessidade**, pois quebra o princípio de orientação a objetos.
+
+---
+
+## 🧠 Conclusão
+
+Os **métodos** são componentes fundamentais para a construção de sistemas orientados a objetos. Eles promovem **organização, legibilidade, reutilização e coesão** no código. Aprender a usá-los corretamente é um passo essencial para escrever bons programas em Java.
+
 
 
 [Voltar ao Índice](#indice)
@@ -3115,6 +3538,176 @@ Na próxima aula, o professor continuará com o aprofundamento em classes, adici
 
 
 ## <a name="parte46">46 - 045 - Orientação Objetos - Métodos pt 02 - Parâmetros</a>
+
+# Aula 45 – Orientação a Objetos: Métodos (Parte 2 - Parâmetros)
+
+🎥 **Vídeo:** [Orientação Objetos - Métodos pt 02 - Parâmetros](https://www.youtube.com/watch?v=op6inGTMBiw&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=46)
+
+## 🎯 Objetivo da Aula
+
+Aprender como **parâmetros** funcionam dentro de **métodos** em Java. Entender como passá-los, usá-los e como isso torna os métodos mais reutilizáveis e dinâmicos. 
+
+---
+
+## 🧠 O que são Parâmetros?
+
+Parâmetros são **variáveis declaradas na assinatura de um método**. Eles permitem a passagem de dados para dentro do método no momento da chamada, tornando-o mais flexível.
+
+---
+
+## 🧱 Sintaxe de um Método com Parâmetro
+
+```java
+[modificadorDeAcesso] tipoDeRetorno nomeDoMetodo(tipo parametro) {
+    // corpo do método
+}
+```
+
+---
+
+## 💡 Exemplo Básico
+
+```java
+public class Saudacao {
+    void exibirMensagem(String nome) {
+        System.out.println("Olá, " + nome + "!");
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Saudacao saudacao = new Saudacao();
+        saudacao.exibirMensagem("Ana");
+        saudacao.exibirMensagem("Carlos");
+    }
+}
+```
+
+### 🖨️ Saída:
+```
+Olá, Ana!
+Olá, Carlos!
+```
+
+---
+
+## 💡 Exemplo com Múltiplos Parâmetros
+
+```java
+public class Calculadora {
+    int somar(int a, int b) {
+        return a + b;
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Calculadora calc = new Calculadora();
+        int resultado = calc.somar(5, 10);
+        System.out.println("Resultado: " + resultado);
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Complexo com Objeto como Parâmetro
+
+```java
+public class Produto {
+    String nome;
+    double preco;
+
+    Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+}
+
+public class Carrinho {
+    void adicionarProduto(Produto produto) {
+        System.out.println("Adicionado: " + produto.nome + " por R$" + produto.preco);
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Produto p1 = new Produto("Notebook", 3500.00);
+        Carrinho carrinho = new Carrinho();
+        carrinho.adicionarProduto(p1);
+    }
+}
+```
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ **Utilize nomes descritivos para os parâmetros**
+  - Exemplo: `nome`, `idade`, `quantidade`.
+
+- ✅ **Mantenha o método coeso**
+  - Um método deve ter uma única responsabilidade clara.
+
+- ✅ **Valide os parâmetros**
+  - Principalmente se vierem de entradas do usuário.
+
+- ✅ **Reduza o número de parâmetros**
+  - Prefira objetos de transferência (DTOs) quando houver muitos parâmetros.
+
+- ✅ **Documente o que cada parâmetro representa**
+  - Comentários ou Javadoc ajudam na manutenção do código.
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ **Nomes genéricos ou confusos para parâmetros**
+  - Exemplo: `x`, `y`, `data1`.
+
+- ❌ **Métodos com muitos parâmetros**
+  - Exemplo: `processar(int a, int b, int c, String nome, double taxa, boolean ativo)`
+
+- ❌ **Alterar o valor dos parâmetros diretamente**
+  - Especialmente se o parâmetro for um objeto mutável.
+
+- ❌ **Ignorar validações**
+  - Pode causar exceções ou lógica incorreta.
+
+---
+
+## 📌 Dica Extra
+
+Se você estiver passando **muitos parâmetros** para um método, considere criar uma **classe auxiliar** para encapsular esses dados:
+
+```java
+public class PedidoInfo {
+    String produto;
+    int quantidade;
+    double preco;
+    // construtor, getters, setters
+}
+```
+
+```java
+public class PedidoService {
+    void processarPedido(PedidoInfo info) {
+        // lógica usando info.produto, info.quantidade, etc.
+    }
+}
+```
+
+---
+
+## ✅ Conclusão
+
+O uso de parâmetros é fundamental para a **flexibilidade** e **reutilização** dos métodos em Java. Compreender sua estrutura, boas práticas e evitar armadilhas comuns são passos importantes na evolução como desenvolvedor orientado a objetos.
 
 
 
