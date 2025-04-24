@@ -3718,6 +3718,144 @@ O uso de parâmetros é fundamental para a **flexibilidade** e **reutilização*
 
 ## <a name="parte47">47 - 046 - Orientação Objetos - Métodos pt 03 - Retorno pt 01</a>
 
+# Aula 46 – Orientação a Objetos: Métodos pt 03 - Retorno (Parte 1)
+
+🎥 **Vídeo:** [Métodos pt 03 - Retorno pt 01](https://www.youtube.com/watch?v=FCnTsy2EzSw&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=47)
+
+## 🎯 Objetivo da Aula
+
+Compreender como os **métodos com retorno** funcionam em Java, como declarar e utilizar o valor retornado. A aula mostra como métodos podem retornar valores úteis para outras partes do código.
+
+---
+
+## 🧠 O que é o Retorno de um Método?
+
+- Um método pode retornar um **valor** após sua execução.
+- O tipo de retorno é declarado na **assinatura do método**.
+- O comando `return` é usado para devolver o valor.
+
+### Sintaxe:
+```java
+tipo nomeDoMetodo() {
+    return valor;
+}
+```
+
+---
+
+## 💡 Exemplo Básico - Método que retorna um número
+
+```java
+public class Calculadora {
+    int somar(int a, int b) {
+        return a + b;
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Calculadora calc = new Calculadora();
+        int resultado = calc.somar(10, 5);
+        System.out.println("Resultado da soma: " + resultado);
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Intermediário - Retorno de String
+
+```java
+public class Saudacao {
+    String mensagemDeBoasVindas(String nome) {
+        return "Bem-vindo, " + nome + "!";
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Saudacao saudacao = new Saudacao();
+        String msg = saudacao.mensagemDeBoasVindas("Maria");
+        System.out.println(msg);
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Complexo - Retorno de Objeto
+
+```java
+public class Produto {
+    String nome;
+    double preco;
+
+    Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+}
+
+public class Estoque {
+    Produto buscarProdutoMaisCaro() {
+        return new Produto("Notebook Gamer", 7500.00);
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Estoque estoque = new Estoque();
+        Produto p = estoque.buscarProdutoMaisCaro();
+        System.out.println("Produto: " + p.nome + ", Preço: R$" + p.preco);
+    }
+}
+```
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ **Use o tipo de retorno correto** conforme a lógica do método.
+- ✅ **Documente o retorno** (ex: com Javadoc).
+- ✅ **Evite lógica excessiva dentro do método**, mantenha-o coeso.
+- ✅ **Valide os dados antes de retornar**, quando necessário.
+- ✅ **Prefira retornar objetos ao invés de múltiplos valores soltos**.
+
+---
+
+## ❌ Más Práticas a Evitar
+
+- ❌ **Retornar valores irrelevantes** ou sempre fixos (ex: sempre `0` ou `null`).
+- ❌ **Executar várias tarefas no método além do necessário** (falta de coesão).
+- ❌ **Retornar dados modificados inesperadamente** (quebra de encapsulamento).
+- ❌ **Deixar código duplicado em métodos semelhantes**.
+
+---
+
+## 📌 Dica Extra
+
+Se um método **não precisar retornar nada**, use o tipo `void`:
+
+```java
+void imprimirMensagem(String msg) {
+    System.out.println(msg);
+}
+```
+
+Se quiser retornar algo depois de algum cálculo ou processo, troque o `void` pelo tipo necessário e use `return`.
+
+---
+
+## ✅ Conclusão
+
+Entender o uso do `return` e métodos com retorno é fundamental para criar sistemas **modulares, reutilizáveis e fáceis de manter**. Eles ajudam a separar responsabilidades e permitem reutilizar lógicas complexas com simplicidade.
+
 
 
 [Voltar ao Índice](#indice)
@@ -3727,6 +3865,152 @@ O uso de parâmetros é fundamental para a **flexibilidade** e **reutilização*
 
 ## <a name="parte48">48 - 047 - Orientação Objetos - Métodos pt 04 - Retorno pt 02</a>
 
+# Aula 47 – Orientação a Objetos: Métodos pt 04 - Retorno (Parte 2)
+
+🎥 **Vídeo:** [Métodos pt 04 - Retorno pt 02](https://www.youtube.com/watch?v=d0BO5mBBFK8&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=48)
+
+## 🎯 Objetivo da Aula
+
+Aprofundar o entendimento sobre métodos que retornam valores em Java, explorando diferentes tipos de retorno, boas práticas e erros comuns a serem evitados.
+
+---
+
+## 🧠 Conceitos Fundamentais
+
+- **Tipo de Retorno:** O tipo especificado na assinatura do método deve corresponder ao tipo do valor retornado.
+- **Uso do `return`:** A instrução `return` é utilizada para devolver um valor ao chamador do método.
+- **Métodos `void`:** Métodos declarados com `void` não retornam valor e não precisam de uma instrução `return`, embora possam usá-la para sair antecipadamente do método.
+
+---
+
+## 💡 Exemplo Básico - Retorno de Valor Primitivo
+
+```java
+public class Calculadora {
+    public int multiplicar(int a, int b) {
+        return a * b;
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Calculadora calc = new Calculadora();
+        int resultado = calc.multiplicar(4, 5);
+        System.out.println("Resultado: " + resultado);
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Intermediário - Retorno de Objeto
+
+```java
+public class Produto {
+    String nome;
+    double preco;
+
+    Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+}
+
+public class Estoque {
+    public Produto obterProdutoMaisCaro() {
+        return new Produto("Notebook", 3500.00);
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Estoque estoque = new Estoque();
+        Produto produto = estoque.obterProdutoMaisCaro();
+        System.out.println("Produto: " + produto.nome + ", Preço: R$" + produto.preco);
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Avançado - Retorno de Coleção
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Carrinho {
+    public List<String> listarProdutos() {
+        List<String> produtos = new ArrayList<>();
+        produtos.add("Mouse");
+        produtos.add("Teclado");
+        produtos.add("Monitor");
+        return produtos;
+    }
+}
+```
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Carrinho carrinho = new Carrinho();
+        List<String> produtos = carrinho.listarProdutos();
+        for (String produto : produtos) {
+            System.out.println("Produto: " + produto);
+        }
+    }
+}
+```
+
+---
+
+## ✅ Boas Práticas
+
+- **Correspondência de Tipos:** Certifique-se de que o tipo de retorno declarado corresponde ao tipo do valor retornado.
+- **Clareza no Retorno:** Retorne valores significativos que façam sentido no contexto do método.
+- **Documentação:** Utilize comentários ou Javadoc para descrever o que o método retorna.
+- **Evite Retornar `null`:** Sempre que possível, evite retornar `null` para prevenir `NullPointerException`. Considere retornar objetos vazios ou usar `Optional`.
+- **Consistência:** Mantenha consistência nos tipos de retorno em métodos similares.
+
+---
+
+## ❌ Práticas a Evitar
+
+- **Retornar Tipos Incompatíveis:** Evite retornar um tipo diferente do declarado na assinatura do método, pois isso causará erros de compilação.
+- **Retornar `null` Desnecessariamente:** Retornar `null` pode levar a erros em tempo de execução. Prefira retornar objetos vazios ou utilizar `Optional`.
+- **Métodos com Múltiplos Pontos de Retorno Confusos:** Embora múltiplos `return` possam ser úteis, evite usá-los de forma que torne o código difícil de entender.
+- **Ignorar o Valor Retornado:** Se um método retorna um valor, utilize-o. Ignorar o valor pode indicar que o método deveria ser `void`.
+
+---
+
+## 📌 Dica Extra
+
+Para métodos que podem não ter um valor a retornar, considere o uso de `Optional`:
+
+```java
+import java.util.Optional;
+
+public class UsuarioService {
+    public Optional<Usuario> buscarUsuarioPorId(int id) {
+        // Lógica para buscar o usuário
+        if (/* usuário encontrado */) {
+            return Optional.of(usuario);
+        } else {
+            return Optional.empty();
+        }
+    }
+}
+```
+
+---
+
+## ✅ Conclusão
+
+Compreender e aplicar corretamente o conceito de retorno em métodos é essencial para escrever código Java limpo, eficiente e livre de erros. Utilize os exemplos e práticas descritas acima para aprimorar suas habilidades em programação orientada a objetos.
 
 
 [Voltar ao Índice](#indice)
@@ -3735,6 +4019,123 @@ O uso de parâmetros é fundamental para a **flexibilidade** e **reutilização*
 
 
 ## <a name="parte49">49 - 048 - Orientação Objetos - Métodos pt 05 - Parâmetros tipo primitivo</a>
+
+# Aula 48 – Orientação a Objetos: Métodos pt 05 - Parâmetros Tipo Primitivo
+
+🎥 **Vídeo:** [Métodos pt 05 - Parâmetros tipo primitivo](https://www.youtube.com/watch?v=-izqpkaXKx0&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=49)
+
+## 🎯 Objetivo da Aula
+
+Compreender como os métodos em Java recebem e manipulam parâmetros de tipos primitivos, destacando o comportamento de passagem por valor e suas implicações.
+
+---
+
+## 🧠 Conceitos Fundamentais
+
+- **Tipos Primitivos em Java:** `byte`, `short`, `int`, `long`, `float`, `double`, `char`, `boolean`.
+- **Passagem por Valor:** Em Java, todos os parâmetros são passados por valor. Para tipos primitivos, isso significa que o método recebe uma cópia do valor original, e alterações dentro do método não afetam a variável original.
+
+---
+
+## 💡 Exemplo Básico - Passagem por Valor
+
+```java
+public class Exemplo {
+    public static void incrementar(int numero) {
+        numero++;
+        System.out.println("Dentro do método: " + numero);
+    }
+
+    public static void main(String[] args) {
+        int valor = 5;
+        incrementar(valor);
+        System.out.println("Fora do método: " + valor);
+    }
+}
+```
+
+**Saída:**
+```
+Dentro do método: 6
+Fora do método: 5
+```
+
+*Explicação:* O método `incrementar` recebe uma cópia do valor de `valor`. Alterações em `numero` dentro do método não afetam `valor` fora dele.
+
+---
+
+## 💡 Exemplo Intermediário - Operações com Vários Parâmetros Primitivos
+
+```java
+public class Calculadora {
+    public static int somar(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        int resultado = somar(10, 20);
+        System.out.println("Resultado da soma: " + resultado);
+    }
+}
+```
+
+*Explicação:* O método `somar` recebe dois parâmetros primitivos, realiza a operação e retorna o resultado. Os valores originais não são modificados.
+
+---
+
+## 💡 Exemplo Avançado - Utilizando Tipos Primitivos em Cálculos Complexos
+
+```java
+public class ConversorTemperatura {
+    public static double celsiusParaFahrenheit(double celsius) {
+        return (celsius * 9/5) + 32;
+    }
+
+    public static void main(String[] args) {
+        double celsius = 25.0;
+        double fahrenheit = celsiusParaFahrenheit(celsius);
+        System.out.println(celsius + "°C equivalem a " + fahrenheit + "°F");
+    }
+}
+```
+
+*Explicação:* O método `celsiusParaFahrenheit` realiza uma conversão utilizando um parâmetro primitivo do tipo `double`.
+
+---
+
+## ✅ Boas Práticas
+
+- **Utilize Tipos Primitivos Quando Possível:** Eles são mais eficientes em termos de desempenho e uso de memória.
+- **Evite Modificar Parâmetros Primitivos Dentro do Método:** Como são passados por valor, alterações não afetam o valor original, o que pode levar a confusões.
+- **Documente o Comportamento dos Métodos:** Especifique claramente se o método modifica ou não os valores passados.
+- **Escolha o Tipo Primitivo Adequado:** Utilize o tipo que melhor representa o dado e evita desperdício de memória.
+
+---
+
+## ❌ Práticas a Evitar
+
+- **Não Presuma que Alterações em Parâmetros Primitivos Afetam o Valor Original:** Lembre-se que são passados por valor.
+- **Evite Usar Tipos Primitivos em Contextos que Requerem Objetos:** Por exemplo, ao trabalhar com coleções genéricas, utilize as classes wrapper correspondentes (`Integer`, `Double`, etc.).
+- **Não Utilize Tipos Primitivos para Representar Estados Complexos:** Prefira enums ou objetos para representar estados ou comportamentos mais complexos.
+
+---
+
+## 📌 Dica Extra
+
+Ao trabalhar com coleções ou APIs que exigem objetos, utilize as classes wrapper correspondentes aos tipos primitivos:
+
+```java
+List<Integer> numeros = new ArrayList<>();
+numeros.add(10); // Autoboxing de int para Integer
+```
+
+*Explicação:* O Java realiza automaticamente a conversão de tipos primitivos para suas classes wrapper correspondentes (autoboxing) quando necessário.
+
+---
+
+## ✅ Conclusão
+
+Entender como os parâmetros de tipos primitivos são passados e manipulados em métodos é fundamental para evitar comportamentos inesperados e escrever código Java eficiente e claro.
 
 
 
@@ -3745,6 +4146,150 @@ O uso de parâmetros é fundamental para a **flexibilidade** e **reutilização*
 
 ## <a name="parte50">50 - 049 - Orientação Objetos - Métodos pt 06 - Parâmetros tipo referência</a>
 
+# Aula 49 – Orientação a Objetos: Métodos pt 06 - Parâmetros Tipo Referência
+
+🎥 **Vídeo:** [Métodos pt 06 - Parâmetros tipo referência](https://www.youtube.com/watch?v=C-tmxo4FcKs)
+
+## 🎯 Objetivo da Aula
+
+Compreender como os métodos em Java recebem e manipulam parâmetros de tipos referência (objetos), destacando o comportamento de passagem por valor de referências e suas implicações.
+
+---
+
+## 🧠 Conceitos Fundamentais
+
+- **Tipos de Referência em Java:** Incluem todas as classes, interfaces, arrays e enumeradores.
+- **Passagem por Valor de Referência:** Em Java, todos os parâmetros são passados por valor. No caso de objetos, o valor passado é a referência ao objeto, permitindo que métodos modifiquem o estado interno do objeto, mas não a referência em si.
+- **Imutabilidade da Referência:** Alterar a referência dentro do método não afeta a referência original fora dele.
+
+---
+
+## 💡 Exemplo Básico - Modificando o Estado do Objeto
+
+```java
+public class Pessoa {
+    String nome;
+}
+
+public class Exemplo {
+    public static void alterarNome(Pessoa p) {
+        p.nome = "João";
+    }
+
+    public static void main(String[] args) {
+        Pessoa pessoa = new Pessoa();
+        pessoa.nome = "Maria";
+        alterarNome(pessoa);
+        System.out.println(pessoa.nome); // Saída: João
+    }
+}
+```
+
+*Explicação:* O método `alterarNome` modifica o atributo `nome` do objeto `Pessoa`. Como a referência ao objeto é passada por valor, o método pode alterar o estado interno do objeto.
+
+---
+
+## 💡 Exemplo Intermediário - Tentando Alterar a Referência
+
+```java
+public class Pessoa {
+    String nome;
+}
+
+public class Exemplo {
+    public static void criarNovaPessoa(Pessoa p) {
+        p = new Pessoa();
+        p.nome = "Carlos";
+    }
+
+    public static void main(String[] args) {
+        Pessoa pessoa = new Pessoa();
+        pessoa.nome = "Ana";
+        criarNovaPessoa(pessoa);
+        System.out.println(pessoa.nome); // Saída: Ana
+    }
+}
+```
+
+*Explicação:* O método `criarNovaPessoa` atribui uma nova instância à variável `p`, mas essa alteração não afeta a variável `pessoa` no método `main`, pois a referência é passada por valor.
+
+---
+
+## 💡 Exemplo Avançado - Modificando Objetos em Coleções
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Exemplo {
+    public static void adicionarElemento(List<String> lista) {
+        lista.add("Novo Elemento");
+    }
+
+    public static void main(String[] args) {
+        List<String> minhaLista = new ArrayList<>();
+        minhaLista.add("Elemento 1");
+        adicionarElemento(minhaLista);
+        System.out.println(minhaLista); // Saída: [Elemento 1, Novo Elemento]
+    }
+}
+```
+
+*Explicação:* O método `adicionarElemento` modifica o conteúdo da lista, e essa modificação é refletida fora do método, pois a lista é um objeto e sua referência é passada por valor.
+
+---
+
+## ✅ Boas Práticas
+
+- **Compreensão Clara da Passagem por Valor de Referência:** Entenda que, embora a referência seja passada por valor, o objeto referenciado pode ser modificado dentro do método.
+- **Evite Alterar a Referência Dentro do Método:** Alterar a referência dentro do método não afeta a referência original e pode causar confusão.
+- **Documente o Comportamento dos Métodos:** Especifique claramente se o método modifica ou não o estado dos objetos passados como parâmetros.
+- **Utilize Objetos Imutáveis Quando Apropriado:** Para evitar efeitos colaterais indesejados, considere o uso de objetos imutáveis.
+
+---
+
+## ❌ Práticas a Evitar
+
+- **Supor que a Referência Pode Ser Alterada Dentro do Método:** Lembre-se de que alterar a referência dentro do método não afeta a referência original.
+- **Modificar Objetos Sem Necessidade:** Evite modificar o estado de objetos passados como parâmetros se isso não for necessário, para manter a previsibilidade do código.
+- **Falta de Clareza no Comportamento do Método:** Métodos que modificam objetos passados como parâmetros devem deixar isso claro em sua documentação e nome.
+
+---
+
+## 📌 Dica Extra
+
+Para evitar modificações indesejadas em objetos passados como parâmetros, considere criar cópias dos objetos dentro do método:
+
+```java
+public class Pessoa {
+    String nome;
+
+    public Pessoa(String nome) {
+        this.nome = nome;
+    }
+
+    public Pessoa(Pessoa outra) {
+        this.nome = outra.nome;
+    }
+}
+
+public class Exemplo {
+    public static void alterarNome(Pessoa p) {
+        Pessoa copia = new Pessoa(p);
+        copia.nome = "João";
+        // Modificações em 'copia' não afetam o objeto original
+    }
+}
+```
+
+*Explicação:* Criar uma cópia do objeto dentro do método permite que modificações sejam feitas sem afetar o objeto original.
+
+---
+
+## ✅ Conclusão
+
+Entender como os parâmetros de tipos referência são passados e manipulados em métodos é fundamental para evitar comportamentos inesperados e escrever código Java eficiente e claro.
+
 
 
 [Voltar ao Índice](#indice)
@@ -3753,6 +4298,150 @@ O uso de parâmetros é fundamental para a **flexibilidade** e **reutilização*
 
 
 ## <a name="parte51">51 - 050 - Orientação Objetos - Métodos pt 07 - Parâmetros tipo referência pt 02</a>
+
+# Aula 50 – Orientação a Objetos: Métodos pt 07 - Parâmetros Tipo Referência pt 02
+
+🎥 **Vídeo:** [Métodos pt 07 - Parâmetros tipo referência pt 02](https://www.youtube.com/watch?v=OMuzOoHAEpg)
+
+## 🎯 Objetivo da Aula
+
+Aprofundar o entendimento sobre a passagem de parâmetros de tipo referência em métodos Java, destacando como alterações nos objetos passados como parâmetros afetam o estado desses objetos fora do método.
+
+---
+
+## 🧠 Conceitos Fundamentais
+
+- **Passagem por Valor de Referência:** Em Java, os parâmetros são passados por valor. No caso de objetos, o valor passado é a referência ao objeto, permitindo que métodos modifiquem o estado interno do objeto, mas não a referência em si.
+- **Imutabilidade da Referência:** Alterar a referência dentro do método não afeta a referência original fora dele.
+- **Mutabilidade do Objeto:** Alterações no estado do objeto dentro do método são refletidas fora dele, pois ambos os métodos compartilham a mesma referência.
+
+---
+
+## 💡 Exemplo Básico - Modificando o Estado do Objeto
+
+```java
+public class Carro {
+    String modelo;
+}
+
+public class Exemplo {
+    public static void alterarModelo(Carro carro) {
+        carro.modelo = "Fusca";
+    }
+
+    public static void main(String[] args) {
+        Carro meuCarro = new Carro();
+        meuCarro.modelo = "Civic";
+        alterarModelo(meuCarro);
+        System.out.println(meuCarro.modelo); // Saída: Fusca
+    }
+}
+```
+
+*Explicação:* O método `alterarModelo` modifica o atributo `modelo` do objeto `Carro`. Como a referência ao objeto é passada por valor, o método pode alterar o estado interno do objeto.
+
+---
+
+## 💡 Exemplo Intermediário - Tentando Alterar a Referência
+
+```java
+public class Carro {
+    String modelo;
+}
+
+public class Exemplo {
+    public static void criarNovoCarro(Carro carro) {
+        carro = new Carro();
+        carro.modelo = "Gol";
+    }
+
+    public static void main(String[] args) {
+        Carro meuCarro = new Carro();
+        meuCarro.modelo = "Civic";
+        criarNovoCarro(meuCarro);
+        System.out.println(meuCarro.modelo); // Saída: Civic
+    }
+}
+```
+
+*Explicação:* O método `criarNovoCarro` atribui uma nova instância à variável `carro`, mas essa alteração não afeta a variável `meuCarro` no método `main`, pois a referência é passada por valor.
+
+---
+
+## 💡 Exemplo Avançado - Modificando Objetos em Coleções
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Exemplo {
+    public static void adicionarElemento(List<String> lista) {
+        lista.add("Novo Elemento");
+    }
+
+    public static void main(String[] args) {
+        List<String> minhaLista = new ArrayList<>();
+        minhaLista.add("Elemento 1");
+        adicionarElemento(minhaLista);
+        System.out.println(minhaLista); // Saída: [Elemento 1, Novo Elemento]
+    }
+}
+```
+
+*Explicação:* O método `adicionarElemento` modifica o conteúdo da lista, e essa modificação é refletida fora do método, pois a lista é um objeto e sua referência é passada por valor.
+
+---
+
+## ✅ Boas Práticas
+
+- **Compreensão Clara da Passagem por Valor de Referência:** Entenda que, embora a referência seja passada por valor, o objeto referenciado pode ser modificado dentro do método.
+- **Evite Alterar a Referência Dentro do Método:** Alterar a referência dentro do método não afeta a referência original e pode causar confusão.
+- **Documente o Comportamento dos Métodos:** Especifique claramente se o método modifica ou não o estado dos objetos passados como parâmetros.
+- **Utilize Objetos Imutáveis Quando Apropriado:** Para evitar efeitos colaterais indesejados, considere o uso de objetos imutáveis.
+
+---
+
+## ❌ Práticas a Evitar
+
+- **Supor que a Referência Pode Ser Alterada Dentro do Método:** Lembre-se de que alterar a referência dentro do método não afeta a referência original.
+- **Modificar Objetos Sem Necessidade:** Evite modificar o estado de objetos passados como parâmetros se isso não for necessário, para manter a previsibilidade do código.
+- **Falta de Clareza no Comportamento do Método:** Métodos que modificam objetos passados como parâmetros devem deixar isso claro em sua documentação e nome.
+
+---
+
+## 📌 Dica Extra
+
+Para evitar modificações indesejadas em objetos passados como parâmetros, considere criar cópias dos objetos dentro do método:
+
+```java
+public class Carro {
+    String modelo;
+
+    public Carro(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public Carro(Carro outro) {
+        this.modelo = outro.modelo;
+    }
+}
+
+public class Exemplo {
+    public static void alterarModelo(Carro carro) {
+        Carro copia = new Carro(carro);
+        copia.modelo = "Fusca";
+        // Modificações em 'copia' não afetam o objeto original
+    }
+}
+```
+
+*Explicação:* Criar uma cópia do objeto dentro do método permite que modificações sejam feitas sem afetar o objeto original.
+
+---
+
+## ✅ Conclusão
+
+Entender como os parâmetros de tipos referência são passados e manipulados em métodos é fundamental para evitar comportamentos inesperados e escrever código Java eficiente e claro.
 
 
 
