@@ -4452,6 +4452,144 @@ Entender como os parâmetros de tipos referência são passados e manipulados em
 
 ## <a name="parte52">52 - 051 - Orientação Objetos - Métodos pt 08 - Referência this</a>
 
+# Aula 51 – Orientação a Objetos: Métodos pt 08 - Referência `this`
+
+📺 **Vídeo:** [Referência this](https://www.youtube.com/watch?v=0fVZlarZ-Lg&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=53)
+
+## 🎯 Objetivo
+
+Entender como funciona a palavra-chave `this` em Java, utilizada para referenciar o próprio objeto dentro de métodos e construtores. A aula mostra como usar `this` para resolver ambiguidades, chamar construtores sobrecarregados e aplicar em métodos encadeados (method chaining).
+
+---
+
+## 🔹 O que é `this`?
+
+A palavra-chave `this` é uma referência ao objeto atual da classe. Ela é usada para:
+
+- Diferenciar variáveis de instância de parâmetros com o mesmo nome.
+- Chamar outro construtor dentro da mesma classe (`this(...)`).
+- Retornar o próprio objeto, permitindo encadeamento de métodos.
+
+---
+
+## 💡 Exemplo Básico – Resolvendo Ambiguidade
+
+```java
+public class Produto {
+    String nome;
+
+    public void setNome(String nome) {
+        this.nome = nome; // "this.nome" se refere à variável de instância
+    }
+
+    public void imprimir() {
+        System.out.println(this.nome);
+    }
+}
+```
+
+### Explicação:
+Sem `this`, o Java entende que `nome = nome` se refere ao parâmetro da função, causando erro lógico. Com `this.nome`, deixamos claro que estamos acessando o atributo do objeto.
+
+---
+
+## 💡 Exemplo Intermediário – Chamando outro Construtor
+
+```java
+public class Pessoa {
+    String nome;
+    int idade;
+
+    public Pessoa(String nome) {
+        this(nome, 0); // chama o outro construtor com idade 0
+    }
+
+    public Pessoa(String nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+}
+```
+
+### Explicação:
+Utilizando `this(...)`, chamamos outro construtor da mesma classe, evitando repetição de código e garantindo consistência de inicialização.
+
+---
+
+## 💡 Exemplo Avançado – Method Chaining (Encadeamento de Métodos)
+
+```java
+public class Carro {
+    String modelo;
+    int ano;
+
+    public Carro setModelo(String modelo) {
+        this.modelo = modelo;
+        return this;
+    }
+
+    public Carro setAno(int ano) {
+        this.ano = ano;
+        return this;
+    }
+
+    public void mostrar() {
+        System.out.println("Modelo: " + this.modelo + ", Ano: " + this.ano);
+    }
+}
+```
+
+### Uso:
+```java
+Carro carro = new Carro();
+carro.setModelo("Fusca").setAno(1975).mostrar();
+```
+
+### Explicação:
+Ao retornar `this`, é possível encadear chamadas de métodos em uma única linha de código, o que melhora a legibilidade em alguns contextos.
+
+---
+
+## ✅ Boas Práticas
+
+- Utilize `this` para deixar o código claro quando há ambiguidade entre parâmetros e atributos.
+- Prefira `this(...)` para reusar lógica de construtores.
+- Encadeie métodos (`method chaining`) quando isso deixar o código mais legível.
+- Use `this` em contextos onde você deseja destacar explicitamente que está lidando com atributos do objeto.
+
+---
+
+## ❌ Piores Práticas
+
+- ❌ Usar `this` em métodos `static` (isso gera erro, pois não há objeto associado).
+- ❌ Criar parâmetros com os mesmos nomes dos atributos e esquecer de usar `this`, o que causa erros de lógica.
+- ❌ Usar encadeamento de métodos em excesso, o que pode dificultar a leitura se os métodos forem muitos ou complexos.
+- ❌ Criar muitos construtores com lógica duplicada ao invés de usar `this(...)`.
+
+---
+
+## 📌 Dica Extra
+
+`this` também pode ser passado como argumento para outros métodos ou classes, representando o próprio objeto atual. Exemplo:
+
+```java
+public class Teste {
+    public void mostrar() {
+        util(this); // passa o objeto atual
+    }
+
+    public void util(Teste obj) {
+        System.out.println("Objeto recebido!");
+    }
+}
+```
+
+---
+
+## 🧠 Conclusão
+
+A referência `this` é essencial para escrever código orientado a objetos limpo e bem estruturado em Java. Ela evita ambiguidades, melhora a clareza e permite padrões como method chaining e reutilização de construtores.
+
 
 
 [Voltar ao Índice](#indice)
