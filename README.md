@@ -5168,6 +5168,149 @@ Usar `private`, `getters` e `setters` da maneira correta promove segurança, org
 
 ## <a name="parte57">57 - 056 - Orientação Objetos - Modificador de acesso private, get e set pt 03</a>
 
+# Aula 56 – Orientação a Objetos: Modificador de acesso private, get e set pt 03
+
+🎥 **Vídeo:** [Modificador de acesso private, get e set pt 03](https://www.youtube.com/watch?v=kuvg8JixRp4&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=57)
+
+## 🎯 Objetivo da Aula
+
+Finalizar o estudo sobre o uso do modificador de acesso `private`, `getters` e `setters`, reforçando a importância do **encapsulamento** para proteger os dados e criar APIs de classes mais controladas e seguras.
+
+---
+
+## 🧠 Conceitos Abordados
+
+- **Encapsulamento completo**: restringir o acesso direto aos atributos da classe.
+- **Proteção contra estados inválidos**: validando alterações dos atributos.
+- **Getters e Setters customizados**: adaptando comportamento de leitura ou escrita dos dados.
+- **Implementação de regras de negócio simples nos métodos de acesso**.
+
+---
+
+## 💡 Exemplo Básico – Validação no Setter
+
+```java
+public class ContaBancaria {
+    private double saldo;
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+        }
+    }
+
+    public void sacar(double valor) {
+        if (valor > 0 && saldo >= valor) {
+            saldo -= valor;
+        } else {
+            System.out.println("Saque inválido!");
+        }
+    }
+}
+
+public class TesteConta {
+    public static void main(String[] args) {
+        ContaBancaria conta = new ContaBancaria();
+        conta.depositar(1000);
+        conta.sacar(500);
+
+        System.out.println("Saldo atual: R$" + conta.getSaldo());
+    }
+}
+```
+
+### Explicação:
+- O método `depositar` só permite valores positivos.
+- O método `sacar` verifica se há saldo suficiente antes de sacar.
+- O saldo nunca é alterado diretamente, protegendo a integridade da conta.
+
+---
+
+## 💡 Exemplo Complexo – Setter Inteligente com Ajustes
+
+```java
+public class Produto {
+    private String nome;
+    private double preco;
+    private double desconto; // Desconto em percentual
+
+    public Produto(String nome, double preco) {
+        this.nome = nome;
+        setPreco(preco); // Aplica validação inicial
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public double getPreco() {
+        return preco - (preco * desconto / 100);
+    }
+
+    public void setPreco(double preco) {
+        if (preco > 0) {
+            this.preco = preco;
+        }
+    }
+
+    public void aplicarDesconto(double desconto) {
+        if (desconto >= 0 && desconto <= 50) {
+            this.desconto = desconto;
+        } else {
+            System.out.println("Desconto inválido! Máximo permitido: 50%");
+        }
+    }
+}
+
+public class TesteProduto {
+    public static void main(String[] args) {
+        Produto produto = new Produto("Smartphone", 2000);
+        produto.aplicarDesconto(10);
+
+        System.out.println("Preço com desconto: R$" + produto.getPreco());
+    }
+}
+```
+
+### Explicação:
+- O preço retornado já considera o desconto aplicado.
+- A validação impede descontos abusivos (> 50%).
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ Sempre proteger atributos sensíveis com `private`.
+- ✅ Validar corretamente as alterações dos atributos usando setters.
+- ✅ Utilizar getters para retornar informações tratadas, se necessário.
+- ✅ Deixar a responsabilidade da integridade dos dados para dentro da classe.
+- ✅ Pensar nas **regras de negócio** enquanto desenha os métodos de acesso.
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ Deixar atributos públicos (`public`) sem necessidade.
+- ❌ Aceitar valores inválidos sem validação nos setters (ex: preço negativo, desconto acima do permitido).
+- ❌ Escrever getters e setters desnecessariamente sem propósito claro.
+- ❌ Permitir que objetos externos alterem o estado da classe diretamente.
+
+---
+
+## 📌 Dica Extra
+
+- Setter não precisa ser obrigatório! Em casos onde o atributo é **imutável**, forneça apenas o getter.
+- Getters podem realizar cálculos simples ou ajustes antes de devolver o valor, tornando o acesso mais seguro e controlado.
+
+---
+
+## ✅ Conclusão
+
+Usar `private`, `getters` e `setters` de maneira adequada é essencial para proteger os dados internos das classes e para construir programas robustos, seguros e fáceis de manter.
 
 
 [Voltar ao Índice](#indice)
@@ -5177,6 +5320,128 @@ Usar `private`, `getters` e `setters` da maneira correta promove segurança, org
 
 ## <a name="parte58">58 - 057 - Orientação Objetos - Sobrecarga de métodos</a>
 
+# Aula 57 – Orientação a Objetos: Sobrecarga de métodos
+
+🎥 **Vídeo:** [Sobrecarga de métodos](https://www.youtube.com/watch?v=UNPh61FYFrA&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=58)
+
+## 🎯 Objetivo da Aula
+
+Explicar o conceito de **Sobrecarga de Métodos** (*Method Overloading*) em Java, mostrando como criar vários métodos com o mesmo nome mas com **parâmetros diferentes**.
+
+---
+
+## 🧠 Conceitos Abordados
+
+- **Sobrecarga de métodos** é quando dois ou mais métodos na mesma classe têm o **mesmo nome**, mas **assinaturas diferentes** (quantidade ou tipo de parâmetros diferente).
+- Não é permitido diferenciar métodos apenas pelo **tipo de retorno**.
+- Sobrecarga melhora a legibilidade e facilita o uso da classe, oferecendo múltiplas formas de executar uma operação.
+
+---
+
+## 💡 Exemplo Básico – Sobrecarga simples
+
+```java
+public class Calculadora {
+
+    // Método que soma dois inteiros
+    int somar(int a, int b) {
+        return a + b;
+    }
+
+    // Método que soma três inteiros
+    int somar(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    // Método que soma dois números double
+    double somar(double a, double b) {
+        return a + b;
+    }
+}
+
+public class TesteCalculadora {
+    public static void main(String[] args) {
+        Calculadora calc = new Calculadora();
+        
+        System.out.println(calc.somar(2, 3));         // Chama somar(int, int)
+        System.out.println(calc.somar(2, 3, 4));      // Chama somar(int, int, int)
+        System.out.println(calc.somar(2.5, 3.5));     // Chama somar(double, double)
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Complexo – Sobrecarga aplicando tipos variados
+
+```java
+public class Impressora {
+
+    void imprimir(String texto) {
+        System.out.println("Texto: " + texto);
+    }
+
+    void imprimir(int numero) {
+        System.out.println("Número inteiro: " + numero);
+    }
+
+    void imprimir(double numero) {
+        System.out.println("Número decimal: " + numero);
+    }
+
+    void imprimir(boolean valor) {
+        System.out.println("Valor booleano: " + valor);
+    }
+}
+
+public class TesteImpressora {
+    public static void main(String[] args) {
+        Impressora impressora = new Impressora();
+        
+        impressora.imprimir("Olá Mundo!");
+        impressora.imprimir(100);
+        impressora.imprimir(45.67);
+        impressora.imprimir(true);
+    }
+}
+```
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ Criar sobrecargas quando realmente faz sentido semântico: o método representa a **mesma ação**, só que para dados diferentes.
+- ✅ Manter **nomes claros** e seguir o padrão de **mesmo nome** para reforçar a ideia de operação semelhante.
+- ✅ Manter a **consistência** no comportamento esperado dos métodos sobrecarregados.
+- ✅ Documentar diferenças importantes entre versões do método, caso necessário.
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ Criar sobrecarga apenas para "encher código" sem necessidade real.
+- ❌ Diferenciar métodos apenas pelo **tipo de retorno** — isso não é permitido em Java e causará erro de compilação.
+- ❌ Tornar métodos sobrecarregados muito diferentes entre si no comportamento — isso confunde o usuário da classe.
+- ❌ Criar muitas versões desnecessárias, poluindo a classe e dificultando a manutenção.
+
+---
+
+## 📌 Dica Extra
+
+- A sobrecarga é especialmente útil quando queremos **oferecer flexibilidade** sem obrigar o usuário da classe a fornecer sempre todos os parâmetros.
+- Métodos sobrecarregados podem também **chamar uns aos outros** para evitar repetição de código.
+
+```java
+void imprimir() {
+    imprimir("Sem conteúdo!");
+}
+```
+
+---
+
+## ✅ Conclusão
+
+Sobrecarga de métodos é uma ferramenta poderosa da programação orientada a objetos em Java, ajudando a criar APIs mais intuitivas e fáceis de usar. Quando usada com responsabilidade, melhora muito a **legibilidade**, a **manutenção** e a **eficiência** do código.
 
 
 [Voltar ao Índice](#indice)
@@ -5186,6 +5451,111 @@ Usar `private`, `getters` e `setters` da maneira correta promove segurança, org
 
 ## <a name="parte59">59 - 058 - Orientação Objetos - Construtores pt 01</a>
 
+# Aula 58 – Orientação a Objetos: Construtores pt 01
+
+🎥 **Vídeo:** [Construtores pt 01](https://www.youtube.com/watch?v=zErSZzgYY_g&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=59)
+
+## 🎯 Objetivo da Aula
+
+Explicar o conceito e a utilização de **Construtores** em Java — métodos especiais utilizados para inicializar objetos.
+
+---
+
+## 🧠 Conceitos Abordados
+
+- **Construtor** é um método especial chamado automaticamente quando criamos um objeto.
+- Ele possui o **mesmo nome** da classe e **não tem tipo de retorno** (nem `void`).
+- Usamos construtores para definir valores iniciais dos atributos de um objeto.
+- Se nenhum construtor for definido, o Java fornece um **construtor padrão** (sem parâmetros).
+
+---
+
+## 💡 Exemplo Básico – Construtor sem parâmetros
+
+```java
+public class Carro {
+    String modelo;
+    int ano;
+
+    // Construtor padrão
+    Carro() {
+        modelo = "Modelo não definido";
+        ano = 2020;
+    }
+}
+
+public class TesteCarro {
+    public static void main(String[] args) {
+        Carro carro1 = new Carro();
+        System.out.println(carro1.modelo); // Modelo não definido
+        System.out.println(carro1.ano);    // 2020
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Complexo – Construtor com parâmetros
+
+```java
+public class Carro {
+    String modelo;
+    int ano;
+
+    // Construtor com parâmetros
+    Carro(String modelo, int ano) {
+        this.modelo = modelo;
+        this.ano = ano;
+    }
+}
+
+public class TesteCarro {
+    public static void main(String[] args) {
+        Carro carro1 = new Carro("Civic", 2022);
+        Carro carro2 = new Carro("Corolla", 2023);
+        
+        System.out.println(carro1.modelo + " - " + carro1.ano); // Civic - 2022
+        System.out.println(carro2.modelo + " - " + carro2.ano); // Corolla - 2023
+    }
+}
+```
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ Sempre inicializar os atributos importantes no construtor.
+- ✅ Usar **`this`** para deixar claro que você está se referindo ao atributo da instância.
+- ✅ Criar construtores que facilitem o uso correto do objeto (evitando objetos com estado inválido).
+- ✅ Se possível, fornecer tanto um **construtor padrão** quanto construtores com parâmetros, para dar flexibilidade.
+- ✅ Documentar bem os construtores, especialmente quando houver vários.
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ Criar muitos construtores sem necessidade, complicando o uso da classe.
+- ❌ Inicializar valores incorretos ou inválidos no construtor.
+- ❌ Esquecer de usar `this` e acabar confundindo variável local com atributo de classe.
+- ❌ Deixar atributos obrigatórios sem inicialização, causando possíveis `NullPointerException` mais tarde.
+
+---
+
+## 📌 Dica Extra
+
+- Você pode criar múltiplos construtores na mesma classe, variando o número ou tipo de parâmetros (**Sobrecarga de Construtores**).
+- Sempre pense no **estado mínimo válido** que o objeto precisa ter para funcionar corretamente.
+
+```java
+Carro carroDefault = new Carro(); // Sem parâmetros
+Carro carroEspecifico = new Carro("Fiesta", 2021); // Com parâmetros
+```
+
+---
+
+## ✅ Conclusão
+
+Construtores tornam o processo de criação de objetos mais seguro e organizado, garantindo que os atributos essenciais sejam devidamente inicializados logo no nascimento do objeto.
 
 
 [Voltar ao Índice](#indice)
@@ -5195,6 +5565,153 @@ Usar `private`, `getters` e `setters` da maneira correta promove segurança, org
 
 ## <a name="parte60">60 - 059 - Orientação Objetos - Construtores pt 02 - Sobrecarga</a>
 
+# Aula 59 – Orientação a Objetos: Construtores pt 02 - Sobrecarga
+
+🎥 **Vídeo:** [Construtores pt 02 - Sobrecarga](https://www.youtube.com/watch?v=rW11EAkxFnc&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=60)
+
+## 🎯 Objetivo da Aula
+
+Apresentar o conceito de **sobrecarga de construtores** em Java: a capacidade de criar múltiplos construtores na mesma classe, variando a quantidade e tipos de parâmetros.
+
+---
+
+## 🧠 Conceitos Abordados
+
+- **Sobrecarga** significa ter **métodos** (ou **construtores**) com o **mesmo nome**, mas **diferentes listas de parâmetros** (tipo, quantidade ou ordem).
+- Em Java, é possível ter vários construtores dentro da mesma classe para dar **flexibilidade** na criação dos objetos.
+- Cada construtor pode inicializar o objeto de uma maneira diferente, dependendo dos dados fornecidos.
+
+---
+
+## 💡 Exemplo Básico – Sobrecarga de Construtores
+
+```java
+public class Carro {
+    String modelo;
+    int ano;
+
+    // Construtor padrão
+    Carro() {
+        modelo = "Modelo padrão";
+        ano = 2020;
+    }
+
+    // Construtor com 1 parâmetro
+    Carro(String modelo) {
+        this.modelo = modelo;
+        this.ano = 2020;
+    }
+
+    // Construtor com 2 parâmetros
+    Carro(String modelo, int ano) {
+        this.modelo = modelo;
+        this.ano = ano;
+    }
+}
+
+public class TesteCarro {
+    public static void main(String[] args) {
+        Carro carro1 = new Carro();
+        Carro carro2 = new Carro("Civic");
+        Carro carro3 = new Carro("Corolla", 2023);
+
+        System.out.println(carro1.modelo + " - " + carro1.ano); // Modelo padrão - 2020
+        System.out.println(carro2.modelo + " - " + carro2.ano); // Civic - 2020
+        System.out.println(carro3.modelo + " - " + carro3.ano); // Corolla - 2023
+    }
+}
+```
+
+---
+
+## 💡 Exemplo Complexo – Usando Sobrecarga + Validação
+
+```java
+public class Produto {
+    String nome;
+    double preco;
+
+    // Construtor padrão
+    Produto() {
+        this("Produto Genérico", 0.0);
+    }
+
+    // Construtor com 1 parâmetro
+    Produto(String nome) {
+        this(nome, 0.0);
+    }
+
+    // Construtor com 2 parâmetros
+    Produto(String nome, double preco) {
+        this.nome = nome;
+        if (preco >= 0) {
+            this.preco = preco;
+        } else {
+            this.preco = 0.0;
+        }
+    }
+}
+
+public class TesteProduto {
+    public static void main(String[] args) {
+        Produto p1 = new Produto();
+        Produto p2 = new Produto("Notebook");
+        Produto p3 = new Produto("Celular", 2500.00);
+
+        System.out.println(p1.nome + " - " + p1.preco);
+        System.out.println(p2.nome + " - " + p2.preco);
+        System.out.println(p3.nome + " - " + p3.preco);
+    }
+}
+```
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ Usar a **chamada de construtores** dentro de outro construtor (`this(...)`) para **reutilizar** código e evitar repetição.
+- ✅ Criar construtores sobrecarregados apenas se fizer sentido para diferentes formas de inicializar o objeto.
+- ✅ Manter a ordem lógica dos parâmetros para evitar confusão na criação dos objetos.
+- ✅ Usar validações dentro do construtor quando necessário (ex: checar valores inválidos).
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ Criar muitos construtores sem necessidade real, complicando o entendimento da classe.
+- ❌ Não reutilizar código, duplicando a lógica de inicialização entre construtores.
+- ❌ Deixar estados inconsistentes por meio de inicializações parciais incorretas.
+- ❌ Não documentar a intenção de cada construtor quando houver vários.
+
+---
+
+## 📌 Dica Extra
+
+- É uma prática recomendada criar **um construtor principal** (o mais completo) e fazer os outros construtores chamarem este utilizando `this(...)`.
+- Exemplo:
+
+```java
+Produto() {
+    this("Produto Genérico", 0.0);
+}
+
+Produto(String nome) {
+    this(nome, 0.0);
+}
+
+Produto(String nome, double preco) {
+    this.nome = nome;
+    this.preco = preco;
+}
+```
+
+Assim o código fica **organizado, limpo** e **fácil de manter**!
+
+---
+
+## ✅ Conclusão
+
+A **sobrecarga de construtores** torna a classe mais flexível e prática para diferentes cenários de criação de objetos, desde que usada com responsabilidade e organização.
 
 
 [Voltar ao Índice](#indice)
@@ -5204,6 +5721,143 @@ Usar `private`, `getters` e `setters` da maneira correta promove segurança, org
 
 ## <a name="parte61">61 - 060 - Orientação Objetos - Blocos de inicialização</a>
 
+# Aula 60 – Orientação a Objetos: Blocos de Inicialização
+
+🎥 **Vídeo:** [Blocos de Inicialização](https://www.youtube.com/watch?v=HGB02nLvgKU&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=61)
+
+## 🎯 Objetivo da Aula
+
+Entender o que são **blocos de inicialização** em Java, como eles funcionam, quando são executados e para que servem no ciclo de vida de um objeto.
+
+---
+
+## 🧠 Conceitos Abordados
+
+- **Blocos de inicialização** são usados para **executar código** sempre que uma **instância da classe é criada**.
+- Existem dois tipos principais:
+  - **Bloco de inicialização de instância** (`{}`): Executado toda vez que um objeto é instanciado.
+  - **Bloco de inicialização estático** (`static {}`): Executado apenas **uma vez**, quando a classe é carregada pela primeira vez.
+
+---
+
+## 💡 Exemplo Básico – Bloco de Inicialização de Instância
+
+```java
+public class Pessoa {
+    String nome;
+    int idade;
+
+    {
+        System.out.println("Bloco de inicialização chamado!");
+        nome = "Nome padrão";
+        idade = 18;
+    }
+
+    public Pessoa() {
+        System.out.println("Construtor chamado!");
+    }
+}
+
+public class TestePessoa {
+    public static void main(String[] args) {
+        Pessoa p1 = new Pessoa();
+        Pessoa p2 = new Pessoa();
+    }
+}
+```
+
+**Saída:**
+```
+Bloco de inicialização chamado!
+Construtor chamado!
+Bloco de inicialização chamado!
+Construtor chamado!
+```
+
+---
+
+## 💡 Exemplo Complexo – Bloco Estático + Bloco de Instância
+
+```java
+public class Carro {
+    String modelo;
+    static int totalDeCarros;
+
+    static {
+        System.out.println("Bloco estático chamado!");
+        totalDeCarros = 0;
+    }
+
+    {
+        System.out.println("Bloco de inicialização chamado!");
+        modelo = "Modelo genérico";
+        totalDeCarros++;
+    }
+
+    public Carro() {
+        System.out.println("Construtor chamado!");
+    }
+}
+
+public class TesteCarro {
+    public static void main(String[] args) {
+        Carro c1 = new Carro();
+        Carro c2 = new Carro();
+        System.out.println("Total de carros: " + Carro.totalDeCarros);
+    }
+}
+```
+
+**Saída:**
+```
+Bloco estático chamado!
+Bloco de inicialização chamado!
+Construtor chamado!
+Bloco de inicialização chamado!
+Construtor chamado!
+Total de carros: 2
+```
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ Use blocos de inicialização para configurar **valores padrão** ou **lógicas comuns** que não dependem dos argumentos do construtor.
+- ✅ Em inicialização de variáveis estáticas importantes, utilize o **bloco estático** para garantir consistência.
+- ✅ Deixe o código dos blocos **simples e legível** para evitar confusão.
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ Colocar **lógica complexa** ou **processamentos pesados** nos blocos de inicialização — isso dificulta a leitura e manutenção.
+- ❌ Abusar de blocos de inicialização ao invés de usar **métodos próprios** ou **construtores** para lógicas específicas.
+- ❌ Não misturar a responsabilidade de blocos com outras partes da classe (por exemplo, lógica de negócio dentro de bloco de inicialização).
+
+---
+
+## 📌 Dica Extra
+
+- Se puder escolher, **prefira inicializar valores diretamente nos atributos** ou dentro do **construtor**. Use blocos de inicialização apenas para casos onde **múltiplos construtores** precisam de um comportamento comum.
+
+Exemplo:
+```java
+private String nome = "Nome padrão";
+```
+
+ao invés de:
+
+```java
+{
+    nome = "Nome padrão";
+}
+```
+
+---
+
+## ✅ Conclusão
+
+Os **blocos de inicialização** são ferramentas poderosas para configurar o estado de objetos e classes, mas devem ser usados com moderação e clareza. Entender o **momento de execução** de cada tipo (estático e de instância) é fundamental para escrever códigos mais organizados e previsíveis.
 
 
 [Voltar ao Índice](#indice)
