@@ -5867,6 +5867,97 @@ Os **blocos de inicialização** são ferramentas poderosas para configurar o es
 
 ## <a name="parte62">62 - 061 - Orientação Objetos - Modificador static</a>
 
+# Aula 61 – Orientação a Objetos: Modificador `static`
+
+🎥 **Vídeo:** [Modificador static](https://www.youtube.com/watch?v=WBBbsEdzzmA&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=63)
+
+## 🎯 Objetivo da Aula
+
+Entender como o **modificador `static`** funciona em Java, tanto para **atributos** quanto para **métodos**, e a diferença entre membros de instância e membros estáticos.
+
+---
+
+## 🧠 Conceitos Abordados
+
+- **Atributos estáticos** (`static`) pertencem **à classe** e **não** a uma instância (objeto).
+- **Métodos estáticos** podem ser chamados **sem criar objetos** da classe.
+- Utilizamos o `static` para **compartilhar** valores ou comportamentos comuns a **todas as instâncias**.
+
+---
+
+## 💡 Exemplo Básico – Atributo `static`
+
+```java
+public class Carro {
+    String modelo;
+    static int velocidadeMaxima = 240;
+}
+
+public class TesteCarro {
+    public static void main(String[] args) {
+        System.out.println("Velocidade máxima: " + Carro.velocidadeMaxima);
+    }
+}
+```
+> **Observação**: `velocidadeMaxima` pode ser acessado diretamente pelo nome da classe.
+
+---
+
+## 💡 Exemplo Complexo – Método `static`
+
+```java
+public class Utilidade {
+    public static int soma(int a, int b) {
+        return a + b;
+    }
+}
+
+public class TesteUtilidade {
+    public static void main(String[] args) {
+        int resultado = Utilidade.soma(10, 20);
+        System.out.println("Resultado da soma: " + resultado);
+    }
+}
+```
+> **Métodos estáticos** são ideais para funções utilitárias que **não dependem de estado** de instância.
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ Use `static` para **atributos ou métodos que são iguais para todas as instâncias**.
+- ✅ Métodos utilitários que **não precisam acessar atributos de instância** devem ser `static`.
+- ✅ Nomeie variáveis/métodos estáticos de forma clara para indicar seu **uso compartilhado**.
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ Não use `static` indiscriminadamente — **nem tudo** precisa ser compartilhado entre instâncias.
+- ❌ Evite acessar atributos de instância dentro de métodos `static` (não é permitido sem passar o objeto como referência).
+- ❌ Não misture lógica de negócio com `static` sem necessidade — **separação de responsabilidades** é essencial.
+
+---
+
+## 📌 Dica Extra
+
+Se você usa muito `static` em métodos dentro de uma classe, talvez esteja **violando o princípio da orientação a objetos**. Pode ser um sinal de que esse código deveria estar em uma **classe utilitária** ou ser refatorado.
+
+Exemplo de má prática:
+
+```java
+public class Pessoa {
+    static String nome;
+}
+```
+> Aqui, cada pessoa deveria ter um **nome diferente**, logo, **não deveria ser estático**.
+
+---
+
+## ✅ Conclusão
+
+O modificador `static` é uma ferramenta poderosa em Java para compartilhamento de dados e métodos, mas deve ser usado com critério. Ele promove economia de memória e facilita acesso a comportamentos comuns, porém, **um uso inadequado pode prejudicar a orientação a objetos**.
+
 
 
 [Voltar ao Índice](#indice)
@@ -5876,6 +5967,99 @@ Os **blocos de inicialização** são ferramentas poderosas para configurar o es
 
 ## <a name="parte63">63 - 062 - Orientação Objetos - Métodos estáticos</a>
 
+# Aula 62 – Orientação a Objetos: Métodos Estáticos
+
+🎥 **Vídeo:** [Métodos estáticos](https://www.youtube.com/watch?v=jowlUssbJmk&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=64)
+
+## 🎯 Objetivo da Aula
+
+Aprender a utilizar corretamente **métodos estáticos** (`static`) em Java, entender suas aplicações práticas, vantagens, desvantagens e diferenças em relação aos métodos de instância.
+
+---
+
+## 🧠 Conceitos Abordados
+
+- Métodos `static` pertencem **à classe**, não ao objeto.
+- Métodos `static` **não podem acessar diretamente atributos de instância**.
+- Úteis para operações que **não dependem** do estado de um objeto.
+- Normalmente usados em **classes utilitárias** (ex: `Math`, `Arrays`).
+
+---
+
+## 💡 Exemplo Básico – Método Estático
+
+```java
+public class Calculadora {
+    public static int somar(int a, int b) {
+        return a + b;
+    }
+}
+
+public class TesteCalculadora {
+    public static void main(String[] args) {
+        int resultado = Calculadora.somar(5, 10);
+        System.out.println("Resultado da soma: " + resultado);
+    }
+}
+```
+> Aqui, não é necessário criar uma instância de `Calculadora` para usar o método `somar`.
+
+---
+
+## 💡 Exemplo Complexo – Métodos Estáticos em Classe Utilitária
+
+```java
+public class Conversor {
+    public static double celsiusParaFahrenheit(double celsius) {
+        return (celsius * 1.8) + 32;
+    }
+
+    public static double fahrenheitParaCelsius(double fahrenheit) {
+        return (fahrenheit - 32) / 1.8;
+    }
+}
+
+public class TesteConversor {
+    public static void main(String[] args) {
+        double tempF = Conversor.celsiusParaFahrenheit(25);
+        double tempC = Conversor.fahrenheitParaCelsius(77);
+
+        System.out.println("25°C em Fahrenheit: " + tempF);
+        System.out.println("77°F em Celsius: " + tempC);
+    }
+}
+```
+> Exemplo clássico de métodos utilitários que fazem conversão de valores.
+
+---
+
+## ✅ Boas Práticas
+
+- ✅ Use `static` para métodos que **não precisam acessar ou modificar atributos de instância**.
+- ✅ Centralize métodos `static` em **classes utilitárias** específicas (como `Conversor`, `Calculadora`).
+- ✅ Documente bem o comportamento dos métodos `static`, pois eles podem ser usados **fora do contexto** de objetos.
+- ✅ Nomeie as funções de maneira clara e objetiva.
+
+---
+
+## ❌ Práticas a Evitar
+
+- ❌ Não use `static` em métodos que **precisem acessar atributos de instância**.
+- ❌ Evite misturar métodos `static` com lógicas que deveriam ser orientadas a objetos.
+- ❌ Não exagere no uso de `static`, senão sua aplicação pode se tornar procedural (perdendo os benefícios da OOP).
+- ❌ Evite criar dependência entre métodos `static` e estados internos de objetos.
+
+---
+
+## 📌 Dica Extra
+
+Se você precisar de **polimorfismo** (sobrescrever métodos em subclasses), **não use `static`**! Métodos estáticos **não são polimórficos** em Java.
+
+---
+
+## ✅ Conclusão
+
+Métodos `static` são essenciais para construir funções independentes do estado de objetos, ideais para operações genéricas, cálculos e utilidades. Contudo, o excesso de métodos `static` pode prejudicar a boa modelagem orientada a objetos. Use com consciência!
 
 
 [Voltar ao Índice](#indice)
