@@ -6069,6 +6069,111 @@ Métodos `static` são essenciais para construir funções independentes do esta
 
 ## <a name="parte64">64 - 063 - Orientação Objetos - Bloco de inicialização estático</a>
 
+# Bloco de Inicialização Estático em Java
+
+Este documento resume os principais conceitos abordados na videoaula **"63 - Orientação a Objetos - Bloco de Inicialização Estático"** do curso de Java, disponível em: [https://www.youtube.com/watch?v=4YE1ewRK-rk](https://www.youtube.com/watch?v=4YE1ewRK-rk).
+
+---
+
+## 📘 O que é um Bloco de Inicialização Estático?
+
+Em Java, um **bloco de inicialização estático** é um bloco de código precedido pela palavra-chave `static`, que é executado **uma única vez**, no momento em que a classe é carregada pela JVM (Java Virtual Machine). ([Static vs. Instance Initializer Block in Java | Baeldung](https://www.baeldung.com/java-static-instance-initializer-blocks?utm_source=chatgpt.com))
+
+É utilizado para inicializar variáveis estáticas ou executar operações que precisam ocorrer apenas uma vez, independentemente de quantas instâncias da classe sejam criadas.
+
+---
+
+## 🧪 Exemplos Práticos
+
+### Exemplo Básico
+
+```java
+public class ExemploBasico {
+    static int contador;
+
+    static {
+        contador = 100;
+        System.out.println("Bloco estático executado. Contador inicializado com " + contador);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Valor do contador: " + contador);
+    }
+}
+```
+
+**Saída:**
+```
+Bloco estático executado. Contador inicializado com 100
+Valor do contador: 100
+```
+
+
+Neste exemplo, o bloco estático é executado antes do método `main`, inicializando a variável `contador`. ([static block in java- Scaler Topics](https://www.scaler.com/topics/static-block-in-java/?utm_source=chatgpt.com))
+
+---
+
+### Exemplo Avançado
+
+```java
+public class Configuracao {
+    static Properties propriedades;
+
+    static {
+        propriedades = new Properties();
+        try (InputStream input = new FileInputStream("config.properties")) {
+            propriedades.load(input);
+            System.out.println("Configurações carregadas com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar configurações: " + e.getMessage());
+        }
+    }
+
+    public static String getPropriedade(String chave) {
+        return propriedades.getProperty(chave);
+    }
+}
+```
+
+
+Neste exemplo, o bloco estático é utilizado para carregar configurações de um arquivo externo no momento em que a classe `Configuracao` é carregada.
+
+---
+
+## ✅ Boas Práticas
+
+- **Inicializações Simples:** Utilize blocos estáticos para inicializações simples e rápidas, como configuração de constantes ou carregamento de recursos essenciais.
+
+- **Tratamento de Exceções:** Sempre trate possíveis exceções dentro do bloco estático para evitar falhas na inicialização da classe.
+
+- **Ordem de Execução:** Se houver múltiplos blocos estáticos, eles serão executados na ordem em que aparecem no código.
+
+---
+
+## ❌ Más Práticas
+
+- **Operações Pesadas:** Evite executar operações demoradas ou complexas dentro de blocos estáticos, pois isso pode impactar negativamente o tempo de carregamento da classe.
+
+- **Dependências Externas:** Minimize dependências de recursos externos que podem não estar disponíveis no momento da inicialização.
+
+- **Modificações Posteriores:** Não utilize blocos estáticos para modificar o estado de objetos que ainda não foram inicializados.
+
+---
+
+## 🧠 Conclusão
+
+Blocos de inicialização estáticos são uma ferramenta poderosa em Java para configurar o ambiente de uma classe antes de sua utilização. Quando usados com cautela e seguindo as boas práticas, podem tornar o código mais eficiente e organizado.
+
+---
+
+*Referências:*
+
+- [Static Blocks in Java - GeeksforGeeks](https://www.geeksforgeeks.org/static-blocks-in-java/)
+
+- [Static vs. Instance Initializer Block in Java | Baeldung](https://www.baeldung.com/java-static-instance-initializer-blocks)
+
+- [Essential Techniques for Optimizing Your Java Code with Static Blocks](https://medium.com/@tuananhbk1996/essential-techniques-for-optimizing-your-java-code-with-static-blocks-3a478f66a08d)
+
 
 
 [Voltar ao Índice](#indice)
