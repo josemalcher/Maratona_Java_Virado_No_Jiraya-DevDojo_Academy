@@ -5,7 +5,7 @@ https://www.youtube.com/playlist?list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW
 
 Créditos: Melhor, maior, e o mais completo curso de Java em português grátis de toda Internet está de volta. Maratona Java Virado No Jiraya. Regravado desde a aula 0, com extrema qualidade, utilizando a última versão do Java, com fonte 22 e fundo branco celestial. FAQ Q. Quem criou? A. O cara com um parafuso a menos que colocou um curso desses gratuito foi esse aqui: https://www.linkedin.com/in/williamsuane/ Q. Quem editou os vídeos? A. O irmão do cara com um parafuso a menos, que também tem um parafuso a menos, já que editou de graça: https://www.linkedin.com/in/wildneisuane/
 
-FONTE RESUMO: CHATGPT e COPILOT
+FONTE RESUMO: Deepseek/CHATGPT/COPILOT
 
 ## <a name="indice">Índice</a>
 
@@ -6183,6 +6183,141 @@ Blocos de inicialização estáticos são uma ferramenta poderosa em Java para c
 
 ## <a name="parte65">65 - 064 - Orientação Objetos - Associação pt 01 - Arrays com Objetos</a>
 
+
+## Conceito Principal
+- **Associação**: Relacionamento entre objetos onde um objeto usa outro para realizar alguma operação.
+- **Arrays com Objetos**: Permitem armazenar múltiplas instâncias de objetos em uma estrutura de dados linear.
+
+---
+
+## Exemplos Básicos
+
+### 1. Classe `Aluno` (Objeto Associado)
+```java
+public class Aluno {
+    private String nome;
+    private int idade;
+
+    // Construtor
+    public Aluno(String nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+
+    // Getters (boas práticas)
+    public String getNome() { return nome; }
+    public int getIdade() { return idade; }
+}
+```
+
+### 2. Classe `Sala` (Usando Array de Objetos)
+```java
+public class Sala {
+    private Aluno[] alunos; // Associação via array
+
+    public Sala(int capacidade) {
+        alunos = new Aluno[capacidade];
+    }
+
+    public void adicionarAluno(Aluno aluno, int indice) {
+        alunos[indice] = aluno;
+    }
+
+    public void listarAlunos() {
+        for (Aluno aluno : alunos) {
+            if (aluno != null) {
+                System.out.println(aluno.getNome());
+            }
+        }
+    }
+}
+```
+
+---
+
+## Exemplo Complexo (Com Validações)
+```java
+public class Escola {
+    private Sala[] salas;
+    private int totalSalas;
+
+    public Escola(int maxSalas) {
+        salas = new Sala[maxSalas];
+    }
+
+    public void adicionarSala(Sala sala) {
+        if (totalSalas < salas.length) {
+            salas[totalSalas++] = sala;
+        } else {
+            System.out.println("Capacidade máxima de salas atingida!");
+        }
+    }
+
+    public void mostrarAlunosPorSala() {
+        for (int i = 0; i < totalSalas; i++) {
+            System.out.println("Sala " + (i + 1) + ":");
+            salas[i].listarAlunos();
+        }
+    }
+}
+```
+
+---
+
+## Melhores Práticas ✅
+
+1. **Encapsulamento**:
+    - Sempre usar `private` para atributos e fornecer getters/setters quando necessário.
+    - Exemplo: `alunos` na classe `Sala` é privado.
+
+2. **Inicialização Segura**:
+    - Verificar limites do array antes de inserir (`if (indice >= 0 && indice < alunos.length)`).
+
+3. **Nomenclatura Clara**:
+    - Nomes descritivos como `listarAlunos()` em vez de `printAll()`.
+
+4. **Tratamento de Nulos**:
+    - Verificar `if (aluno != null)` ao iterar em arrays.
+
+5. **Flexibilidade**:
+    - Usar coleções dinâmicas (`ArrayList`) em vez de arrays fixos quando possível (tópico avançado).
+
+---
+
+## Práticas a Evitar ❌
+
+1. **Acesso Direto a Atributos**:
+   ```java
+   // Ruim
+   sala.alunos[0] = new Aluno("Nome", 20);
+
+   // Bom
+   sala.adicionarAluno(new Aluno("Nome", 20), 0);
+   ```
+
+2. **Tamanho Fixo sem Validação**:
+    - Não verificar limites do array causa `ArrayIndexOutOfBoundsException`.
+
+3. **Ignorar Nulos**:
+    - Iterar arrays sem verificar nulos pode gerar `NullPointerException`.
+
+4. **Acoplamento Direto**:
+    - Expor o array interno (ex: método `getAlunos()` que retorna o array) permite modificações inseguras.
+
+5. **Métodos Longos**:
+    - Evitar lógica complexa diretamente nos métodos de associação (ex: validações deveriam estar em classes separadas).
+
+---
+
+## Observações da Aula
+- Arrays de objetos são a forma mais simples de associação 1:N (um para muitos).
+- Em aplicações reais, preferir coleções como `ArrayList` (será visto em aulas futuras).
+- A associação permite modelar relações do mundo real (ex: Escola → Salas → Alunos).
+
+### Link da Aula
+[Assista aqui](https://www.youtube.com/watch?v=HOjV9M6pRQQ&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=66)
+
+---
 
 
 [Voltar ao Índice](#indice)
