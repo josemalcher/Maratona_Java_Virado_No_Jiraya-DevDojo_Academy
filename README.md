@@ -6327,6 +6327,186 @@ public class Escola {
 
 ## <a name="parte66">66 - 065 - Orientação Objetos - Associação pt 02 - Associação unidirecional um para muitos</a>
 
+# Resumo da Aula: Associação Unidirecional Um para Muitos
+
+## Conceito Principal
+**Associação Unidirecional 1:N**: Um objeto de uma classe contém/referencia múltiplos objetos de outra classe, sem que o inverso seja verdadeiro. A relação existe apenas em uma direção.
+
+---
+
+## Exemplo Básico: Professor → Alunos
+
+### Classe `Aluno` (Classe Independente)
+```java
+public class Aluno {
+    private String nome;
+    
+    public Aluno(String nome) {
+        this.nome = nome;
+    }
+    
+    public String getNome() {
+        return nome;
+    }
+}
+```
+
+### Classe `Professor` (Classe Dono da Associação)
+```java
+public class Professor {
+    private String nome;
+    private List<Aluno> alunos; // Associação 1 para muitos
+
+    public Professor(String nome) {
+        this.nome = nome;
+        this.alunos = new ArrayList<>(); // Boa prática: inicializar a coleção
+    }
+
+    public void adicionarAluno(Aluno aluno) {
+        alunos.add(aluno);
+    }
+
+    public void listarAlunos() {
+        System.out.println("Alunos do professor " + nome + ":");
+        for (Aluno aluno : alunos) {
+            System.out.println("- " + aluno.getNome());
+        }
+    }
+}
+```
+
+---
+
+## Exemplo Complexo: Departamento → Professores → Alunos
+
+### Classe `Departamento`
+```java
+public class Departamento {
+    private String nome;
+    private List<Professor> professores;
+
+    public Departamento(String nome) {
+        this.nome = nome;
+        this.professores = new ArrayList<>();
+    }
+
+    public void adicionarProfessor(Professor professor) {
+        professores.add(professor);
+    }
+
+    public void relatorio() {
+        System.out.println("Departamento: " + nome);
+        System.out.println("Total professores: " + professores.size());
+        System.out.println("--- Relação Professores/Alunos ---");
+        
+        for (Professor prof : professores) {
+            prof.listarAlunos();
+            System.out.println();
+        }
+    }
+}
+```
+
+---
+
+## Melhores Práticas ✅
+
+1. **Uso de Collections**:
+    - Prefira `List`/`ArrayList` em vez de arrays para flexibilidade (tamanho dinâmico).
+
+2. **Encapsulamento Rigoroso**:
+    - Métodos modificadores (`adicionarAluno()`) devem ser o único meio de alterar a associação.
+
+3. **Inicialização no Construtor**:
+    - Sempre inicializar coleções no construtor para evitar `NullPointerException`.
+
+4. **Navegação Unidirecional**:
+    - Mantenha a relação em uma só direção (ex: Professor conhece Alunos, mas Aluno NÃO conhece Professor).
+
+5. **Imutabilidade Parcial**:
+    - Para atributos básicos como `nome`, considere `final` se não precisarem ser alterados.
+
+---
+
+## Práticas a Evitar ❌
+
+1. **Expor Coleções Internas**:
+   ```java
+   // RUIM (permite modificação externa incontrolada)
+   public List<Aluno> getAlunos() {
+       return alunos;
+   }
+
+   // ACEITÁVEL (cópia defensiva)
+   public List<Aluno> getAlunos() {
+       return new ArrayList<>(alunos);
+   }
+   ```
+
+2. **Bidirecionalidade Acidental**:
+    - Evite adicionar referência ao Professor na classe Aluno (isso mudaria para bidirecional).
+
+3. **Validações Ausentes**:
+    - Não verificar `null` em métodos como `adicionarAluno(Aluno aluno)`.
+
+4. **Métodos "Gigantes"**:
+    - Evite lógica complexa nas classes de associação (ex: regras de negócio devem ficar em serviços).
+
+5. **Acoplamento Circular**:
+    - Não fazer Departamentos conhecerem Alunos diretamente (deve ser via Professores).
+
+---
+
+## Exemplo Completo em Execução
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        // Criando alunos
+        Aluno a1 = new Aluno("Ana");
+        Aluno a2 = new Aluno("Lucas");
+        Aluno a3 = new Aluno("Carlos");
+
+        // Criando professor e associando alunos
+        Professor p1 = new Professor("Dr. Silva");
+        p1.adicionarAluno(a1);
+        p1.adicionarAluno(a2);
+
+        Professor p2 = new Professor("Dra. Santos");
+        p2.adicionarAluno(a3);
+
+        // Criando departamento
+        Departamento departamento = new Departamento("Ciência da Computação");
+        departamento.adicionarProfessor(p1);
+        departamento.adicionarProfessor(p2);
+
+        // Gerando relatório
+        departamento.relatorio();
+    }
+}
+```
+
+### Saída Esperada:
+```
+Departamento: Ciência da Computação
+Total professores: 2
+--- Relação Professores/Alunos ---
+Alunos do professor Dr. Silva:
+- Ana
+- Lucas
+
+Alunos do professor Dra. Santos:
+- Carlos
+```
+
+---
+
+## Diferença Chave para Aula Anterior
+- Na associação com arrays (aula 64), o relacionamento era estático (tamanho fixo).
+- Nesta aula (65), usando `List`, o relacionamento é dinâmico e mais aderente a cenários reais.
+
+**Link da Aula**: [Assista aqui](https://www.youtube.com/watch?v=LFlZcO9qAh8&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=67)
+
 
 
 [Voltar ao Índice](#indice)
