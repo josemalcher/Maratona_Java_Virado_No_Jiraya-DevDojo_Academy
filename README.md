@@ -6516,7 +6516,221 @@ Alunos do professor Dra. Santos:
 
 ## <a name="parte67">67 - 066 - Orientação Objetos - Associação pt 03 - Associação unidirecional muitos para um</a>
 
+# Resumo da Aula: Associação Unidirecional Muitos para Um (N:1)
 
+## Conceito Principal
+**Associação Unidirecional N:1**: Múltiplos objetos de uma classe referenciam um único objeto de outra classe, sem que o inverso seja verdadeiro. Diferente da aula anterior (1:N), agora a "seta" aponta no sentido inverso.
+
+---
+
+## Exemplo Básico: Alunos → Escola
+
+### Classe `Escola` (Classe Alvo)
+```java
+public class Escola {
+    private String nome;
+    
+    public Escola(String nome) {
+        this.nome = nome;
+    }
+    
+    public String getNome() {
+        return nome;
+    }
+}
+```
+
+### Classe `Aluno` (Classe que Referencia)
+```java
+public class Aluno {
+    private String nome;
+    private Escola escola; // Associação muitos-para-um
+
+    public Aluno(String nome, Escola escola) {
+        this.nome = nome;
+        this.escola = escola;
+    }
+
+    public void imprimirDados() {
+        System.out.println(nome + " estuda na " + escola.getNome());
+    }
+}
+```
+
+---
+
+## Exemplo Complexo: Funcionários → Departamento → Empresa
+
+### Classe `Empresa`
+```java
+public class Empresa {
+    private String nome;
+    
+    public Empresa(String nome) {
+        this.nome = nome;
+    }
+    
+    public String getNome() {
+        return nome;
+    }
+}
+```
+
+### Classe `Departamento`
+```java
+public class Departamento {
+    private String nome;
+    private Empresa empresa; // Associação N:1
+
+    public Departamento(String nome, Empresa empresa) {
+        this.nome = nome;
+        this.empresa = empresa;
+    }
+
+    public void relatorio() {
+        System.out.println(nome + " pertence à " + empresa.getNome());
+    }
+}
+```
+
+### Classe `Funcionario`
+```java
+public class Funcionario {
+    private String nome;
+    private Departamento departamento; // Associação N:1
+
+    public Funcionario(String nome, Departamento departamento) {
+        this.nome = nome;
+        this.departamento = departamento;
+    }
+
+    public void mostrarVinculo() {
+        System.out.printf("%s trabalha no %s na empresa %s\n",
+            nome,
+            departamento.getNome(),
+            departamento.getEmpresa().getNome());
+    }
+}
+```
+
+---
+
+## Melhores Práticas ✅
+
+1. **Construção Segura**:
+    - Exigir o objeto obrigatório no construtor:
+      ```java
+      public Aluno(String nome, Escola escola) {
+          Objects.requireNonNull(escola); // Validação importante
+          this.escola = escola;
+      }
+      ```
+
+2. **Navegação Encadeada**:
+    - Permite acessar informações hierárquicas:
+      ```java
+      funcionario.getDepartamento().getEmpresa().getNome();
+      ```
+
+3. **Imutabilidade das Referências**:
+    - Considere `final` para referências que não devem mudar:
+      ```java
+      private final Escola escola;
+      ```
+
+4. **Separação de Responsabilidades**:
+    - A classe `Funcionario` não deve conhecer diretamente `Empresa`, apenas `Departamento`.
+
+5. **Uso de Interfaces**:
+    - Se aplicável, usar interfaces para reduzir acoplamento:
+      ```java
+      private IEmpresa empresa;
+      ```
+
+---
+
+## Práticas a Evitar ❌
+
+1. **Referências Nulas sem Validação**:
+   ```java
+   // RUIM
+   public void setEscola(Escola escola) {
+       this.escola = escola; // Pode ser null
+   }
+   ```
+
+2. **Bidirecionalidade Acidental**:
+    - Evite adicionar `List<Aluno>` na classe `Escola` (transformaria em bidirecional).
+
+3. **Exposição de Objetos Internos**:
+   ```java
+   // PERIGOSO (permite modificar o estado interno)
+   public Escola getEscola() {
+       return escola;
+   }
+   
+   // MELHOR (retornar cópia ou imutável)
+   public Escola getEscola() {
+       return new Escola(escola.getNome());
+   }
+   ```
+
+4. **Hierarquias Muito Profundas**:
+    - Evite cadeias muito longas (`funcionario.getDepartamento().getEmpresa().getGrupo().getPais()`).
+
+5. **Lógica Complexa nos Getters**:
+    - Não adicione validações/computação pesada em métodos de acesso.
+
+---
+
+## Exemplo Completo em Execução
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        // Exemplo Básico
+        Escola escola1 = new Escola("Escola Municipal");
+        Aluno aluno1 = new Aluno("João", escola1);
+        Aluno aluno2 = new Aluno("Maria", escola1);
+        aluno1.imprimirDados();
+        aluno2.imprimirDados();
+
+        // Exemplo Complexo
+        Empresa empresaX = new Empresa("Tech Solutions");
+        Departamento rh = new Departamento("RH", empresaX);
+        Departamento ti = new Departamento("TI", empresaX);
+        
+        Funcionario f1 = new Funcionario("Carlos", ti);
+        Funcionario f2 = new Funcionario("Ana", rh);
+        
+        f1.mostrarVinculo();
+        f2.mostrarVinculo();
+        ti.relatorio();
+    }
+}
+```
+
+### Saída Esperada:
+```
+João estuda na Escola Municipal
+Maria estuda na Escola Municipal
+Carlos trabalha no TI na empresa Tech Solutions
+Ana trabalha no RH na empresa Tech Solutions
+TI pertence à Tech Solutions
+```
+
+---
+
+## Comparação com Padrões Anteriores
+| Aula 65 (1:N)            | Aula 66 (N:1)            |
+|--------------------------|--------------------------|
+| Professor tem muitos Alunos | Muitos Alunos têm uma Escola |
+| Dono da relação guarda coleção | Dono é referenciado por muitos |
+| `List<Aluno>` no Professor | `Escola` no Aluno |
+
+**Link da Aula**: [Assista aqui](https://www.youtube.com/watch?v=idIGsMoxfO0&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=68)
+
+Este resumo mostra a inversão de perspectiva em relação à aula anterior, mantendo o foco no baixo acoplamento e alta coesão. O exemplo complexo demonstra como construir hierarquias de objetos de forma limpa e escalável.
 
 [Voltar ao Índice](#indice)
 
@@ -6525,7 +6739,219 @@ Alunos do professor Dra. Santos:
 
 ## <a name="parte68">68 - 067 - Orientação Objetos - Associação pt 04 - Associação bidirecional</a>
 
+# Resumo da Aula: Associação Bidirecional em Java
 
+## Conceito Principal
+**Associação Bidirecional**: Relação onde duas classes se referenciam mutuamente, exigindo sincronização cuidadosa para manter a consistência dos dados.
+
+---
+
+## Exemplo Básico: Aluno ↔ Turma (1:N)
+
+### Classe `Aluno` (Implementação Corrigida)
+```java
+public class Aluno {
+    private final String nome;
+    private Turma turma;
+
+    public Aluno(String nome) {
+        this.nome = nome;
+    }
+
+    public void entrarNaTurma(Turma novaTurma) {
+        if (this.turma == novaTurma) return;
+        
+        if (this.turma != null) {
+            this.turma.getAlunos().remove(this);
+        }
+        
+        this.turma = novaTurma;
+        
+        if (novaTurma != null && !novaTurma.getAlunos().contains(this)) {
+            novaTurma.getAlunos().add(this);
+        }
+    }
+
+    public void mostrarSituacao() {
+        System.out.println(nome + " - Turma: " + (turma != null ? turma.getNome() : "Sem turma"));
+    }
+}
+```
+
+### Classe `Turma` (Implementação Corrigida)
+```java
+public class Turma {
+    private final String nome;
+    private final List<Aluno> alunos = new ArrayList<>();
+
+    public Turma(String nome) {
+        this.nome = nome;
+    }
+
+    public void adicionarAluno(Aluno aluno) {
+        if (aluno == null || alunos.contains(aluno)) return;
+        
+        alunos.add(aluno);
+        if (aluno.getTurma() != this) {
+            aluno.entrarNaTurma(this);
+        }
+    }
+
+    public void listarAlunos() {
+        System.out.println("Alunos da " + nome + ":");
+        alunos.forEach(Aluno::mostrarSituacao);
+    }
+}
+```
+
+---
+
+## Exemplo Complexo: Departamento ↔ Professor ↔ Aluno
+
+### Classe `Departamento`
+```java
+public class Departamento {
+    private String nome;
+    private List<Professor> professores = new ArrayList<>();
+
+    public void adicionarProfessor(Professor prof) {
+        if (!professores.contains(prof)) {
+            professores.add(prof);
+            if (prof.getDepartamento() != this) {
+                prof.setDepartamento(this);
+            }
+        }
+    }
+}
+```
+
+### Classe `Professor`
+```java
+public class Professor {
+    private String nome;
+    private Departamento departamento;
+    private List<Aluno> orientandos = new ArrayList<>();
+
+    public void setDepartamento(Departamento depto) {
+        if (this.departamento != depto) {
+            this.departamento = depto;
+            depto.adicionarProfessor(this);
+        }
+    }
+}
+```
+
+---
+
+## Melhores Práticas ✅
+
+1. **Controle de Duplicação**:
+    - Use `contains()` antes de adicionar a coleções
+    - Exemplo: `if (!alunos.contains(aluno)) alunos.add(aluno);`
+
+2. **Sincronização Bidirecional**:
+    - Sempre atualize ambos os lados da relação
+    - Verifique `if (aluno.getTurma() != this)` antes de atualizar
+
+3. **Imutabilidade**:
+    - Atributos básicos como `nome` devem ser `final`
+
+4. **Null Safety**:
+    - Sempre verifique `if (aluno != null)`
+
+5. **Encapsulamento**:
+    - Use `Collections.unmodifiableList()` para retornar coleções:
+   ```java
+   public List<Aluno> getAlunos() {
+       return Collections.unmodifiableList(alunos);
+   }
+   ```
+
+---
+
+## Práticas a Evitar ❌
+
+1. **Exposição Direta de Coleções**:
+   ```java
+   // RUIM
+   public List<Aluno> getAlunos() { return alunos; }
+   ```
+
+2. **Atualização Incompleta**:
+   ```java
+   // PERIGOSO (atualiza só um lado)
+   public void setTurma(Turma turma) { this.turma = turma; }
+   ```
+
+3. **Loops Infinitos**:
+    - Não verificar a relação existente antes de atualizar
+
+4. **Bidirecionalidade Desnecessária**:
+    - Implemente apenas quando essencial para o domínio
+
+---
+
+## Exemplo Completo Funcional
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Turma turmaPOO = new Turma("POO-2023");
+        Aluno aluno1 = new Aluno("Maria");
+        Aluno aluno2 = new Aluno("João");
+
+        // Associação correta sem duplicação
+        turmaPOO.adicionarAluno(aluno1);
+        aluno2.entrarNaTurma(turmaPOO);
+
+        // Verificação
+        turmaPOO.listarAlunos();
+    }
+}
+```
+
+### Saída Correta:
+```
+Alunos da POO-2023:
+Maria - Turma: POO-2023
+João - Turma: POO-2023
+```
+
+---
+
+## Solução para Problemas Comuns
+
+1. **Duplicação em Listas**:
+    - Use `contains()` antes de `add()`
+    - Considere `Set` se permitido (embora este exemplo use `ArrayList`)
+
+2. **Referências Circulares**:
+   ```java
+   // Na classe Aluno
+   public void entrarNaTurma(Turma novaTurma) {
+       if (this.turma == novaTurma) return; // Importante!
+       // ... resto do código
+   }
+   ```
+
+3. **NullPointerException**:
+   ```java
+   public void adicionarAluno(Aluno aluno) {
+       Objects.requireNonNull(aluno, "Aluno não pode ser nulo");
+       // ... resto do código
+   }
+   ```
+
+**Link da Aula**: [Assista aqui](https://www.youtube.com/watch?v=-RtaqvKlH7w&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=70)
+
+> Esta implementação corrige os problemas de duplicação mantendo a associação bidirecional com `ArrayList`, seguindo as melhores práticas de OO.
+
+
+As principais correções em relação ao problema de duplicação são:
+1. Verificação `contains()` antes de adicionar à lista
+2. Controle rigoroso do fluxo entre `entrarNaTurma()` e `adicionarAluno()`
+3. Prevenção de loops com a condição `if (this.turma == novaTurma) return;`
+4. Sincronização completa dos dois lados da associação
 
 [Voltar ao Índice](#indice)
 
