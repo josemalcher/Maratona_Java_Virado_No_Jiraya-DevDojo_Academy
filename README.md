@@ -7431,7 +7431,221 @@ Este resumo cobre os principais conceitos de herança em Java conforme abordado 
 
 ## <a name="parte75">75 - 072 - Orientação Objetos - Herança pt 02 - Super</a>
 
+# Resumo: Herança em Java - Parte 2 (Palavra-chave `super`)
 
+## 📌 Visão Geral
+Esta aula explora o uso avançado da palavra-chave `super` em herança Java, demonstrando como:
+1. Acessar membros da superclasse
+2. Invocar construtores parentais
+3. Diferenciar membros com nomes duplicados
+4. Construir hierarquias de objetos corretamente
+
+## 📋 Exemplos Básicos
+
+### 1. Chamada de Construtor Parental
+```java
+class Veiculo {
+    private String placa;
+    
+    public Veiculo(String placa) {
+        this.placa = placa;
+    }
+}
+
+class Carro extends Veiculo {
+    private int portas;
+    
+    public Carro(String placa, int portas) {
+        super(placa);  // Obrigatório (Veiculo não tem construtor padrão)
+        this.portas = portas;
+    }
+}
+```
+
+### 2. Acesso a Método da Superclasse
+```java
+class Instrumento {
+    void afinar() {
+        System.out.println("Afinando instrumento genérico");
+    }
+}
+
+class Violao extends Instrumento {
+    @Override
+    void afinar() {
+        super.afinar();  // Reutiliza comportamento parental
+        System.out.println("Afinando cordas do violão");
+    }
+}
+```
+
+## 🏗️ Exemplo Complexo (Hierarquia de Inicialização)
+
+```java
+class Dispositivo {
+    private String serial;
+    
+    public Dispositivo(String serial) {
+        this.serial = serial;
+        System.out.println("Construindo Dispositivo");
+    }
+}
+
+class Smartphone extends Dispositivo {
+    private String sistema;
+    
+    public Smartphone(String serial, String sistema) {
+        super(serial);  // Chamada obrigatória primeiro
+        this.sistema = sistema;
+        System.out.println("Construindo Smartphone");
+    }
+    
+    public void mostrarInfo() {
+        System.out.println("S/N: " + super.serial);  // Erro: serial é private
+        System.out.println("OS: " + this.sistema);
+    }
+}
+```
+
+## ✅ Melhores Práticas
+
+1. **Ordem de Construção**:
+   ```java
+   public SubClasse() {
+       super();  // Sempre deve ser a primeira instrução
+       // Demais inicializações
+   }
+   ```
+
+2. **Uso de `@Override`**:
+   ```java
+   @Override
+   void metodo() {
+       super.metodo();  // Clareza na sobrescrita
+   }
+   ```
+
+3. **Encapsulamento Protegido**:
+   ```java
+   protected String serial;  // Acessível apenas na hierarquia
+   ```
+
+4. **Encadeamento Limpo**:
+   ```java
+   class A {
+       A(int x) { ... }
+   }
+   
+   class B extends A {
+       B() {
+           super(10);  // Explícito quando necessário
+       }
+   }
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Ordem Incorreta**:
+   ```java
+   public SubClasse() {
+       this.inicializar();  // ❌ Antes de super()
+       super();            // Erro de compilação
+   }
+   ```
+
+2. **Acesso Direto a Privados**:
+   ```java
+   super.atributoPrivado;  // ❌ Não compila
+   ```
+
+3. **Abuso de Herança**:
+   ```java
+   class StringUtils extends String {  // ❌ String é final
+       // ...
+   }
+   ```
+
+4. **Construtores Fantasmas**:
+   ```java
+   class Pai {
+       Pai(int x) { ... }
+   }
+   
+   class Filho extends Pai {
+       Filho() { }  // ❌ Falta super(x)
+   }
+   ```
+
+5. **Confusão This/Super**:
+   ```java
+   this.metodo();  // Pode ser sobrescrito
+   super.metodo(); // Versão específica da superclasse
+   ```
+
+## 🔍 Observações Avançadas
+
+1. **Herança Multinível**:
+   ```java
+   class A { void m() {} }
+   class B extends A { @Override void m() {} }
+   class C extends B { 
+       void test() {
+           super.m();  // Chama B.m()
+       }
+   }
+   ```
+
+2. **Inicialização com Parâmetros**:
+   ```java
+   class Database {
+       Database(String url) { ... }
+   }
+   
+   class MySQL extends Database {
+       MySQL() {
+           super("jdbc:mysql://localhost");  // Parâmetro fixo
+       }
+   }
+   ```
+
+3. **Padrão Template Method**:
+   ```java
+   abstract class Template {
+       void execute() {
+           init();
+           run();
+           end();
+       }
+       abstract void run();
+   }
+   ```
+
+4. **Problema do Diamante**:
+   ```java
+   interface A { default void m() {} }
+   interface B { default void m() {} }
+   class C implements A, B {  // ❌ Conflito
+       @Override
+       public void m() {
+           A.super.m();  // Solução explícita
+       }
+   }
+   ```
+
+5. **Serialização**:
+   ```java
+   class Parent implements Serializable { ... }
+   class Child extends Parent {
+       private void readObject(ObjectInputStream ois) 
+           throws IOException, ClassNotFoundException {
+           ois.defaultReadObject();
+           super.validate();  // Pós-processamento
+       }
+   }
+   ```
+
+
+Este resumo cobre desde os usos básicos até padrões avançados com `super`, incluindo armadilhas comuns e soluções recomendadas para construção robusta de hierarquias de classes.
 
 [Voltar ao Índice](#indice)
 
@@ -7440,7 +7654,234 @@ Este resumo cobre os principais conceitos de herança em Java conforme abordado 
 
 ## <a name="parte76">76 - 073 - Orientação Objetos - Herança pt 03 - protected</a>
 
+# Resumo: Modificador `protected` em Java - Herança Parte 3
 
+## 📌 Visão Geral
+A aula explora o modificador de acesso `protected`, que permite:
+- Acesso às classes do mesmo pacote
+- Acesso às subclasses (mesmo em pacotes diferentes)
+- Um meio-termo entre `public` e `private`
+
+## 📋 Exemplos Básicos
+
+### 1. Uso Básico de `protected`
+```java
+package br.com.dev;
+public class Pessoa {
+    protected String nome;  // Acessível por subclasses
+    
+    protected void imprimir() {
+        System.out.println("Nome: " + nome);
+    }
+}
+```
+
+### 2. Acesso em Subclasse (pacote diferente)
+```java
+package br.com.outro;
+import br.com.dev.Pessoa;
+
+public class Aluno extends Pessoa {
+    public void mostrarDados() {
+        System.out.println(this.nome);  // Acesso permitido
+        this.imprimir();  // Método protected acessível
+    }
+}
+```
+
+## 🏗️ Exemplo Complexo (Hierarquia com `protected`)
+
+```java
+package br.com.veiculos;
+
+public abstract class Veiculo {
+    protected String modelo;
+    protected int ano;
+    
+    protected abstract void ligar();
+    
+    protected void imprimirDetalhes() {
+        System.out.println("Modelo: " + modelo);
+    }
+}
+
+public class Carro extends Veiculo {
+    public Carro(String modelo, int ano) {
+        this.modelo = modelo;  // Acesso direto
+        this.ano = ano;
+    }
+    
+    @Override
+    protected void ligar() {
+        System.out.println("Ligando carro " + modelo);
+    }
+    
+    public void mostrar() {
+        this.ligar();  // Chama método protected
+        super.imprimirDetalhes();  // Usando super
+    }
+}
+```
+
+## ✅ Melhores Práticas
+
+1. **Use para membros de framework**:
+   ```java
+   protected void initialize() { // Para ser sobrescrito
+       // Código padrão
+   }
+   ```
+
+2. **Documente o contrato**:
+   ```java
+   /**
+    * @protected Este método deve ser sobrescrito para configurar a view
+    */
+   protected void setupView() {...}
+   ```
+
+3. **Prefira `protected` a `public`** para métodos internos da hierarquia
+
+4. **Para atributos constantes**:
+   ```java
+   protected static final int DEFAULT_SIZE = 10;
+   ```
+
+5. **Combine com abstract**:
+   ```java
+   public abstract class Animal {
+       protected abstract void comer();
+   }
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Expor atributos sem necessidade**:
+   ```java
+   protected List<String> dadosInternos;  // ❌ Expõe implementação
+   ```
+
+2. **Usar em classes `final`** (contraditório):
+   ```java
+   public final class Util {
+       protected static void helper() {}  // ❌ Nunca será herdado
+   }
+   ```
+
+3. **Violar encapsulamento**:
+   ```java
+   public class Conta {
+       protected double saldo;  // ❌ Perigoso expor diretamente
+   }
+   ```
+
+4. **Ignorar pacotes**:
+   ```java
+   protected void metodo() {}  // ❌ Se a classe for package-private
+   ```
+
+5. **Confundir com default (package-private)**:
+   ```java
+   void metodo() {}       // Só mesmo pacote
+   protected void m() {}  // Só mesmo pacote + subclasses
+   ```
+
+## 🔍 Observações Avançadas
+
+1. **Herança cruzando pacotes**:
+   ```java
+   // Pacote A
+   public class Pai {
+       protected int x;
+   }
+   
+   // Pacote B
+   public class Filho extends Pai {
+       void teste() {
+           System.out.println(x);  // OK
+           Pai p = new Pai();
+           System.out.println(p.x);  // ❌ Erro (acesso via instância)
+       }
+   }
+   ```
+
+2. **Padrão Template Method**:
+   ```java
+   public abstract class Template {
+       public final void process() {
+           init();
+           execute();
+           end();
+       }
+       
+       protected abstract void execute();  // Hook method
+       protected void init() {}  // Opcional
+   }
+   ```
+
+3. **Serialização protegida**:
+   ```java
+   public class Base implements Serializable {
+       protected void readData(ObjectInputStream in) 
+           throws IOException {
+           // Leitura segura para subclasses
+       }
+   }
+   ```
+
+4. **Classes abstratas**:
+   ```java
+   public abstract class Figura {
+       protected int lados;
+       
+       protected Figura(int lados) {
+           this.lados = lados;
+       }
+   }
+   ```
+
+5. **Enums com comportamento protegido**:
+   ```java
+   public enum Nivel {
+       BASIC {
+           protected void show() { /* impl */ }
+       };
+       
+       protected abstract void show();
+   }
+   ```
+
+## ⚠️ Cuidados Especiais
+
+1. **Visibilidade em tempo de design**:
+   ```plantuml
+   class Parent {
+     #protectedField
+     #protectedMethod()
+   }
+   
+   class Child {
+     .. usa ..
+     -> Parent#protectedField
+     -> Parent#protectedMethod()
+   }
+   ```
+
+2. **Refatoração segura**:
+    - Alterar de `private` para `protected` = compatível
+    - Alterar de `protected` para `private` = quebra compatibilidade
+
+3. **Testabilidade**:
+   ```java
+   @Test
+   public void testProtectedMethod() throws Exception {
+       Method method = Classe.class.getDeclaredMethod("metodoProtegido");
+       method.setAccessible(true);  // Reflection para testes
+   }
+   ```
+
+
+Este resumo cobre desde os conceitos fundamentais até padrões avançados de uso do modificador `protected`, incluindo os principais cuidados no design de hierarquias de classes em Java.
 
 [Voltar ao Índice](#indice)
 
