@@ -7266,6 +7266,162 @@ Este resumo cobre o exercício prático de associação entre objetos em Java, i
 
 ## <a name="parte74">74 - 071 - Orientação Objetos - Herança pt 01</a>
 
+# Resumo: Herança em Java - Parte 1
+
+## 📌 Visão Geral
+A aula introduz o conceito de **Herança** em Java, um dos pilares da Orientação a Objetos que permite que uma classe (subclasse) herde atributos e métodos de outra classe (superclasse), promovendo reutilização de código e organização hierárquica.
+
+---
+
+## 📋 Exemplo Básico
+
+### Superclasse `Pessoa`
+```java
+public class Pessoa {
+    private String nome;
+    private String cpf;
+
+    public Pessoa(String nome, String cpf) {
+        this.nome = nome;
+        this.cpf = cpf;
+    }
+
+    public void imprimirDados() {
+        System.out.println("Nome: " + nome);
+        System.out.println("CPF: " + cpf);
+    }
+}
+```
+
+### Subclasse `Funcionario` (herda de `Pessoa`)
+```java
+public class Funcionario extends Pessoa {
+    private double salario;
+
+    public Funcionario(String nome, String cpf, double salario) {
+        super(nome, cpf); // Chama o construtor da superclasse
+        this.salario = salario;
+    }
+
+    @Override
+    public void imprimirDados() {
+        super.imprimirDados(); // Reusa o método da superclasse
+        System.out.println("Salário: " + salario);
+    }
+}
+```
+
+### Uso
+```java
+Funcionario func = new Funcionario("João", "123.456.789-00", 2500.0);
+func.imprimirDados();
+```
+
+---
+
+## 🏗️ Exemplo Complexo (Herança Múltipla Nívels)
+
+### Hierarquia: `Veiculo` → `VeiculoTerrestre` → `Carro`
+```java
+// Nível 1
+public class Veiculo {
+    private String marca;
+    public Veiculo(String marca) {
+        this.marca = marca;
+    }
+    public void ligar() {
+        System.out.println("Veículo ligado");
+    }
+}
+
+// Nível 2
+public class VeiculoTerrestre extends Veiculo {
+    private int rodas;
+    public VeiculoTerrestre(String marca, int rodas) {
+        super(marca);
+        this.rodas = rodas;
+    }
+}
+
+// Nível 3
+public class Carro extends VeiculoTerrestre {
+    private int portas;
+    public Carro(String marca, int portas) {
+        super(marca, 4); // Todos os carros têm 4 rodas
+        this.portas = portas;
+    }
+    @Override
+    public void ligar() {
+        System.out.println("Carro ligado com chave");
+    }
+}
+```
+
+---
+
+## ✅ Melhores Práticas
+
+1. **Use `@Override`**: Sempre anote métodos sobrescritos para melhor legibilidade.
+2. **Chame `super()` corretamente**: Inicialize a superclasse no construtor.
+3. **Prefira composição sobre herança**: Herde apenas quando houver relação "é-um".
+4. **Mantenha hierarquias rasas**: Evite mais de 3 níveis de herança.
+5. **Use métodos protegidos**: Para métodos usados apenas por subclasses:
+   ```java
+   protected void metodoInterno() { ... }
+   ```
+
+---
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Herança para reutilização apenas**:
+    - ❌ Ruim: Herdar `ArrayList` só para usar seus métodos.
+    - ✅ Melhor: Usar composição (`private List list = new ArrayList()`).
+
+2. **Quebrar LSP (Princípio de Substituição de Liskov)**:
+    - ❌ Ruim:
+      ```java
+      @Override
+      public void ligar() {
+          throw new UnsupportedOperationException(); // Subclasse não deveria invalidar superclasse
+      }
+      ```
+
+3. **Acessar atributos diretamente**:
+    - ❌ Ruim:
+      ```java
+      public class SubClasse extends SuperClasse {
+          public void metodo() {
+              System.out.println(super.atributo); // Deveria usar getter
+          }
+      }
+      ```
+
+4. **Herança múltipla simulada** (Java não suporta):
+    - ❌ Ruim: Usar `default` em interfaces para simular herança múltiplia complexa.
+
+5. **Classes/métodos `final` ignorados**:
+    - Não tente herdar de classes marcadas como `final` como `String`.
+
+---
+
+## 🔍 Observações Adicionais
+
+- **`super` vs `this`**:
+    - `super` acessa a superclasse
+    - `this` acessa a classe atual
+
+- **Herança de Interfaces**: Uma classe pode implementar múltiplas interfaces.
+
+- **Classes Abstratas**: Úteis quando a superclasse não deve ser instanciada diretamente:
+  ```java
+  public abstract class Animal {
+      public abstract void emitirSom();
+  }
+  ```
+
+Este resumo cobre os principais conceitos de herança em Java conforme abordado na aula, com exemplos práticos e boas práticas para aplicação correta do conceito.
+
 
 
 [Voltar ao Índice](#indice)
