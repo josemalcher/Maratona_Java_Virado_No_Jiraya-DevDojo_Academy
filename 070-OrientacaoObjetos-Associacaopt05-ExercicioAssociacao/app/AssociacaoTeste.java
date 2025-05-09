@@ -16,12 +16,12 @@ public class AssociacaoTeste {
 
         Professor prof1 = new Professor("Dr. Adriana", "Matemática");
 
-        Seminario seminario1 = new Seminario("Matemática Etc!", 4, alunos, local);
+        // Seminario seminario1 = new Seminario("Matemática Etc!", 4, alunos, local);
         Seminario seminario2 = new Seminario("Portugues Etc!", 2);
 
-        Seminario[] seminariosDisponiveis = {seminario1};
+        // Seminario[] seminariosDisponiveis = {seminario1};
 
-        prof1.setSeminarios(seminariosDisponiveis);
+        // prof1.setSeminarios(seminariosDisponiveis);
         prof1.imprime();
 
     }

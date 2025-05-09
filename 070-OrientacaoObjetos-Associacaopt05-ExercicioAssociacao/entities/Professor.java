@@ -6,6 +6,10 @@ public class Professor {
 
     private Seminario[] seminarios;
 
+    public Professor(String nome) {
+        this.nome = nome;
+    }
+
     public Professor(String nome, String especialidade) {
         this.nome = nome;
         this.especialidade = especialidade;
@@ -43,8 +47,8 @@ public class Professor {
 
     public void imprime() {
         System.out.println("-------------------");
-        System.out.println("Professor "+ this.nome);
-        System.out.println("Especialidade "+ this.especialidade);
+        System.out.println("Professor " + this.nome);
+        System.out.println("Especialidade " + this.especialidade);
         if (this.seminarios == null) {
             return;
         }
@@ -54,7 +58,7 @@ public class Professor {
             System.out.println(seminario.getTitulo());
             System.out.println(seminario.getLocal().getEnredeco());
 
-            if (seminario.getAlunos() == null || seminario.getAlunos().length == 0) {
+            if (seminario.getAlunos() == null) {
                 continue;
             }
             System.out.println(" ** ALUNOS ** ");
