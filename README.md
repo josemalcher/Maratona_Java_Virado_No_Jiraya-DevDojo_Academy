@@ -6960,7 +6960,97 @@ As principais correções em relação ao problema de duplicação são:
 
 ## <a name="parte69">69 - 068 - Orientação Objetos - Leitura de dados pelo console</a>
 
+# Resumo: Leitura de Dados pelo Console em Java
 
+## 📌 Visão Geral
+A aula aborda como ler dados do console em Java usando a classe `Scanner`, que pertence ao pacote `java.util`. Essa técnica é útil para interações básicas com o usuário via terminal.
+
+## 📋 Exemplos Básicos
+
+### 1. Importação e Criação do Scanner
+```java
+import java.util.Scanner;
+
+public class LeituraDados {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+    }
+}
+```
+
+### 2. Lendo Diferentes Tipos de Dados
+```java
+System.out.print("Digite seu nome: ");
+String nome = scanner.nextLine();
+
+System.out.print("Digite sua idade: ");
+int idade = scanner.nextInt();
+
+System.out.print("Digite sua altura (ex: 1,75): ");
+double altura = scanner.nextDouble();
+```
+
+## 🏗️ Exemplo Complexo (Validação de Entrada)
+```java
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class LeituraValidada {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int idade = 0;
+        boolean entradaValida = false;
+
+        while (!entradaValida) {
+            try {
+                System.out.print("Digite sua idade: ");
+                idade = scanner.nextInt();
+                entradaValida = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Erro: Digite um número inteiro válido!");
+                scanner.next(); // Limpa o buffer do scanner
+            }
+        }
+
+        System.out.println("Idade registrada: " + idade);
+        scanner.close();
+    }
+}
+```
+
+## ✅ Melhores Práticas
+1. **Sempre fechar o Scanner**: Use `scanner.close()` quando não for mais necessário.
+2. **Tratamento de exceções**: Capture `InputMismatchException` para entradas inválidas.
+3. **Limpar o buffer**: Use `scanner.next()` após erros para evitar loops infinitos.
+4. **Mensagens claras**: Sempre exiba instruções claras para o usuário.
+5. **Validação de entrada**: Implemente lógica para garantir que os dados estão no formato esperado.
+
+## ❌ Piores Práticas (Evitar)
+1. **Não validar entradas**: Aceitar qualquer valor sem verificação pode causar erros.
+2. **Ignorar exceções**: Não tratar `InputMismatchException` pode quebrar o programa.
+3. **Não fechar o Scanner**: Pode causar vazamento de recursos.
+4. **Misturar nextLine() com nextInt()/nextDouble()**: Pode causar comportamentos inesperados devido ao buffer.
+    - ❌ Problema:
+      ```java
+      int idade = scanner.nextInt();
+      String nome = scanner.nextLine(); // Vai capturar o "enter" anterior
+      ```
+    - ✅ Solução:
+      ```java
+      int idade = scanner.nextInt();
+      scanner.nextLine(); // Consome o "enter"
+      String nome = scanner.nextLine();
+      ```
+
+5. **Usar Scanner como variável global**: Pode levar a problemas de concorrência e dificulta o gerenciamento de recursos.
+
+## 🔍 Observações Adicionais
+- Para sistemas reais, considere usar frameworks mais robustos para entrada de dados.
+- O Scanner é adequado para programas simples e aprendizado.
+- Em aplicações com muitas entradas, considere criar métodos utilitários para leitura e validação.
+
+
+Este resumo cobre os principais pontos da aula, incluindo exemplos práticos e dicas importantes para escrever código mais robusto ao trabalhar com entrada de dados pelo console em Java.
 
 [Voltar ao Índice](#indice)
 
