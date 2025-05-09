@@ -7066,26 +7066,9 @@ Este resumo cobre os principais pontos da aula, incluindo exemplos práticos e d
 ---
 
 
-## <a name="parte71">71 - 068 - Orientação Objetos - Leitura de dados pelo console</a>
-
-
-
-[Voltar ao Índice](#indice)
-
----
-
-
-## <a name="parte72">72 - 069 - Orientação Objetos - Exercício leitura de dados do teclado</a>
-
-
-
-[Voltar ao Índice](#indice)
-
----
-
-
 ## <a name="parte73">73 - 070 - Orientação Objetos - Associação pt 05 - Exercício Associação</a>
 
+[/070-OrientacaoObjetos-Associacaopt05-ExercicioAssociacao](/070-OrientacaoObjetos-Associacaopt05-ExercicioAssociacao)
 
 
 [Voltar ao Índice](#indice)
