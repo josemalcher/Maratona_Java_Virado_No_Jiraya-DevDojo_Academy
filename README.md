@@ -7890,6 +7890,226 @@ Este resumo cobre desde os conceitos fundamentais até padrões avançados de us
 
 ## <a name="parte77">77 - 074 - Orientação Objetos - Herança pt 04 - Construtores</a>
 
+# Resumo: Herança e Construtores em Java - Parte 4
+
+## 📌 Visão Geral
+Esta aula aborda o comportamento de construtores em hierarquias de herança, destacando:
+- A cadeia de chamadas de construtores
+- O uso obrigatório de `super()`
+- Padrões para inicialização segura
+- Problemas comuns e suas soluções
+
+## 📋 Exemplos Básicos
+
+### 1. Chamada Implícita a super()
+```java
+class Animal {
+    Animal() {
+        System.out.println("Construtor Animal");
+    }
+}
+
+class Cachorro extends Animal {
+    Cachorro() {
+        // super() chamado implicitamente
+        System.out.println("Construtor Cachorro");
+    }
+}
+```
+**Saída:**
+```
+Construtor Animal
+Construtor Cachorro
+```
+
+### 2. Construtor Parametrizado
+```java
+class Veiculo {
+    private String placa;
+    
+    Veiculo(String placa) {
+        this.placa = placa;
+    }
+}
+
+class Carro extends Veiculo {
+    Carro(String placa) {
+        super(placa); // Obrigatório explícito
+    }
+}
+```
+
+## 🏗️ Exemplo Complexo (Inicialização em 3 Níveis)
+
+```java
+class Eletronico {
+    private int voltagem;
+    
+    Eletronico(int voltagem) {
+        this.voltagem = voltagem;
+        System.out.println("Eletronico: " + voltagem + "V");
+    }
+}
+
+class Computador extends Eletronico {
+    private String modelo;
+    
+    Computador(int voltagem, String modelo) {
+        super(voltagem);
+        this.modelo = modelo;
+        System.out.println("Computador: " + modelo);
+    }
+}
+
+class Notebook extends Computador {
+    private int bateria;
+    
+    Notebook() {
+        super(110, "UltraBook"); // Chama Computador(int, String)
+        this.bateria = 5000;
+        System.out.println("Notebook: " + bateria + "mAh");
+    }
+}
+```
+
+## ✅ Melhores Práticas
+
+1. **Encadeamento claro**:
+   ```java
+   public SubClasse(params) {
+       super(paramsPai); // Sempre na primeira linha
+       // Inicializações específicas
+   }
+   ```
+
+2. **Construtores mínimos**:
+   ```java
+   public class Pai {
+       // Um único construtor bem definido
+       public Pai(parametrosEssenciais) { ... }
+   }
+   ```
+
+3. **Factory Methods**:
+   ```java
+   public static CriarInstanciaPadrao() {
+       return new SubClasse(valoresPadrao);
+   }
+   ```
+
+4. **Validação em um nível**:
+   ```java
+   public Pai(int valor) {
+       if (valor < 0) throw... // Valida aqui
+   }
+   ```
+
+5. **Documentação clara**:
+   ```java
+   /**
+    * @throws IllegalArgumentException se X ocorrer
+    */
+   public Pai(int x) { ... }
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Ordem incorreta**:
+   ```java
+   public SubClasse() {
+       inicializar(); // ❌ Antes de super()
+       super();      // Erro de compilação
+   }
+   ```
+
+2. **Construtores desnecessários**:
+   ```java
+   public class Pai {
+       public Pai() {} // Vazio só para compilar
+       public Pai(int x) { ... }
+   }
+   ```
+
+3. **Lógica complexa em construtores**:
+   ```java
+   public Pai() {
+       this.connection = new Connection(); // ❌ Injeção seria melhor
+       this.config = loadConfigFile();    // ❌ Pode falhar
+   }
+   ```
+
+4. **Ignorar exceções**:
+   ```java
+   public SubClasse() {
+       try { super(); } catch(Exception e) {} // ❌ Esconde erros
+   }
+   ```
+
+5. **Acoplamento temporal**:
+   ```java
+   public Pai() {
+       init(); // ❌ Requer chamada adicional
+   }
+   ```
+
+## 🔍 Casos Especiais
+
+### 1. Classes sem construtor explícito
+```java
+class A { }
+class B extends A { } // Ambos têm construtor padrão
+```
+
+### 2. Construtores privados
+```java
+class Singleton {
+    private Singleton() {}
+    public static Singleton getInstance() { ... }
+}
+```
+
+### 3. Herança com classes internas
+```java
+class Externa {
+    class Interna extends Pai {
+        Interna() {
+            Externa.this.super(); // Sintaxe especial
+        }
+    }
+}
+```
+
+### 4. Serialização
+```java
+class Pai implements Serializable {
+    public Pai() { ... } // Chamado na desserialização
+}
+```
+
+### 5. Padrão Builder
+```java
+class Produto {
+    private Produto(Builder b) { ... }
+    
+    static class Builder {
+        Produto build() {
+            return new Produto(this);
+        }
+    }
+}
+```
+
+## ⚠️ Regras Fundamentais
+
+1. **Primeira linha deve ser this() ou super()**
+2. **Se nenhum construtor for definido, Java insere um padrão**
+3. **Classes abstratas podem ter construtores (chamados pelas concretas)**
+4. **Construtores não são herdados**
+5. **Final fields devem ser inicializados em todos os construtores**
+
+
+Este resumo cobre desde os conceitos básicos até padrões avançados de construção de objetos em hierarquias de herança, incluindo armadilhas comuns e melhores práticas para um design robusto.
+
 
 
 [Voltar ao Índice](#indice)
@@ -7899,7 +8119,221 @@ Este resumo cobre desde os conceitos fundamentais até padrões avançados de us
 
 ## <a name="parte78">78 - 075 - Orientação Objetos - Herança pt 05 - Sequência de inicialização</a>
 
+# Resumo: Sequência de Inicialização em Herança Java
 
+## 📌 Visão Geral
+A aula explica a ordem exata de execução durante a construção de objetos em hierarquias de herança, mostrando como Java inicializa:
+1. Blocos estáticos
+2. Atributos de classe
+3. Construtores
+4. Blocos de instância
+
+## 📋 Exemplo Básico (Ordem Simples)
+
+```java
+class A {
+    static { System.out.println("Bloco estático A"); }
+    { System.out.println("Bloco instância A"); }
+    A() { System.out.println("Construtor A"); }
+}
+
+class B extends A {
+    static { System.out.println("Bloco estático B"); }
+    { System.out.println("Bloco instância B"); }
+    B() { System.out.println("Construtor B"); }
+}
+
+// Saída quando new B() é chamado:
+// Bloco estático A
+// Bloco estático B
+// Bloco instância A
+// Construtor A
+// Bloco instância B
+// Construtor B
+```
+
+## 🏗️ Exemplo Complexo (Inicialização Multinível)
+
+```java
+class Raiz {
+    private static String staticRaiz = initStatic("Static Raiz");
+    private String instanciaRaiz = initInstancia("Instância Raiz");
+    
+    static { System.out.println("Bloco estático Raiz"); }
+    { System.out.println("Bloco instância Raiz"); }
+    
+    Raiz() { System.out.println("Construtor Raiz"); }
+    
+    static String initStatic(String msg) {
+        System.out.println(msg);
+        return msg;
+    }
+    
+    String initInstancia(String msg) {
+        System.out.println(msg);
+        return msg;
+    }
+}
+
+class Nivel1 extends Raiz {
+    // Membros similares com "Nivel1"...
+}
+
+class Nivel2 extends Nivel1 {
+    // Membros similares com "Nivel2"...
+}
+
+// Saída para new Nivel2() mostra a ordem completa
+// de inicialização em 3 níveis de herança
+```
+
+## ✅ Melhores Práticas
+
+1. **Organize inicializações complexas**:
+   ```java
+   private List<String> dados = new ArrayList<>(); // Inicialização direta
+   ```
+
+2. **Use métodos auxiliares para lógica complexa**:
+   ```java
+   private Connection conn = initConnection();
+   private Connection initConnection() { ... }
+   ```
+
+3. **Documente dependências de inicialização**:
+   ```java
+   /**
+    * @depends BancoDeDados.inicializar() 
+    * deve ser chamado primeiro
+    */
+   ```
+
+4. **Para inicialização lazy**:
+   ```java
+   private Data dataCarregada;
+   public Data getData() {
+       if (dataCarregada == null) {
+           dataCarregada = carregarData();
+       }
+       return dataCarregada;
+   }
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Ordem dependente de inicialização**:
+   ```java
+   private static int A = B + 1; // ❌ B ainda não inicializado
+   private static int B = 2;
+   ```
+
+2. **Blocos de instância após construtor**:
+   ```java
+   class X {
+       X() { System.out.println(a); } // ❌ a ainda não existe
+       { a = 10; }
+       private int a;
+   }
+   ```
+
+3. **Inicialização circular**:
+   ```java
+   class A { static final int X = B.Y + 1; }
+   class B { static final int Y = A.X + 1; } // ❌ StackOverflow
+   ```
+
+4. **Construtores que chamam métodos sobrescritos**:
+   ```java
+   class Pai {
+       Pai() { metodo(); } // ❌ Perigoso se sobrescrito
+   }
+   ```
+
+## 🔍 Detalhes de Inicialização
+
+### Ordem Completa:
+1. Blocos `static` e atributos estáticos da superclasse
+2. Blocos `static` e atributos estáticos da subclasse
+3. Atributos de instância e blocos não-estáticos da superclasse
+4. Construtor da superclasse
+5. Atributos de instância e blocos não-estáticos da subclasse
+6. Construtor da subclasse
+
+### Exemplo com Threads:
+```java
+class Singleton {
+    private static Singleton instance = new Singleton();
+    public static int COUNT_A;
+    public static int COUNT_B = 0;
+    
+    private Singleton() {
+        COUNT_A++;
+        COUNT_B++;
+    }
+    
+    public static Singleton getInstance() {
+        return instance;
+    }
+}
+// Resultado: COUNT_A=1, COUNT_B=0 (devido à ordem)
+```
+
+### Inicialização de Interfaces:
+```java
+interface I {
+    int VAL = new Random().nextInt(10);
+}
+// VAL é inicializado quando a interface é carregada
+```
+
+### Caso Especial - Herança + Interfaces:
+```java
+interface A { default void m() {} }
+class B { public void m() {} }
+class C extends B implements A {
+    // Não precisa implementar m()
+}
+```
+
+Este resumo cobre os principais aspectos da sequência de inicialização em Java, mostrando desde exemplos básicos até casos complexos com herança multinível, incluindo armadilhas comuns e boas práticas para um código robusto.
+
+#### Sequência de Inicialização em Herança Java
+
+##### Ordem de Execução:
+
+1. **Bloco de inicialização estático da superclasse**  
+   É executado quando a JVM carrega a classe pai
+
+2. **Bloco de inicialização estático da subclasse**  
+   É executado quando a JVM carrega a classe filha
+
+3. **Alocação de memória**  
+   Espaço é alocado para o objeto da superclasse
+
+4. **Inicialização de atributos da superclasse**  
+   Cada atributo é criado e inicializado com:
+    - Valores default, ou
+    - O que for passado explicitamente
+
+5. **Bloco de inicialização da superclasse**  
+   Executado na ordem em que aparece no código
+
+6. **Construtor da superclasse**  
+   É executado
+
+7. **Alocação de memória**  
+   Espaço é alocado para o objeto da subclasse
+
+8. **Inicialização de atributos da subclasse**  
+   Cada atributo é criado e inicializado com:
+    - Valores default, ou
+    - O que for passado explicitamente
+
+9. **Bloco de inicialização da subclasse**  
+   Executado na ordem em que aparece no código
+
+10. **Construtor da subclasse**  
+    É executado
 
 [Voltar ao Índice](#indice)
 
