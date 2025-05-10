@@ -8301,40 +8301,20 @@ Este resumo cobre os principais aspectos da sequência de inicialização em Jav
 
 ##### Ordem de Execução:
 
-1. **Bloco de inicialização estático da superclasse**  
-   É executado quando a JVM carrega a classe pai
+``` 
 
-2. **Bloco de inicialização estático da subclasse**  
-   É executado quando a JVM carrega a classe filha
+// 0 - Bloco de inicialização estático da super classe é executado quando a JVM carregar classe pai
+// 1 - Bloco de inicialização estático da subclasse é executado quando a JVM carregar classe filha
+// 2 - Alocado espaço em memória pro objeto da superclasse
+// 3 - Cada atributo de superclasse é criado e inicializado com valores default ou o quer for passado
+// 4 - Bloco de inicialização da superclasse é executado na ordem em que aparece
+// 5 - Construtor é executado da superclasse
+// 6 - Alocado espaço em memória pro objeto da subclasse
+// 7 - Cada atributo de subclasse é criado e inicializado com valores default ou o quer for passado
+// 8 - Bloco de inicialização da subclasse é executado na ordem em que aparece
+// 9 - Construtor é executado da subclasse
 
-3. **Alocação de memória**  
-   Espaço é alocado para o objeto da superclasse
-
-4. **Inicialização de atributos da superclasse**  
-   Cada atributo é criado e inicializado com:
-    - Valores default, ou
-    - O que for passado explicitamente
-
-5. **Bloco de inicialização da superclasse**  
-   Executado na ordem em que aparece no código
-
-6. **Construtor da superclasse**  
-   É executado
-
-7. **Alocação de memória**  
-   Espaço é alocado para o objeto da subclasse
-
-8. **Inicialização de atributos da subclasse**  
-   Cada atributo é criado e inicializado com:
-    - Valores default, ou
-    - O que for passado explicitamente
-
-9. **Bloco de inicialização da subclasse**  
-   Executado na ordem em que aparece no código
-
-10. **Construtor da subclasse**  
-    É executado
-
+```
 [Voltar ao Índice](#indice)
 
 ---
