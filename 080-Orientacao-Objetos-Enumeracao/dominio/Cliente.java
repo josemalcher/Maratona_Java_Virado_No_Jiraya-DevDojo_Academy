@@ -29,7 +29,7 @@ public class Cliente {
     public String toString() {
         return "Cliente{" +
                 "Nome='" + nome + '\'' +
-                ", TipoCliente=" + tipoCliente +
+                ", dominio.TipoCliente=" + tipoCliente +
                 '}';
     }
 }

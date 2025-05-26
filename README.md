@@ -9044,13 +9044,15 @@ public final class EnderecoImutavel {
 ```java
 package dominio;
 
-public enum TipoCliente {
+public enum dominio.TipoCliente {
     PESSOA_FISCA, PESSOA_JURIDICA
 }
 
 ```
 
 ```java
+import dominio.TipoCliente;
+
 public class Cliente {
     private String nome;
     private TipoCliente tipoCliente;
@@ -9063,6 +9065,8 @@ public class Cliente {
 ```
 
 ```java
+import dominio.TipoCliente;
+
 public class ClienteTeste01 {
     public static void main(String[] args) {
         Cliente cliente1 = new Cliente("Tsubasa", TipoCliente.PESSOA_FISCA);
@@ -9304,7 +9308,290 @@ Lembre-se que o objetivo principal dos `enums` é melhorar a legibilidade e a se
 
 ## <a name="parte84">84 - 081 - Orientação Objetos - Enumeração pt 02 - Construtores e atributos</a>
 
+```java
+package dominio;
 
+public enum TipoCliente {
+    PESSOA_FISICA(1, "Pessoa Fisica"),
+    PESSOA_JURIDICA(2, "Pessoa Juridica");
+
+    private int valor;
+    public String nomeRelatorio;
+
+    TipoCliente(int valor, String nomeRelatorio) {
+        this.valor = valor;
+        this.nomeRelatorio = nomeRelatorio;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public String getNomeRelatorio() {
+        return nomeRelatorio;
+    }
+}
+
+```
+
+```java
+package dominio;
+
+public class Cliente {
+
+    public enum TipoPagamento {
+        DEBITO,
+        CREDITO
+    }
+
+    private String nome;
+    private TipoCliente tipoCliente;
+    private TipoPagamento tipoPagamento;
+
+    public Cliente(String nome, TipoCliente tipoCliente, TipoPagamento tipoPagamento) {
+        this.nome = nome;
+        this.tipoCliente = tipoCliente;
+        this.tipoPagamento = tipoPagamento;
+    }
+
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "nome='" + nome + '\'' +
+                ", tipoCliente=" + tipoCliente +
+                ", tipoClienteValor=" + tipoCliente.getValor() +
+                ", tipoClienteNomeRelatorio=" + tipoCliente.getNomeRelatorio() +
+                ", tipoPagamento=" + tipoPagamento +
+                '}';
+    }
+}
+
+```
+
+--
+
+### RESUMO DA GEMINI
+
+## Construtores e Atributos em Enumerações Java ☕
+
+Continuando o estudo de `enums` em Java, esta parte foca em como adicionar **construtores e atributos** às suas enumerações, tornando-as ainda mais poderosas e capazes de armazenar dados e comportamentos específicos para cada constante.
+
+Quando você define atributos em um `enum`, cada constante da enumeração pode ter seus próprios valores para esses atributos. Esses valores são tipicamente passados através de um **construtor**, que é chamado automaticamente quando cada constante do `enum` é criada.
+
+---
+
+### Pontos Principais: Construtores e Atributos em Enums
+
+1.  **Atributos (Campos)**:
+    * Você pode declarar campos (variáveis de instância) dentro de um `enum`, assim como faria em uma classe normal.
+    * Esses campos geralmente são `private` e `final` para garantir que os dados associados a cada constante do `enum` sejam imutáveis após a criação.
+
+2.  **Construtores**:
+    * Construtores em `enums` são sempre **`private`** (ou package-private, o padrão, mas `private` é a convenção mais forte). Você não pode declarar um construtor de `enum` como `public` ou `protected`.
+    * O construtor é chamado uma vez para cada constante definida no `enum` no momento em que a classe do `enum` é carregada.
+    * Você não chama o construtor do `enum` explicitamente com `new`; o compilador faz isso por você quando encontra as declarações das constantes.
+    * Se você definir um construtor com parâmetros, deverá fornecer os argumentos para esses parâmetros ao declarar cada constante do `enum`.
+
+3.  **Métodos**:
+    * Você pode adicionar métodos ao `enum` para operar sobre os atributos ou fornecer funcionalidades relacionadas às constantes. Por exemplo, métodos `getter` são comuns para acessar os valores dos atributos.
+
+---
+
+### Exemplos de Código
+
+#### Exemplo Básico: Tipo de Cliente com Código
+
+```java
+public enum TipoCliente {
+    PESSOA_FISICA(1, "Pessoa Física"), // Chama o construtor TipoCliente(1, "Pessoa Física")
+    PESSOA_JURIDICA(2, "Pessoa Jurídica"); // Chama o construtor TipoCliente(2, "Pessoa Jurídica")
+
+    private final int codigo;
+    private final String descricao;
+
+    // Construtor é implicitamente private
+    TipoCliente(int codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    // Opcional: sobrescrever toString para uma representação mais amigável
+    @Override
+    public String toString() {
+        return codigo + " - " + descricao;
+    }
+}
+
+public class TesteTipoCliente {
+    public static void main(String[] args) {
+        TipoCliente pf = TipoCliente.PESSOA_FISICA;
+        System.out.println("Tipo: " + pf.name()); // Saída: PESSOA_FISICA
+        System.out.println("Código: " + pf.getCodigo()); // Saída: 1
+        System.out.println("Descrição: " + pf.getDescricao()); // Saída: Pessoa Física
+        System.out.println("Representação: " + pf); // Saída: 1 - Pessoa Física (devido ao toString)
+
+        TipoCliente pj = TipoCliente.PESSOA_JURIDICA;
+        System.out.println("\nTipo: " + pj.name()); // Saída: PESSOA_JURIDICA
+        System.out.println("Código: " + pj.getCodigo()); // Saída: 2
+        System.out.println("Descrição: " + pj.getDescricao()); // Saída: Pessoa Jurídica
+        System.out.println("Representação: " + pj); // Saída: 2 - Pessoa Jurídica
+
+        // Obtendo um enum pelo nome (útil para deserialização ou input de usuário)
+        String tipoInput = "PESSOA_FISICA";
+        TipoCliente tipoEncontrado = TipoCliente.valueOf(tipoInput);
+        System.out.println("\nEncontrado pelo nome: " + tipoEncontrado.getDescricao());
+    }
+}
+```
+
+#### Exemplo Mais Elaborado: Status de Pagamento com Lógica
+
+```java
+public enum StatusPagamento {
+    PENDENTE(1, "Aguardando Pagamento") {
+        @Override
+        public boolean podeCancelar() {
+            return true;
+        }
+        @Override
+        public String proximoPassoPossivel() {
+            return "Realizar pagamento ou cancelar.";
+        }
+    },
+    PAGO(2, "Pagamento Confirmado") {
+        @Override
+        public boolean podeCancelar() {
+            return false; // Não pode cancelar após pago, talvez estornar
+        }
+        @Override
+        public String proximoPassoPossivel() {
+            return "Aguardar envio do produto.";
+        }
+    },
+    CANCELADO(3, "Pagamento Cancelado") {
+        @Override
+        public boolean podeCancelar() {
+            return false;
+        }
+        @Override
+        public String proximoPassoPossivel() {
+            return "Nenhuma ação pendente.";
+        }
+    },
+    ESTORNADO(4, "Pagamento Estornado") {
+        @Override
+        public boolean podeCancelar() {
+            return false;
+        }
+        @Override
+        public String proximoPassoPossivel() {
+            return "Nenhuma ação pendente.";
+        }
+    }; // Ponto e vírgula aqui é OBRIGATÓRIO se houver métodos ou campos após as constantes
+
+    private final int id;
+    private final String textoDisplay;
+
+    // Construtor (private por padrão)
+    StatusPagamento(int id, String textoDisplay) {
+        this.id = id;
+        this.textoDisplay = textoDisplay;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTextoDisplay() {
+        return textoDisplay;
+    }
+
+    // Métodos abstratos para serem implementados por cada constante (corpo específico da constante)
+    public abstract boolean podeCancelar();
+    public abstract String proximoPassoPossivel();
+
+    // Método comum a todos
+    public void imprimirStatusDetalhado() {
+        System.out.println("Status: " + getTextoDisplay() + " (ID: " + getId() + ")");
+        System.out.println("  Pode cancelar? " + (podeCancelar() ? "Sim" : "Não"));
+        System.out.println("  Próximo passo: " + proximoPassoPossivel());
+    }
+}
+
+public class TesteStatusPagamento {
+    public static void main(String[] args) {
+        StatusPagamento status1 = StatusPagamento.PENDENTE;
+        status1.imprimirStatusDetalhado();
+        /*
+        Saída:
+        Status: Aguardando Pagamento (ID: 1)
+          Pode cancelar? Sim
+          Próximo passo: Realizar pagamento ou cancelar.
+        */
+
+        System.out.println("---");
+
+        StatusPagamento status2 = StatusPagamento.PAGO;
+        status2.imprimirStatusDetalhado();
+        /*
+        Saída:
+        Status: Pagamento Confirmado (ID: 2)
+          Pode cancelar? Não
+          Próximo passo: Aguardar envio do produto.
+        */
+    }
+}
+```
+Neste exemplo `StatusPagamento`, cada constante do `enum` não só tem seus próprios valores para `id` e `textoDisplay`, mas também fornece uma implementação específica para os métodos abstratos `podeCancelar()` e `proximoPassoPossivel()`. Isso é chamado de **corpo específico da constante** (constant-specific body).
+
+---
+
+### Melhores Práticas (O que fazer 👍)
+
+1.  **Declare atributos como `private final`**: Isso garante que os dados associados a cada constante sejam imutáveis e encapsulados.
+2.  **Forneça `getters` para os atributos**: Se os atributos precisam ser acessados de fora do `enum`, forneça métodos `public getter`. Evite `setters` para manter a imutabilidade.
+3.  **Mantenha construtores `private`**: Isso é imposto pelo Java para `enums`, mas é uma boa prática reforçar que `enums` não são instanciados como classes normais.
+4.  **Use o ponto e vírgula (`;`) após a lista de constantes se houver membros subsequentes**: Se o seu `enum` tem apenas constantes, o ponto e vírgula é opcional. Mas se você adicionar campos, métodos ou construtores, o ponto e vírgula após a última constante é obrigatório.
+    ```java
+    public enum Opcao {
+        SIM, NAO; // Ponto e vírgula obrigatório aqui se adicionar mais membros
+
+        // Exemplo: um método
+        public boolean isAfirmativo() {
+            return this == SIM;
+        }
+    }
+    ```
+5.  **Sobrescreva `toString()` para representações amigáveis**: Por padrão, `toString()` retorna o nome da constante (ex: "PESSOA_FISICA"). Se uma representação mais legível para o usuário ou para logs for necessária, sobrescreva `toString()`.
+6.  **Use corpos específicos de constante (Constant-Specific Bodies) para comportamento variado**: Se diferentes constantes do `enum` precisam se comportar de maneiras ligeiramente diferentes para o mesmo método, você pode declarar o método (possivelmente abstrato) no `enum` e fazer com que cada constante o sobrescreva. Isso é uma forma poderosa de polimorfismo dentro de um `enum`.
+
+---
+
+### Piores Práticas (O que evitar 👎)
+
+1.  **Atributos mutáveis**: Evite atributos que não sejam `final`, pois isso quebra a ideia de que as constantes do `enum` são, de fato, constantes e imutáveis.
+    ```java
+    // Ruim: atributo mutável
+    public enum Nivel {
+        BAIXO(1), MEDIO(2), ALTO(3);
+        public int valor; // Não final, e público!
+        Nivel(int v) { this.valor = v; }
+    }
+    ```
+2.  **Construtores `public` ou `protected`**: O compilador não permite isso, mas a tentativa indica um mal-entendido de como `enums` são instanciados.
+3.  **Confiar em `ordinal()` quando atributos podem fazer o trabalho**: Se você precisa de um valor numérico ou outro dado associado a uma constante, defina um atributo para isso em vez de depender da ordem de declaração (`ordinal()`).
+4.  **Sobrecarga de responsabilidades**: Não transforme um `enum` em uma classe massiva com inúmeros atributos e métodos complexos que poderiam ser melhor gerenciados por classes dedicadas. `Enums` são para representar um conjunto fixo de constantes relacionadas, com dados e comportamentos associados a *essas constantes*.
+5.  **Esquecer o ponto e vírgula (`;`)** quando necessário: Se o `enum` contém qualquer coisa além das próprias constantes (campos, métodos, construtores), você deve terminar a lista de constantes com um ponto e vírgula. A falta dele causará um erro de compilação.
+
+Ao usar construtores e atributos, os `enums` em Java se tornam uma ferramenta muito expressiva para modelar tipos de dados que representam um conjunto fixo de valores, cada um com suas próprias características e comportamentos.
 
 [Voltar ao Índice](#indice)
 
