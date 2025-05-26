@@ -9600,7 +9600,31 @@ Ao usar construtores e atributos, os `enums` em Java se tornam uma ferramenta mu
 
 ## <a name="parte85">85 - 082 - Orientação Objetos - Enumeração pt 03 - Sobrescrita de métodos</a>
 
+```java
+package dominio;
 
+public enum TipoPagamento {
+    DEBITO{
+        @Override
+        public double calculaDesconto(double valor) {
+            return valor * 0.1;
+
+        }
+    },
+    CREDITO{
+        @Override
+        public double calculaDesconto(double valor) {
+            return valor * 0.5;
+        }
+    };
+    public abstract double calculaDesconto(double valor) ;
+}
+```
+
+```java
+        System.out.println(TipoPagamento.DEBITO.calculaDesconto(100));
+        System.out.println(TipoPagamento.CREDITO.calculaDesconto(100));
+```
 
 [Voltar ao Índice](#indice)
 
