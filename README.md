@@ -8322,7 +8322,193 @@ Este resumo cobre os principais aspectos da sequência de inicialização em Jav
 
 ## <a name="parte79">79 - 076 - Orientação Objetos - Sobrescrita do método toString</a>
 
+# Resumo: Sobrescrita do Método `toString()` em Java
 
+## 📌 Visão Geral
+A aula aborda a importância e implementação da sobrescrita do método `toString()` para:
+- Representação textual significativa de objetos
+- Depuração mais eficiente
+- Saída legível em logs e interfaces
+
+## 📋 Exemplo Básico
+
+### Classe sem `toString()`
+```java
+class Pessoa {
+    String nome;
+    int idade;
+}
+
+// Saída padrão quando impressa: Pessoa@15db9742
+```
+
+### Classe com `toString()` sobrescrito
+```java
+@Override
+public String toString() {
+    return "Pessoa{nome='" + nome + "', idade=" + idade + "}";
+}
+
+// Saída: Pessoa{nome='João', idade=30}
+```
+
+## 🏗️ Exemplo Complexo (Composição de Objetos)
+
+```java
+class Endereco {
+    String rua;
+    int numero;
+    
+    @Override
+    public String toString() {
+        return rua + ", " + numero;
+    }
+}
+
+class Cliente {
+    String nome;
+    Endereco endereco;
+    List<String> telefones;
+    
+    @Override
+    public String toString() {
+        return "Cliente{" +
+               "nome='" + nome + '\'' +
+               ", endereco=" + endereco +
+               ", telefones=" + telefones +
+               '}';
+    }
+}
+
+// Saída: Cliente{nome='Maria', endereco=Av. Java, 123, telefones=[1199999, 1188888]}
+```
+
+## ✅ Melhores Práticas
+
+1. **Inclua todos os campos relevantes**:
+   ```java
+   @Override
+   public String toString() {
+       return "Produto{" +
+              "id=" + id +
+              ", nome='" + nome + '\'' +
+              ", preco=" + preco +
+              '}';
+   }
+   ```
+
+2. **Mantenha formato consistente**:
+    - Escolha um padrão (ex: JSON-style) e mantenha em todas as classes
+
+3. **Use `StringBuilder` para objetos complexos**:
+   ```java
+   @Override
+   public String toString() {
+       StringBuilder sb = new StringBuilder("Pedido{");
+       sb.append("itens=").append(itens);
+       // outros campos
+       return sb.append('}').toString();
+   }
+   ```
+
+4. **Documente o formato**:
+   ```java
+   /**
+    * @return String no formato "Nome(id)", ex: "ProdutoX(123)"
+    */
+   @Override
+   public String toString() { ... }
+   ```
+
+5. **Para coleções, use `Arrays.toString()` ou similar**:
+   ```java
+   "telefones=" + Arrays.toString(telefones)
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Expor dados sensíveis**:
+   ```java
+   @Override
+   public String toString() {
+       return "Usuario{" +
+              "login='" + login + '\'' +
+              ", senha='" + senha + '\'' + // ❌ Perigoso!
+              '}';
+   }
+   ```
+
+2. **Formato inconsistente**:
+   ```java
+   // Na classe A: "Nome: "+nome
+   // Na classe B: "{nome:value}" 
+   ```
+
+3. **Alta complexidade computacional**:
+   ```java
+   @Override
+   public String toString() {
+       return calcularRelatorioComplexo(); // ❌ Pode ser pesado
+   }
+   ```
+
+4. **Quebrar contrato do `toString()`**:
+   ```java
+   @Override
+   public String toString() {
+       return null; // ❌ Nunca retorne null
+   }
+   ```
+
+5. **Depender de locale/formatação**:
+   ```java
+   @Override
+   public String toString() {
+       return "Preço: " + NumberFormat.getCurrencyInstance().format(preco); // ❌ Locale-dependent
+   }
+   ```
+
+## 🔍 Observações Avançadas
+
+1. **Geração automática**:
+    - IDEs geram `toString()` automaticamente:
+      ```java
+      // Eclipse/IntelliJ generation
+      @Override
+      public String toString() {
+          return "Cliente [nome=" + nome + ", idade=" + idade + "]";
+      }
+      ```
+
+2. **Bibliotecas úteis**:
+    - `ToStringBuilder` do Apache Commons:
+      ```java
+      public String toString() {
+          return ToStringBuilder.reflectionToString(this);
+      }
+      ```
+
+3. **Herança com `toString()`**:
+   ```java
+   @Override
+   public String toString() {
+       return super.toString() + " SubClasse{campo=" + campo + "}";
+   }
+   ```
+
+4. **Para enumerações**:
+   ```java
+   @Override
+   public String toString() {
+       return name().toLowerCase(); // Formato customizado
+   }
+   ```
+
+5. **Contrato oficial** (JavaDoc):
+    - Deve retornar "texto representativo e informativo"
+    - Recomendado sobrescrever para todas as classes
+
+Este resumo cobre desde os conceitos básicos até técnicas avançadas de implementação do `toString()`, incluindo melhores práticas e armadilhas comuns, conforme apresentado na aula.
 
 [Voltar ao Índice](#indice)
 
@@ -8331,7 +8517,162 @@ Este resumo cobre os principais aspectos da sequência de inicialização em Jav
 
 ## <a name="parte80">80 - 077 - Orientação Objetos - Modificador final pt 01 - Tipo primitivo</a>
 
+# Resumo: Modificador `final` em Java - Tipos Primitivos
 
+## 📌 Visão Geral
+A aula aborda o uso do modificador `final` com tipos primitivos, que:
+- Transforma a variável em uma constante (valor não pode ser alterado após inicialização)
+- Deve ser inicializada no momento da declaração ou no construtor (para variáveis de instância)
+- Pode melhorar a legibilidade e segurança do código
+
+## 📋 Exemplos Básicos
+
+### 1. Constante primitiva
+```java
+final double PI = 3.14159;  // Deve ser inicializada
+// PI = 3.15;  // ❌ Erro de compilação (não pode reatribuir)
+```
+
+### 2. Parâmetro final
+```java
+void calcular(final int valor) {
+    // valor = 10;  // ❌ Erro (parâmetro final não pode ser modificado)
+    System.out.println(valor * 2);
+}
+```
+
+## 🏗️ Exemplo Complexo (Uso em Contextos Diferentes)
+
+### 1. Bloco de inicialização
+```java
+class Circulo {
+    final double RAIO;
+    
+    {  // Bloco de inicialização
+        RAIO = 10.0;  // OK (antes do construtor)
+    }
+}
+```
+
+### 2. Switch com final
+```java
+final int opcao = 2;
+switch(opcao) {
+    case 1: System.out.println("Opção 1"); break;
+    case 2: System.out.println("Opção 2"); break;  // ✔️ Uso válido
+}
+```
+
+### 3. Final em estruturas de controle
+```java
+for(final int i = 0; i < 5; i++) {  // ❌ i++ viola o final
+    System.out.println(i);
+}
+```
+
+## ✅ Melhores Práticas
+
+1. **Nomes em MAIÚSCULAS** para constantes:
+   ```java
+   final int MAX_TENTATIVAS = 3;
+   ```
+
+2. **Inicialização no construtor** para variáveis de instância:
+   ```java
+   class Pagamento {
+       final double VALOR;
+       
+       Pagamento(double v) {
+           this.VALOR = v;  // OK no construtor
+       }
+   }
+   ```
+
+3. **Use final para parâmetros** quando não devem ser modificados:
+   ```java
+   void processar(final int codigo) { ... }
+   ```
+
+4. **Final + static** para constantes globais:
+   ```java
+   public static final double VELOCIDADE_LUZ = 299792458;
+   ```
+
+5. **Documente o propósito**:
+   ```java
+   /** Tempo máximo em segundos antes do timeout */
+   final int TIMEOUT = 30;
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Reatribuição disfarçada**:
+   ```java
+   final int[] nums = {1, 2, 3};
+   nums[0] = 10;  // ❌ Permitido (mas enganoso)
+   ```
+
+2. **Final sem inicialização** (variáveis locais):
+   ```java
+   final int x;  // ❌ Erro se não for inicializada antes do uso
+   ```
+
+3. **Uso desnecessário** em variáveis efêmeras:
+   ```java
+   for(final int j = 0; j < 10; j++) {  // ❌ j não precisa ser final
+       // ...
+   }
+   ```
+
+4. **Confundir imutabilidade**:
+   ```java
+   final List<String> nomes = new ArrayList<>();
+   nomes.add("Novo");  // ❌ Permitido (aponta para o mesmo objeto)
+   ```
+
+5. **Nomes enganosos**:
+   ```java
+   final int temp = 30;  // ❌ Parece variável, mas é constante
+   ```
+
+## 🔍 Observações Avançadas
+
+1. **Performance**: Variáveis `final` podem ser otimizadas pelo JVM
+
+2. **Thread-safe**: Valores `final` são visíveis para todas threads após construção
+
+3. **Métodos locais**:
+   ```java
+   void metodo() {
+       final int y;  // Pode ser inicializada depois
+       if(condicao) {
+           y = 10;
+       } else {
+           y = 20;
+       }
+   }
+   ```
+
+4. **Lambda expressions**:
+   ```java
+   final int z = 5;
+   Runnable r = () -> System.out.println(z);  // Só funciona com final/effectively final
+   ```
+
+5. **Pattern Matching** (Java 17+):
+   ```java
+   if(obj instanceof final String s) {  // s é final
+       System.out.println(s.toLowerCase());
+   }
+   ```
+
+6. **Record** (Java 16+):
+   ```java
+   record Ponto(final int x, final int y) {}  // Campos já são implicitamente final
+   ```
+
+
+Este resumo cobre desde os usos básicos até aplicações avançadas do `final` com tipos primitivos, incluindo melhores práticas e armadilhas comuns, conforme apresentado na aula.
 
 [Voltar ao Índice](#indice)
 
@@ -8340,6 +8681,165 @@ Este resumo cobre os principais aspectos da sequência de inicialização em Jav
 
 ## <a name="parte81">81 - 078 - Orientação Objetos - Modificador final pt 02 - Tipo referência</a>
 
+# Resumo: Modificador `final` com Tipos Referência em Java
+
+## 📌 Visão Geral
+A aula explora o comportamento do modificador `final` quando aplicado a tipos referência, destacando que:
+- A referência torna-se constante (não pode apontar para outro objeto)
+- O estado do objeto referenciado PODE ser modificado
+- Aplicável a classes, atributos, parâmetros e variáveis locais
+
+## 📋 Exemplos Básicos
+
+### 1. Referência final a objeto mutável
+```java
+final List<String> lista = new ArrayList<>();
+lista.add("Java");  // ✔️ Válido (modificação interna)
+// lista = new LinkedList<>();  // ❌ Erro (reatribuição)
+```
+
+### 2. Parâmetro final
+```java
+void processar(final Pessoa pessoa) {
+    pessoa.setNome("Novo");  // ✔️ Válido
+    // pessoa = new Pessoa();  // ❌ Erro
+}
+```
+
+## 🏗️ Exemplos Complexos
+
+### 1. Padrão de Classe Imutável
+```java
+public final class Endereco {
+    private final String rua;
+    private final int numero;
+    
+    public Endereco(String rua, int numero) {
+        this.rua = rua;
+        this.numero = numero;
+    }
+    
+    // Apenas getters
+}
+```
+
+### 2. Coleção Defensiva
+```java
+public class Time {
+    private final List<Jogador> jogadores;
+    
+    public Time(List<Jogador> jogadores) {
+        this.jogadores = Collections.unmodifiableList(new ArrayList<>(jogadores));
+    }
+    
+    public List<Jogador> getJogadores() {
+        return jogadores; // Lista imutável
+    }
+}
+```
+
+## ✅ Melhores Práticas
+
+1. **Para imutabilidade**:
+   ```java
+   private final List<String> dados = List.of("A", "B"); // Java 9+
+   ```
+
+2. **Documentação clara**:
+   ```java
+   /**
+    * @final A referência não pode mudar, mas o objeto pode ser modificado
+    */
+   private final Configuracao config;
+   ```
+
+3. **Cópia defensiva**:
+   ```java
+   public MinhaClasse(final Map<String, Integer> valores) {
+       this.valores = new HashMap<>(valores);
+   }
+   ```
+
+4. **Classes utilitárias**:
+   ```java
+   public final class MathUtils {
+       private MathUtils() {} // Previne instanciação
+   }
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Expor estado interno**:
+   ```java
+   public final class Caixa {
+       private final List<Item> itens;
+       
+       public List<Item> getItens() {
+           return itens; // ❌ Expõe lista mutável
+       }
+   }
+   ```
+
+2. **Assumir imutabilidade**:
+   ```java
+   final int[] valores = {1, 2, 3};
+   valores[0] = 10; // ❌ Permitido (pode causar bugs)
+   ```
+
+3. **Uso redundante**:
+   ```java
+   public void salvar(final String texto) { // ❌ Desnecessário se não reatribuído
+       arquivo.write(texto);
+   }
+   ```
+
+4. **Vazamento de referência**:
+   ```java
+   public class Exemplo {
+       final int x;
+       
+       public Exemplo() {
+           this.x = 10;
+           registrar(this); // ❌ 'this' vaza antes da inicialização completa
+       }
+   }
+   ```
+
+## 🔍 Técnicas Avançadas
+
+1. **Classes seladas (Java 17+)**:
+   ```java
+   public sealed class Forma permits Circulo, Quadrado {}
+   ```
+
+2. **Records (Java 16+)**:
+   ```java
+   public record Pessoa(String nome, int idade) {} // Campos implicitamente final
+   ```
+
+3. **Métodos final**:
+   ```java
+   public class Pai {
+       public final void metodo() {} // Não pode ser sobrescrito
+   }
+   ```
+
+4. **VarHandle para atomicidade**:
+   ```java
+   private static final VarHandle CONTADOR;
+   static {
+       try {
+           CONTADOR = MethodHandles.lookup().findVarHandle(...);
+       } catch (Exception e) { ... }
+   }
+   ```
+
+5. **Pattern Matching (Java 17+)**:
+   ```java
+   if(obj instanceof final String s) {
+       System.out.println(s.toLowerCase());
+   }
+   ```
 
 
 [Voltar ao Índice](#indice)
@@ -8349,6 +8849,189 @@ Este resumo cobre os principais aspectos da sequência de inicialização em Jav
 
 ## <a name="parte82">82 - 079 - Orientação Objetos - Modificador final pt 03 - Classes e métodos</a>
 
+# Resumo: Modificador `final` em Classes e Métodos Java
+
+## 📌 Visão Geral
+A aula explora o uso do modificador `final` em classes e métodos, destacando que:
+- **Classes final**: Não podem ser estendidas/herdadas
+- **Métodos final**: Não podem ser sobrescritos por subclasses
+- Objetivos principais: segurança, design intencional e otimização
+
+## 📋 Exemplos Básicos
+
+### 1. Classe Final (Não pode ser herdada)
+```java
+public final class String { // Classe core do Java
+    // implementação...
+}
+
+// class MinhaString extends String {} // ❌ Erro de compilação
+```
+
+### 2. Método Final (Não pode ser sobrescrito)
+```java
+class Pagamento {
+    public final void processar() { // Bloqueia sobrescrita
+        System.out.println("Processamento base");
+    }
+}
+
+class PagamentoCartao extends Pagamento {
+    // @Override public void processar() {} // ❌ Erro
+}
+```
+
+## 🏗️ Exemplos Complexos
+
+### 1. Padrão Template Method com final
+```java
+public abstract class TemplateProcessamento {
+    // Método final que define o fluxo
+    public final void executarFluxo() {
+        iniciar();
+        processar(); // Método abstrato
+        finalizar();
+    }
+    
+    protected abstract void processar(); // Hook method
+    
+    private void iniciar() { /* implementação */ }
+    private void finalizar() { /* implementação */ }
+}
+```
+
+### 2. Hierarquia de Classes Imutáveis
+```java
+public final class EnderecoImutavel {
+    private final String rua;
+    private final int numero;
+    
+    public EnderecoImutavel(String rua, int numero) {
+        this.rua = rua;
+        this.numero = numero;
+    }
+    // Apenas getters
+}
+
+// Não pode ser estendida (final)
+```
+
+## ✅ Melhores Práticas
+
+1. **Use final para classes utilitárias**:
+   ```java
+   public final class MathUtils {
+       private MathUtils() {} // Construtor privado
+       public static double calcular(...) { ... }
+   }
+   ```
+
+2. **Documente a intenção**:
+   ```java
+   /**
+    * @final Esta classe não deve ser estendida
+    * pois implementa algoritmo crítico
+    */
+   public final class AlgoritmoSeguro { ... }
+   ```
+
+3. **Combine com sealed classes (Java 17+)**:
+   ```java
+   public sealed class Forma permits Circulo, Quadrado { ... }
+   ```
+
+4. **Para métodos críticos**:
+   ```java
+   public class Autenticador {
+       public final boolean validarCredenciais(...) { ... }
+   }
+   ```
+
+5. **Em frameworks**:
+   ```java
+   public abstract class ServicoBase {
+       public final void iniciar() { ... } // Fluxo fixo
+   }
+   ```
+
+## ❌ Piores Práticas (Evitar)
+
+1. **Usar final sem motivo**:
+   ```java
+   public final class ClasseQualquer {} // ❌ Sem razão clara
+   ```
+
+2. **Impedir extensibilidade útil**:
+   ```java
+   public final class MinhaLista {} // ❌ Pode limitar reuso
+   ```
+
+3. **Métodos final em classes abstratas**:
+   ```java
+   public abstract class Figura {
+       public final void desenhar() { ... } // ❌ Contraditório
+   }
+   ```
+
+4. **Quebrar LSP (Princípio de Substituição)**:
+   ```java
+   class Pai {
+       public final void metodo() { ... }
+   }
+   class Filha extends Pai {
+       // Não pode sobrescrever método necessário
+   }
+   ```
+
+5. **Ignorar alternativas modernas**:
+   ```java
+   // Preferir:
+   public sealed class Animal permits Cachorro, Gato {}
+   // Em vez de:
+   public final class Animal {}
+   ```
+
+## 🔍 Técnicas Avançadas
+
+1. **Records (Java 16+)**:
+   ```java
+   public record Pessoa(String nome, int idade) {} 
+   // Implicitamente final
+   ```
+
+2. **Enums com métodos final**:
+   ```java
+   public enum Nivel {
+       BASIC {
+           @Override final void show() { ... }
+       };
+       abstract void show();
+   }
+   ```
+
+3. **Padrão Strategy com final**:
+   ```java
+   public final class PagamentoCredito implements EstrategiaPagamento {
+       @Override public final void pagar() { ... }
+   }
+   ```
+
+4. **Injeção de Dependência**:
+   ```java
+   @Service
+   public final class ServicoEmail {
+       // Garante que ninguém altere o comportamento
+       public final void enviar(...) { ... }
+   }
+   ```
+
+5. **Classes de Utilidade**:
+   ```java
+   public final class Strings {
+       private Strings() {}
+       public static boolean isBlank(String s) { ... }
+   }
+   ```
 
 
 [Voltar ao Índice](#indice)
@@ -8358,6 +9041,260 @@ Este resumo cobre os principais aspectos da sequência de inicialização em Jav
 
 ## <a name="parte83">83 - 080 - Orientação Objetos - Enumeração pt 01 - Introdução</a>
 
+```java
+package dominio;
+
+public enum TipoCliente {
+    PESSOA_FISCA, PESSOA_JURIDICA
+}
+
+```
+
+```java
+public class Cliente {
+    private String nome;
+    private TipoCliente tipoCliente;
+
+    public Cliente(String nome, TipoCliente tipoCliente) {
+        this.nome = nome;
+        this.tipoCliente = tipoCliente;
+    }
+
+```
+
+```java
+public class ClienteTeste01 {
+    public static void main(String[] args) {
+        Cliente cliente1 = new Cliente("Tsubasa", TipoCliente.PESSOA_FISCA);
+        Cliente cliente2 = new Cliente("Tsubasa", TipoCliente.PESSOA_JURIDICA);
+        Cliente cliente3 = new Cliente("Tsubasa", TipoCliente.PESSOA_FISCA);
+        Cliente cliente4 = new Cliente("Tsubasa", TipoCliente.PESSOA_JURIDICA);
+
+```
+
+---
+
+Resumo GEMINI
+
+## Resumo sobre Enumerações (Enums) em Java ☕
+
+Enumerações em Java (declaradas com a palavra-chave `enum`) são um tipo de dado especial usado para definir um conjunto de **constantes nomeadas**. Elas são muito úteis quando você tem um número fixo de valores que uma variável pode assumir, como dias da semana, naipes de um baralho, ou estados de um pedido.
+
+Em essência, um `enum` é uma **classe especial**. Os valores definidos em um `enum` são **instâncias** dessa classe `enum`. Isso significa que `enums` podem ter construtores, campos (variáveis) e métodos, tornando-os muito mais poderosos do que as constantes estáticas (`public static final`) tradicionais.
+
+---
+
+### Exemplos de Código
+
+#### Exemplo Básico: Dias da Semana
+
+```java
+public enum DiaSemana {
+    DOMINGO,
+    SEGUNDA,
+    TERCA,
+    QUARTA,
+    QUINTA,
+    SEXTA,
+    SABADO
+}
+
+public class TesteEnumBasico {
+    public static void main(String[] args) {
+        DiaSemana hoje = DiaSemana.SEXTA;
+        System.out.println("Hoje é: " + hoje); // Saída: Hoje é: SEXTA
+
+        // Iterando sobre os valores do enum
+        System.out.println("\nDias da semana:");
+        for (DiaSemana dia : DiaSemana.values()) {
+            System.out.println(dia);
+        }
+
+        // Usando enum em um switch
+        switch (hoje) {
+            case SEGUNDA:
+                System.out.println("\nComeço da semana de trabalho.");
+                break;
+            case SEXTA:
+                System.out.println("\nSextou!");
+                break;
+            default:
+                System.out.println("\nUm dia qualquer.");
+        }
+    }
+}
+```
+
+#### Exemplo Complexo: Planetas com Atributos e Métodos
+
+Neste exemplo, cada constante do `enum` `Planeta` terá atributos (massa e raio) e um método para calcular a gravidade superficial.
+
+```java
+public enum Planeta {
+    MERCURIO (3.303e+23, 2.4397e6),
+    VENUS    (4.869e+24, 6.0518e6),
+    TERRA    (5.976e+24, 6.37814e6),
+    MARTE    (6.421e+23, 3.3972e6),
+    JUPITER  (1.9e+27,   7.1492e7),
+    SATURNO  (5.688e+26, 6.0268e7),
+    URANO    (8.686e+25, 2.5559e7),
+    NETUNO   (1.024e+26, 2.4746e7);
+
+    private final double massa;   // em quilogramas
+    private final double raio;    // em metros
+    public static final double G = 6.67300E-11; // Constante gravitacional
+
+    Planeta(double massa, double raio) {
+        this.massa = massa;
+        this.raio = raio;
+    }
+
+    public double getMassa() {
+        return massa;
+    }
+
+    public double getRaio() {
+        return raio;
+    }
+
+    public double gravidadeSuperficial() {
+        return G * massa / (raio * raio);
+    }
+
+    public double pesoSuperficial(double outraMassa) {
+        return outraMassa * gravidadeSuperficial();
+    }
+}
+
+public class TesteEnumComplexo {
+    public static void main(String[] args) {
+        double pesoNaTerra = 75.0; // kg
+
+        for (Planeta p : Planeta.values()) {
+            System.out.printf("Seu peso em %s é %.2f N%n",
+                              p, p.pesoSuperficial(pesoNaTerra));
+            System.out.printf("A gravidade superficial de %s é %.2f m/s^2%n%n",
+                              p, p.gravidadeSuperficial());
+        }
+
+        Planeta meuPlaneta = Planeta.TERRA;
+        System.out.println("Meu planeta: " + meuPlaneta);
+        System.out.println("Massa do meu planeta: " + meuPlaneta.getMassa() + " kg");
+    }
+}
+```
+
+---
+
+### Melhores Práticas (O que fazer 👍)
+
+1.  **Use `enums` em vez de constantes `int` ou `String`**: `Enums` fornecem segurança de tipo (type safety). Com constantes `int`, você pode acidentalmente passar um valor inválido. `Enums` garantem que apenas os valores definidos sejam usados.
+    ```java
+    // Ruim: usando constantes int
+    public static final int ESTADO_PENDENTE = 0;
+    public static final int ESTADO_APROVADO = 1;
+    public static final int ESTADO_REJEITADO = 2;
+    // void processarPedido(int estado) { ... }
+
+    // Bom: usando enum
+    public enum EstadoPedido { PENDENTE, APROVADO, REJEITADO }
+    // void processarPedido(EstadoPedido estado) { ... }
+    ```
+2.  **Nomeie as constantes `enum` em MAIÚSCULAS**: Por convenção, constantes em Java (incluindo valores de `enum`) são nomeadas com todas as letras maiúsculas, com palavras separadas por underscores (`_`).
+    ```java
+    public enum Cor { VERMELHO, VERDE_ESCURO, AZUL_CELESTE }
+    ```
+3.  **Use `enums` em instruções `switch`**: `Enums` funcionam muito bem com `switch`, tornando o código mais legível.
+    ```java
+    Nivel prioridade = Nivel.ALTO;
+    switch (prioridade) {
+        case BAIXO:
+            System.out.println("Prioridade baixa.");
+            break;
+        case MEDIO:
+            System.out.println("Prioridade média.");
+            break;
+        case ALTO:
+            System.out.println("Prioridade alta.");
+            break;
+    }
+    ```
+4.  **Adicione campos e métodos aos `enums` quando necessário**: Como mostrado no exemplo `Planeta`, `enums` podem ter construtores, campos e métodos, permitindo que você associe dados e comportamento a cada constante. O construtor de um `enum` deve ser `private` ou package-private (o padrão).
+5.  **Use `EnumSet` e `EnumMap` para coleções de `enums`**: Se você precisa de um `Set` ou `Map` cujas chaves são `enums`, `EnumSet` e `EnumMap` são implementações altamente otimizadas.
+    ```java
+    import java.util.EnumSet;
+    import java.util.EnumMap;
+    import java.util.Map;
+
+    public enum DiaUtil { SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA }
+
+    // EnumSet
+    EnumSet<DiaUtil> diasDeTrabalho = EnumSet.of(DiaUtil.SEGUNDA, DiaUtil.TERCA, DiaUtil.QUARTA);
+
+    // EnumMap
+    EnumMap<DiaUtil, String> tarefas = new EnumMap<>(DiaUtil.class);
+    tarefas.put(DiaUtil.SEGUNDA, "Reunião de planejamento");
+    ```
+6.  **Implemente interfaces com `enums`**: `Enums` podem implementar interfaces, permitindo que você trate diferentes `enums` de forma polimórfica.
+    ```java
+    public interface Mensageiro {
+        String getMensagemFormatada();
+    }
+
+    public enum TipoNotificacao implements Mensageiro {
+        EMAIL {
+            @Override
+            public String getMensagemFormatada() { return "Email: "; }
+        },
+        SMS {
+            @Override
+            public String getMensagemFormatada() { return "SMS: "; }
+        };
+    }
+    ```
+7.  **Prefira `==` para comparar `enums`**: Como `enums` são instâncias únicas (singletons), você pode usar o operador `==` para compará-los com segurança e eficiência. `equals()` também funciona e faz a mesma coisa para `enums`.
+    ```java
+    DiaSemana dia1 = DiaSemana.SEGUNDA;
+    DiaSemana dia2 = DiaSemana.SEGUNDA;
+    if (dia1 == dia2) { // true
+        System.out.println("São o mesmo dia.");
+    }
+    ```
+
+---
+
+### Piores Práticas (O que evitar 👎)
+
+1.  **Não use `ordinal()` para lógica de negócios**: O método `ordinal()` retorna a posição de uma constante `enum` em sua declaração (começando em 0). Confiar nesse valor é perigoso, pois se a ordem das constantes mudar, seu código quebrará. Se precisar de um valor associado, adicione um campo ao `enum`.
+    ```java
+    public enum Prioridade {
+        BAIXA, // ordinal() == 0
+        MEDIA, // ordinal() == 1
+        ALTA   // ordinal() == 2
+    }
+
+    // Ruim:
+    // if (prioridade.ordinal() == 0) { ... }
+
+    // Bom (se precisar de um valor numérico associado):
+    public enum PrioridadeComValor {
+        BAIXA(1),
+        MEDIA(5),
+        ALTA(10);
+
+        private final int valor;
+        PrioridadeComValor(int valor) { this.valor = valor; }
+        public int getValor() { return valor; }
+    }
+    // if (prioridade.getValor() == 1) { ... }
+    ```
+2.  **Evite `enums` muito grandes ou com responsabilidades demais**: Se um `enum` começa a ficar muito complexo, com muitos métodos ou lógica que não está diretamente relacionada às suas constantes, pode ser um sinal de que você precisa refatorar para classes separadas.
+3.  **Não tente estender um `enum`**: `Enums` implicitamente herdam de `java.lang.Enum` e não podem herdar de outra classe. (Eles podem, no entanto, implementar interfaces).
+4.  **Evite expor construtores públicos**: Construtores de `enum` devem ser `private` (ou package-private). O compilador os chama automaticamente para criar as instâncias das constantes definidas. Você não deve instanciar `enums` com `new`.
+5.  **Cuidado ao serializar `enums` que mudam frequentemente**: Se você serializa um `enum` e depois adiciona, remove ou reordena constantes, pode ter problemas de desserialização. Usar nomes (`toString()`) para persistência em vez de ordinais pode ser mais robusto, mas ainda requer cuidado. Se os valores associados (como IDs para banco de dados) são importantes, defina-os explicitamente.
+6.  **Não use `enums` para substituir qualquer conjunto de constantes**: Se as "constantes" podem mudar dinamicamente ou se há um número ilimitado delas, um `enum` não é a escolha apropriada. `Enums` são para conjuntos *fixos* de valores conhecidos em tempo de compilação.
+
+Lembre-se que o objetivo principal dos `enums` é melhorar a legibilidade e a segurança do tipo do seu código, representando um conjunto fixo de constantes de forma clara e robusta.
 
 
 [Voltar ao Índice](#indice)
