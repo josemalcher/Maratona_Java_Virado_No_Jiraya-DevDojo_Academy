@@ -9875,6 +9875,280 @@ public enum TipoCliente {
 
 ### Resumo GEMINI
 
+Entendido! O tema agora é "Busca por atributos" em `enums` Java. Isso é super útil quando você tem um `enum` com atributos e precisa encontrar uma constante específica baseada no valor de um desses atributos (por exemplo, obter um `StatusPedido` a partir de um código numérico que veio de um banco de dados ou de uma API).
+
+A ideia principal é criar um método estático dentro do seu `enum` que permita essa busca.
+
+---
+## Busca por Atributos em Enumerações Java 🔎
+
+Quando suas enumerações Java possuem atributos, frequentemente surge a necessidade de obter uma constante específica do `enum` com base no valor de um desses atributos. Por exemplo, você pode ter um `enum` `StatusPedido` com um atributo `codigo`, e precisar encontrar o `StatusPedido` que corresponde a um `codigo` recebido de uma fonte externa.
+
+A abordagem mais comum e recomendada é implementar um **método estático** dentro do próprio `enum` que itere sobre as constantes (usando o método `values()`) e compare o atributo desejado. Para otimizar buscas em `enums` com muitas constantes, pode-se usar um `Map` estático para um lookup mais rápido.
+
+---
+
+### Pontos Principais: Busca por Atributos
+
+1.  **Necessidade**: Surge quando você tem um valor (ex: um ID, um código, uma string descritiva) e precisa encontrar a constante do `enum` que possui esse valor em um de seus atributos.
+2.  **Método `values()`**: O método `values()`, implicitamente disponível em todos os `enums`, retorna um array contendo todas as constantes do `enum` na ordem em que foram declaradas. Este array pode ser iterado para realizar a busca.
+3.  **Método Estático de Busca**: É uma convenção criar um método `public static` (por exemplo, `getByCodigo(int codigo)`, `fromString(String texto)`, etc.) dentro do `enum` para encapsular a lógica de busca.
+4.  **Tratamento de Não Encontrado**: O método de busca deve definir como lidar com casos onde nenhuma constante corresponde ao valor fornecido (retornar `null`, lançar uma exceção como `IllegalArgumentException`, ou retornar um valor padrão).
+5.  **Otimização com `Map` (para `enums` grandes)**: Se o `enum` tiver muitas constantes e a performance da busca for crítica, pode-se inicializar um `Map` estático no `enum` que mapeia o valor do atributo para a constante. Isso oferece uma busca O(1).
+
+---
+
+### Exemplos de Código
+
+#### Exemplo Básico: Buscando Tipo de Pagamento por Código
+
+```java
+public enum TipoPagamento {
+    BOLETO(1, "Boleto Bancário"),
+    CARTAO_CREDITO(2, "Cartão de Crédito"),
+    PIX(3, "Pagamento Instantâneo (PIX)"),
+    TRANSFERENCIA(4, "Transferência Bancária");
+
+    private final int codigo;
+    private final String descricao;
+
+    TipoPagamento(int codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    // Método estático para buscar por código
+    public static TipoPagamento getByCodigo(int codigo) {
+        for (TipoPagamento tipo : values()) { // Itera sobre todas as constantes
+            if (tipo.getCodigo() == codigo) {
+                return tipo; // Retorna a constante encontrada
+            }
+        }
+        // Lança uma exceção se o código não for encontrado
+        throw new IllegalArgumentException("Código de tipo de pagamento inválido: " + codigo);
+        // Alternativamente, poderia retornar null:
+        // return null;
+    }
+
+    @Override
+    public String toString() {
+        return descricao;
+    }
+}
+
+public class TesteBuscaEnum {
+    public static void main(String[] args) {
+        int codigoRecebido = 3; // Exemplo de código vindo de uma API, banco, etc.
+
+        try {
+            TipoPagamento tipo = TipoPagamento.getByCodigo(codigoRecebido);
+            System.out.println("Código " + codigoRecebido + " corresponde a: " + tipo);
+            // Saída: Código 3 corresponde a: Pagamento Instantâneo (PIX)
+
+            TipoPagamento tipoInexistente = TipoPagamento.getByCodigo(99); // Código inválido
+            System.out.println(tipoInexistente);
+
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            // Saída: Código de tipo de pagamento inválido: 99
+        }
+
+        // Exemplo retornando null (se o método getByCodigo fosse alterado)
+        // TipoPagamento tipo2 = TipoPagamento.getByCodigo(99);
+        // if (tipo2 == null) {
+        //     System.out.println("Tipo de pagamento com código 99 não encontrado.");
+        // }
+    }
+}
+```
+
+#### Exemplo Otimizado com `Map` Estático: Código de Moeda
+
+Para `enums` com um número maior de constantes, ou quando a performance da busca é crítica.
+
+```java
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Optional; // Para um retorno mais elegante de valor opcional
+
+public enum Moeda {
+    BRL("BRL", "Real Brasileiro", "R$"),
+    USD("USD", "Dólar Americano", "$"),
+    EUR("EUR", "Euro", "€"),
+    GBP("GBP", "Libra Esterlina", "£"),
+    JPY("JPY", "Iene Japonês", "¥");
+    // ... imagine muitas outras moedas
+
+    private final String codigoISO;
+    private final String nome;
+    private final String simbolo;
+
+    // Mapa estático para lookup rápido pelo códigoISO
+    private static final Map<String, Moeda> lookupPorCodigoISO = new HashMap<>();
+
+    // Bloco estático para popular o mapa quando o enum é carregado
+    static {
+        for (Moeda m : values()) {
+            lookupPorCodigoISO.put(m.getCodigoISO(), m);
+        }
+    }
+
+    Moeda(String codigoISO, String nome, String simbolo) {
+        this.codigoISO = codigoISO;
+        this.nome = nome;
+        this.simbolo = simbolo;
+    }
+
+    public String getCodigoISO() {
+        return codigoISO;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getSimbolo() {
+        return simbolo;
+    }
+
+    // Método de busca usando o Map (O(1) em média)
+    public static Moeda getByCodigoISO(String codigoISO) {
+        Moeda moeda = lookupPorCodigoISO.get(codigoISO.toUpperCase());
+        if (moeda == null) {
+            throw new IllegalArgumentException("Código ISO de moeda inválido: " + codigoISO);
+        }
+        return moeda;
+    }
+
+    // Alternativa usando Optional para evitar exceções ou null
+    public static Optional<Moeda> findByCodigoISO(String codigoISO) {
+        return Optional.ofNullable(lookupPorCodigoISO.get(codigoISO.toUpperCase()));
+    }
+
+    @Override
+    public String toString() {
+        return nome + " (" + simbolo + ")";
+    }
+}
+
+public class TesteBuscaMoeda {
+    public static void main(String[] args) {
+        String codigo = "EUR";
+        Moeda euro = Moeda.getByCodigoISO(codigo);
+        System.out.println("Moeda encontrada: " + euro + ", Símbolo: " + euro.getSimbolo());
+        // Saída: Moeda encontrada: Euro (€), Símbolo: €
+
+        Optional<Moeda> ieneOpt = Moeda.findByCodigoISO("JPY");
+        ieneOpt.ifPresent(moeda -> System.out.println("Moeda (Optional): " + moeda.getNome()));
+        // Saída: Moeda (Optional): Iene Japonês
+
+        Optional<Moeda> inexistenteOpt = Moeda.findByCodigoISO("XYZ");
+        if (inexistenteOpt.isEmpty()) {
+            System.out.println("Moeda XYZ não encontrada via Optional.");
+            // Saída: Moeda XYZ não encontrada via Optional.
+        }
+
+        try {
+            Moeda.getByCodigoISO("ABC");
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            // Saída: Código ISO de moeda inválido: ABC
+        }
+    }
+}
+```
+
+---
+
+### Melhores Práticas (O que fazer 👍)
+
+1.  **Crie métodos estáticos de busca nomeados claramente**: Nomes como `getByCodigo()`, `fromValor()`, `valueOfLabel()` são mais descritivos do que um `valueOf()` sobrecarregado (que já existe para buscar pelo nome da constante).
+2.  **Seja consistente no tratamento de não encontrados**: Escolha uma estratégia (lançar exceção, retornar `null`, ou retornar `Optional`) e aplique-a consistentemente. Lançar `IllegalArgumentException` é comum se o valor de entrada *deveria* corresponder a uma constante. Retornar `Optional<MeuEnum>` (Java 8+) é uma forma moderna e segura de lidar com valores que podem não existir.
+3.  **Use um `Map` estático para `enums` grandes ou buscas frequentes**: Para melhorar a performance, pré-calcule um `Map` que mapeia o atributo de busca para a constante do `enum`. Isso é feito em um bloco de inicialização estático.
+4.  **Torne os atributos do `enum` `final`**: Isso garante que os valores pelos quais você está buscando não mudem, mantendo a consistência do `Map` de lookup, se usado.
+5.  **Considere a sensibilidade a maiúsculas/minúsculas (case sensitivity)**: Se estiver buscando por um atributo `String` (como um código ou descrição), decida se a busca deve ser case-sensitive ou não, e normalize a entrada e/ou os valores armazenados no `Map` (ex: usando `toUpperCase()` ou `toLowerCase()`).
+
+---
+
+### Piores Práticas (O que evitar 👎)
+
+1.  **Expor a lógica de iteração fora do `enum`**: Clientes do `enum` não deveriam ter que escrever o loop `for (MeuEnum e : MeuEnum.values())` repetidamente. Encapsule essa lógica dentro de um método estático no próprio `enum`.
+2.  **Depender de `ordinal()` para busca**: O `ordinal()` representa a posição de declaração e é frágil. Se a ordem mudar, a busca baseada em `ordinal()` quebrará. Sempre use um atributo explícito para a busca.
+3.  **Modificar o `Map` de lookup após a inicialização**: Se você usar um `Map` estático para lookup, ele deve ser populado uma vez no bloco estático e depois tratado como imutável.
+4.  **Não tratar o caso de valor não encontrado**: Se o método de busca simplesmente retornar `null` sem uma documentação clara ou se o código cliente não verificar o `null`, isso pode levar a `NullPointerExceptions`.
+5.  **Performance ruim com `enums` muito grandes e buscas lineares frequentes**: Se um `enum` tem centenas de constantes e você está buscando por atributo em um loop `for` muitas vezes em uma seção crítica de performance, a inicialização de um `Map` estático é uma otimização importante a ser considerada.
+6.  **Nomes de método de busca genéricos ou confusos**: Um método chamado `get(Object value)` pode ser ambíguo se o `enum` tiver múltiplos atributos pelos quais se poderia buscar.
+
+Ao implementar métodos de busca por atributos, seus `enums` se tornam mais fáceis de usar e integrar com outras partes do sistema que podem não conhecer as constantes do `enum` diretamente, mas sim seus valores de atributo.
+
+---
+
+**Sim, para os cenários que os exemplos dados ilustram, usar `enum` da maneira como foi mostrado é geralmente considerado uma ótima prática em Java e, em muitos casos, a melhor maneira de tratar esses dados.**
+
+Vamos recapitular o porquê e depois discutir quando alternativas podem ser mais adequadas:
+
+### Por que `enum` é bom para esses casos?
+
+1.  **Segurança de Tipo (Type Safety)**: `Enum` garante que você só pode usar os valores definidos. Você não pode acidentalmente passar um inteiro ou string inválido, como aconteceria com constantes `public static final int` ou `String`. Isso elimina uma classe inteira de bugs em tempo de compilação.
+2.  **Conjunto Fixo e Conhecido**: `Enums` são ideais quando você tem um número limitado e bem definido de constantes que são conhecidas em tempo de compilação (ex: dias da semana, status de um pedido, tipos de pagamento, operações matemáticas fixas).
+3.  **Legibilidade e Manutenibilidade**: O código fica mais claro e fácil de entender. `StatusPedido.APROVADO` é muito mais expressivo do que `pedido.setStatus(1)`.
+4.  **Capacidade de Adicionar Atributos e Comportamento**:
+    * **Atributos**: Permitem que cada constante do `enum` carregue dados específicos (ex: `TipoPagamento.BOLETO` com `codigo = 1` e `descricao = "Boleto Bancário"`).
+    * **Construtores**: Gerenciam a inicialização desses atributos.
+    * **Métodos**: Permitem que cada constante tenha seu próprio comportamento ou que o `enum` como um todo forneça funcionalidades úteis (ex: `Operacao.SOMA.executar(a, b)` ou `TipoPagamento.getByCodigo(int codigo)`). A sobrescrita de métodos para comportamento específico da constante é um recurso poderoso.
+5.  **Integração com a Linguagem**:
+    * Funcionam bem em instruções `switch`.
+    * `EnumSet` e `EnumMap` são coleções altamente otimizadas para `enums`.
+    * São naturalmente serializáveis (com ressalvas se a estrutura do `enum` mudar).
+
+### Quando `enum` é a melhor escolha (como nos exemplos)?
+
+* **Representar estados finitos**: Status de um pedido, níveis de prioridade, modos de operação.
+* **Representar um conjunto fixo de opções**: Tipos de documento, categorias de produtos (se forem fixas), dias da semana, naipes de baralho.
+* **Implementar o padrão Strategy de forma simples**: Como no exemplo de `Operacao`, onde cada constante implementava um método `executar` de forma diferente.
+* **Substituir "magic numbers" ou constantes de string**: Para códigos de erro, tipos de mensagem, etc., onde cada valor tem um significado específico.
+* **Facilitar buscas seguras**: O método `getByAtributo()` que discutimos é um exemplo de como `enums` podem fornecer uma maneira robusta e segura de converter dados externos (como um ID de banco de dados) para um tipo seguro em Java.
+
+### Quando considerar alternativas ou abordagens diferentes?
+
+Apesar de todas as vantagens, existem cenários onde `enums` podem não ser a melhor solução, ou onde seu uso excessivo pode complicar as coisas:
+
+1.  **Dados Dinâmicos ou Carregados do Banco de Dados**:
+    * Se o conjunto de "constantes" não é fixo e precisa ser carregado de um banco de dados, arquivo de configuração, ou pode ser alterado pelo usuário em tempo de execução, `enums` não são adequados porque são definidos em tempo de compilação.
+    * **Alternativa**: Use classes normais (POJOs) e carregue instâncias a partir do banco (ex: uma tabela de "Tipos de Cliente" que pode ser editada). Um padrão Factory ou um Service Layer podem ser usados para buscar esses objetos.
+
+2.  **Número Muito Grande de "Constantes"**:
+    * Se você tem milhares de "constantes" potenciais, um `enum` pode se tornar pesado, pois todas as instâncias são carregadas na memória quando a classe do `enum` é inicializada.
+    * **Alternativa**: Novamente, uma tabela de banco de dados com busca sob demanda pode ser mais eficiente.
+
+3.  **Necessidade de Herança Complexa**:
+    * `Enums` implicitamente herdam de `java.lang.Enum` e não podem herdar de outra classe. Eles podem implementar interfaces, o que é muito útil, mas se você precisa de uma hierarquia de classes com estado e comportamento herdados de uma superclasse que não seja `Enum`, então classes regulares são o caminho.
+
+4.  **Lógica Excessivamente Complexa nos Enums**:
+    * Se os métodos dentro do seu `enum` (especialmente os específicos de cada constante) começam a ficar muito grandes e complexos, manipulando muitas dependências ou lógica de negócios extensa, pode ser um sinal de que o `enum` está assumindo responsabilidades demais.
+    * **Alternativa**: O `enum` ainda pode ser usado para representar os diferentes tipos ou estratégias, mas a lógica complexa pode ser delegada para classes separadas (padrão Strategy mais explícito, onde o `enum` apenas aponta para a instância da estratégia correta).
+
+5.  **"Constantes" que são mais Entidades do Domínio**:
+    * Se os itens que você está tentando modelar têm um ciclo de vida próprio, relacionamentos complexos com outras entidades, ou precisam ser gerenciados por um ORM de forma mais completa, eles provavelmente são mais "entidades" do que "constantes" e devem ser modelados como classes Java normais.
+
+### Conclusão
+
+**Para os exemplos que vimos (como `TipoPagamento`, `Operacao`, `StatusPedido`, `DiaDaSemana` com atributos e métodos de busca/comportamento), `enums` são, sim, uma abordagem excelente e recomendada em Java.** Eles oferecem uma combinação poderosa de segurança de tipo, clareza e capacidade de encapsular dados e comportamento.
+
+A chave é reconhecer a natureza dos dados que você está modelando:
+
+* **É um conjunto pequeno, finito e fixo de valores conceituais?** `Enum` é provavelmente o ideal.
+* **Os valores podem mudar, são muitos, vêm de uma fonte externa dinâmica, ou precisam de uma estrutura de herança complexa?** Classes regulares, possivelmente com dados de um banco, são uma escolha melhor.
+
+É ótimo que você esteja fazendo essa pergunta, pois entender as nuances e os limites de cada ferramenta é fundamental para se tornar um bom desenvolvedor! Os `enums` em Java são muito mais poderosos do que em algumas outras linguagens onde são apenas apelidos para inteiros; em Java, eles são verdadeiras classes.
 
 [Voltar ao Índice](#indice)
 
