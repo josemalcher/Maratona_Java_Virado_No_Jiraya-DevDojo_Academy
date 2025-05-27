@@ -9626,6 +9626,210 @@ public enum TipoPagamento {
         System.out.println(TipoPagamento.CREDITO.calculaDesconto(100));
 ```
 
+---
+
+### RESUMO GEMINI
+
+## Sobrescrita de Métodos em Enumerações Java ☕
+
+A capacidade de **sobrescrever métodos** em `enums` em Java adiciona uma camada significativa de flexibilidade e poder, permitindo que cada constante da enumeração tenha comportamentos específicos. Isso é particularmente útil quando diferentes constantes precisam reagir de maneiras distintas a uma mesma chamada de método.
+
+Existem duas formas principais de sobrescrita de métodos em `enums`:
+
+1.  **Sobrescrever métodos da classe `java.lang.Enum` (ou `Object`)**: O mais comum é sobrescrever o método `toString()` para fornecer uma representação textual mais amigável da constante do `enum`.
+2.  **Corpos de Método Específicos da Constante (Constant-Specific Method Bodies)**: Você pode declarar um método (concreto ou abstrato) no `enum` e, em seguida, fornecer uma implementação diferente para esse método dentro de cada constante específica. Isso permite um comportamento polimórfico dentro do próprio `enum`.
+
+---
+
+### Pontos Principais: Sobrescrita de Métodos em Enums
+
+* **Sobrescrevendo `toString()`**: Por padrão, `toString()` retorna o nome da constante como declarado (ex: `SEGUNDA_FEIRA`). Você pode sobrescrevê-lo para retornar algo mais descritivo ou formatado.
+* **Métodos Abstratos no Enum**: Você pode declarar métodos abstratos dentro do seu `enum`. Se fizer isso, cada constante do `enum` **deve** fornecer uma implementação para esses métodos abstratos. Isso força cada constante a definir seu próprio comportamento.
+* **Métodos Concretos com Implementação Específica da Constante**: Você pode ter um método concreto no `enum` com uma implementação padrão e, opcionalmente, sobrescrevê-lo para constantes específicas que necessitem de um comportamento diferente.
+* **Sintaxe**: Para fornecer uma implementação específica da constante, você abre chaves `{}` após a declaração da constante e implementa o método ali. É necessário um ponto e vírgula (`;`) após a última constante se o `enum` contiver campos, métodos ou construtores adicionais.
+
+---
+
+### Exemplos de Código
+
+#### Exemplo Básico: Sobrescrevendo `toString()`
+
+```java
+public enum DiaDaSemana {
+    DOMINGO("Domingo"),
+    SEGUNDA("Segunda-feira"),
+    TERCA("Terça-feira"),
+    QUARTA("Quarta-feira"),
+    QUINTA("Quinta-feira"),
+    SEXTA("Sexta-feira"),
+    SABADO("Sábado");
+
+    private final String nomeFormatado;
+
+    DiaDaSemana(String nomeFormatado) {
+        this.nomeFormatado = nomeFormatado;
+    }
+
+    // Getter para o nome formatado (opcional, dependendo da necessidade)
+    public String getNomeFormatado() {
+        return nomeFormatado;
+    }
+
+    // Sobrescrevendo toString() para retornar o nomeFormatado
+    @Override
+    public String toString() {
+        return nomeFormatado;
+    }
+}
+
+public class TesteToStringEnum {
+    public static void main(String[] args) {
+        DiaDaSemana hoje = DiaDaSemana.SEXTA;
+        System.out.println("Hoje é: " + hoje); // Saída: Hoje é: Sexta-feira
+        System.out.println("Nome original da constante: " + hoje.name()); // Saída: Nome original da constante: SEXTA
+        System.out.println("Nome formatado (via getter): " + hoje.getNomeFormatado()); // Saída: Nome formatado (via getter): Sexta-feira
+    }
+}
+```
+
+#### Exemplo Complexo: Operações Matemáticas com Implementações Específicas da Constante
+
+Neste exemplo, cada constante do `enum` `Operacao` representa uma operação matemática e implementa um método abstrato `executar`.
+
+```java
+public enum Operacao {
+    SOMA {
+        @Override
+        public double executar(double x, double y) {
+            return x + y;
+        }
+        @Override
+        public String getSimbolo() {
+            return "+";
+        }
+    },
+    SUBTRACAO {
+        @Override
+        public double executar(double x, double y) {
+            return x - y;
+        }
+        @Override
+        public String getSimbolo() {
+            return "-";
+        }
+    },
+    MULTIPLICACAO {
+        @Override
+        public double executar(double x, double y) {
+            return x * y;
+        }
+        @Override
+        public String getSimbolo() {
+            return "*";
+        }
+    },
+    DIVISAO {
+        @Override
+        public double executar(double x, double y) {
+            if (y == 0) {
+                throw new ArithmeticException("Divisão por zero!");
+            }
+            return x / y;
+        }
+        @Override
+        public String getSimbolo() {
+            return "/";
+        }
+    }; // Ponto e vírgula obrigatório aqui
+
+    // Método abstrato que cada constante deve implementar
+    public abstract double executar(double x, double y);
+    public abstract String getSimbolo(); // Outro método abstrato para o símbolo da operação
+
+    // Método concreto que pode usar os métodos específicos da constante
+    public void exibirCalculo(double x, double y) {
+        try {
+            System.out.printf("%.2f %s %.2f = %.2f%n", x, getSimbolo(), y, executar(x, y));
+        } catch (ArithmeticException e) {
+            System.err.println("Erro ao calcular " + x + " " + getSimbolo() + " " + y + ": " + e.getMessage());
+        }
+    }
+}
+
+public class TesteOperacaoEnum {
+    public static void main(String[] args) {
+        double x = 10.0;
+        double y = 5.0;
+
+        Operacao.SOMA.exibirCalculo(x, y);         // Saída: 10.00 + 5.00 = 15.00
+        Operacao.SUBTRACAO.exibirCalculo(x, y);    // Saída: 10.00 - 5.00 = 5.00
+        Operacao.MULTIPLICACAO.exibirCalculo(x, y); // Saída: 10.00 * 5.00 = 50.00
+        Operacao.DIVISAO.exibirCalculo(x, y);      // Saída: 10.00 / 5.00 = 2.00
+        Operacao.DIVISAO.exibirCalculo(x, 0);      // Saída: Erro ao calcular 10.0 / 0.0: Divisão por zero!
+
+        System.out.println("\nIterando e executando:");
+        for (Operacao op : Operacao.values()) {
+            System.out.printf("Resultado de 8 %s 2: %.2f%n", op.getSimbolo(), op.executar(8, 2));
+        }
+    }
+}
+```
+
+---
+
+### Melhores Práticas (O que fazer 👍)
+
+1.  **Sobrescreva `toString()` para clareza**: Se a representação padrão do nome da constante não for ideal para logs ou interface do usuário, forneça uma sobrescrita de `toString()`.
+2.  **Use métodos abstratos para forçar implementações específicas**: Se cada constante *deve* ter um comportamento único para um determinado método, declare o método como `abstract` no `enum`. Isso garante que todas as constantes forneçam sua própria lógica.
+3.  **Utilize corpos específicos da constante para variar comportamento**: Esta é uma maneira elegante de implementar o padrão Strategy ou State dentro de um `enum`. Cada constante se torna uma "estratégia" ou "estado" com seu próprio comportamento.
+4.  **Mantenha a lógica coesa**: A lógica dentro dos métodos específicos da constante deve estar relacionada à responsabilidade daquela constante. Se ficar muito complexa, pode ser um sinal de que o `enum` está fazendo demais.
+5.  **Ponto e vírgula obrigatório**: Lembre-se do ponto e vírgula (`;`) após a última declaração de constante se o `enum` contiver quaisquer membros (campos, métodos, construtores, ou corpos específicos da constante).
+6.  **Combine com atributos**: Atributos podem ser usados em conjunto com métodos sobrescritos para fornecer dados que influenciam o comportamento específico da constante.
+
+---
+
+### Piores Práticas (O que evitar 👎)
+
+1.  **Sobrescrita excessiva e desnecessária**: Não sobrescreva métodos apenas por sobrescrever. Se o comportamento padrão (herdado de `Enum` ou `Object`) é suficiente, ou se um método concreto no `enum` atende a todas as constantes, não há necessidade de implementações específicas.
+2.  **Lógica muito complexa dentro de corpos específicos de constante**: Se a implementação de um método para uma constante se torna muito longa ou envolve muitas dependências, pode ser um indicativo de que essa lógica deveria estar em uma classe separada, e o `enum` poderia delegar a ela. O objetivo é manter o `enum` coeso.
+3.  **Ignorar a necessidade de métodos abstratos**: Se você se encontrar verificando qual é a constante atual com `if/else` ou `switch` dentro de um método do `enum` para então executar lógicas diferentes, provavelmente você deveria estar usando um método abstrato (ou um método concreto com sobrescritas específicas da constante).
+    ```java
+    // Ruim: Usar switch dentro de um método do enum
+    public enum TipoArquivo {
+        TEXTO, BINARIO, IMAGEM;
+
+        public String getDescricao() {
+            switch (this) { // Evite isso dentro do enum!
+                case TEXTO: return "Arquivo de texto simples";
+                case BINARIO: return "Arquivo de dados binários";
+                case IMAGEM: return "Arquivo de imagem";
+                default: throw new AssertionError();
+            }
+        }
+    }
+
+    // Bom: Usar método abstrato ou sobrescrita
+    public enum TipoArquivoMelhorado {
+        TEXTO {
+            @Override
+            public String getDescricao() { return "Arquivo de texto simples"; }
+        },
+        BINARIO {
+            @Override
+            public String getDescricao() { return "Arquivo de dados binários"; }
+        },
+        IMAGEM {
+            @Override
+            public String getDescricao() { return "Arquivo de imagem"; }
+        };
+        public abstract String getDescricao();
+    }
+    ```
+4.  **Esquecer o ponto e vírgula (`;`)**: Um erro comum que leva a erros de compilação quando se adiciona qualquer membro após as constantes do `enum`.
+5.  **Tentar sobrescrever métodos `final` da classe `Enum`**: Métodos como `ordinal()`, `name()`, `compareTo()`, `equals()`, `hashCode()`, e `getDeclaringClass()` são `final` em `java.lang.Enum` e não podem ser sobrescritos (exceto `toString()`, que é de `Object`).
+
+A sobrescrita de métodos, especialmente com corpos específicos da constante, transforma `enums` de simples listas de nomes em tipos de dados altamente especializados e comportamentais, promovendo um código mais limpo e orientado a objetos.
+
 [Voltar ao Índice](#indice)
 
 ---
@@ -9633,6 +9837,43 @@ public enum TipoPagamento {
 
 ## <a name="parte86">86 - 083 - Orientação Objetos - Enumeração pt 04 - Busca por atributos</a>
 
+```java
+package dominio;
+
+public enum TipoCliente {
+    PESSOA_FISICA(1, "Pessoa Fisica"),
+    PESSOA_JURIDICA(2, "Pessoa Juridica");
+
+    private int valor;
+    public String nomeRelatorio;
+
+    TipoCliente(int valor, String nomeRelatorio) {
+        this.valor = valor;
+        this.nomeRelatorio = nomeRelatorio;
+    }
+
+    public static TipoCliente tipoClientePorNomeRelatorio(String nomeRelatorio) {
+        for (TipoCliente tipoCliente : values()) {
+            if (tipoCliente.getNomeRelatorio().equals(nomeRelatorio)) {
+                return tipoCliente;
+            }
+        }
+        return null;
+```
+
+```java
+        TipoCliente tipoCliente1 = TipoCliente.valueOf("PESSOA_FISICA");
+        System.out.println(tipoCliente1);
+
+        TipoCliente tipoCliente2 = TipoCliente.tipoClientePorNomeRelatorio("PESSOA_FISICA");
+        System.out.println(tipoCliente2);
+
+```
+
+
+--- 
+
+### Resumo GEMINI
 
 
 [Voltar ao Índice](#indice)
