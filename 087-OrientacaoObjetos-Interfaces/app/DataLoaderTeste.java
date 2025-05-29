@@ -8,8 +8,14 @@ public class DataLoaderTeste {
 
         DataBaseLoader dataBaseLoader = new DataBaseLoader();
         dataBaseLoader.load();
+        dataBaseLoader.remove();
+        dataBaseLoader.checkPermission();
 
         FileLoader fileLoader = new FileLoader();
         fileLoader.load();
+        fileLoader.remove();
+        fileLoader.checkPermission();
+
+
     }
 }

@@ -10540,7 +10540,15 @@ public class DataBaseLoader implements DateLoader{
 
 ## <a name="parte91">91 - 088 - Orientação Objetos - Interfaces pt 02 - Implementando múltiplas interfaces</a>
 
+```java
+public interface DateLoader {
+    public abstract void load(); // public abstract é opcional!
 
+    default void checkPermission() {
+        System.out.println("FAZENDO CHECAGEM DE PERMISSOES");
+    }
+}
+```
 
 [Voltar ao Índice](#indice)
 
