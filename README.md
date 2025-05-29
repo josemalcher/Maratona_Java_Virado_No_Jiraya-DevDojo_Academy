@@ -10500,7 +10500,38 @@ Ao entender bem as classes abstratas, métodos abstratos e suas regras, você po
 
 ## <a name="parte90">90 - 087 - Orientação Objetos - Interfaces pt 01 - Introdução</a>
 
+```java
+package dominio;
 
+public interface DateLoader {
+    public abstract void load(); // public abstract é opcional!
+}
+
+```
+
+```java
+package dominio;
+
+public class DataBaseLoader implements DateLoader{
+
+    @Override
+    public void load() {
+        System.out.println("Carregando dados do BD");
+
+    }
+}
+```
+
+```java
+    public static void main(String[] args) {
+
+        DataBaseLoader dataBaseLoader = new DataBaseLoader();
+        dataBaseLoader.load();
+
+        FileLoader fileLoader = new FileLoader();
+        fileLoader.load();
+    }
+```
 
 [Voltar ao Índice](#indice)
 
