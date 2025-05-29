@@ -10557,7 +10557,42 @@ public interface DateLoader {
 
 ## <a name="parte92">92 - 089 - Orientação Objetos - Interfaces pt 03 - Atributos e métodos estáticos</a>
 
+```java
+package dominio;
 
+public interface DateLoader {
+    public abstract void load(); // public abstract é opcional!
+
+    public static final int MAX_DATA_SIZE = 10; // "public static final" é redundante!
+
+    default void checkPermission() {
+        System.out.println("FAZENDO CHECAGEM DE PERMISSOES");
+    }
+
+    public static void retrieveMaxDateSize() {
+        System.out.println("DENTRO DO retrieveMaxDateSize() na interface");
+    }
+}
+```
+
+```java
+    public static void main(String[] args) {
+
+        DataBaseLoader dataBaseLoader = new DataBaseLoader();
+        dataBaseLoader.load();
+        dataBaseLoader.remove();
+        dataBaseLoader.checkPermission();
+
+        FileLoader fileLoader = new FileLoader();
+        fileLoader.load();
+        fileLoader.remove();
+        fileLoader.checkPermission();
+
+        DateLoader.retrieveMaxDateSize(); // direta na interface
+        DataBaseLoader.retrieveMaxDateSize(); // SEM OVERRIDE - copia do método
+
+    }
+```
 
 [Voltar ao Índice](#indice)
 

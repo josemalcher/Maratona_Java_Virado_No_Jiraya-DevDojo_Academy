@@ -1,6 +1,7 @@
 package app;
 
 import dominio.DataBaseLoader;
+import dominio.DateLoader;
 import dominio.FileLoader;
 
 public class DataLoaderTeste {
@@ -16,6 +17,8 @@ public class DataLoaderTeste {
         fileLoader.remove();
         fileLoader.checkPermission();
 
+        DateLoader.retrieveMaxDateSize(); // direta na interface
+        DataBaseLoader.retrieveMaxDateSize();
 
     }
 }

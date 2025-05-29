@@ -1,6 +1,6 @@
 package dominio;
 
-public class DataBaseLoader implements DateLoader, DataRemover{
+public class DataBaseLoader implements DateLoader, DataRemover {
 
     @Override
     public void load() {
@@ -11,5 +11,9 @@ public class DataBaseLoader implements DateLoader, DataRemover{
     @Override
     public void remove() {
         System.out.println("Removendo do DB");
+    }
+
+    public static void retrieveMaxDateSize() {
+        System.out.println("DENTRO DO retrieveMaxDateSize() na class DataBaseLoader");
     }
 }
