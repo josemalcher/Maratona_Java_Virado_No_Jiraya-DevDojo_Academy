@@ -10157,6 +10157,7 @@ A chave é reconhecer a natureza dos dados que você está modelando:
 
 ## <a name="parte87">87 - 084 - Orientação Objetos - Classes abstratas pt 01</a>
 
+- https://www.youtube.com/watch?v=ws1NVBGeegs&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW&index=86
 
 
 [Voltar ao Índice](#indice)
