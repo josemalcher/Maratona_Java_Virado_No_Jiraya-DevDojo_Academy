@@ -10892,6 +10892,8 @@ Interfaces são uma ferramenta essencial em Java para construir sistemas flexív
 
 ## <a name="parte93">93 - 090 - Orientação Objetos - Polimorfismo pt 01 - Introdução</a>
 
+- https://www.youtube.com/watch?v=UmReA29kOVw
+
 
 
 [Voltar ao Índice](#indice)
@@ -10920,6 +10922,14 @@ Interfaces são uma ferramenta essencial em Java para construir sistemas flexív
 ## <a name="parte96">96 - 093 - Orientação Objetos - Polimorfismo pt 04 - Cast e instanceof</a>
 
 
+
+---
+
+### RESUMO GEMINI
+
+
+
+---
 
 [Voltar ao Índice](#indice)
 
