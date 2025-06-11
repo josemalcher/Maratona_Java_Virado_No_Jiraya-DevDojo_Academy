@@ -5,7 +5,7 @@ import entities.Tomate;
 
 public class CalculadoraImposto {
 
-    public void calculaImpostoComputdor(Computador computador) {
+    public static void calculaImpostoComputdor(Computador computador) {
         double imposto = computador.calcularImposto();
         System.out.println("RELATORIO de Imposto do computador");
         System.out.println("Nome: " + computador.getNome());
@@ -13,7 +13,7 @@ public class CalculadoraImposto {
         System.out.println("Imposto a ser pago" + imposto);
     }
 
-    public void calculaImpostoTomate(Tomate tomate) {
+    public static void calculaImpostoTomate(Tomate tomate) {
         double imposto = tomate.calcularImposto();
         System.out.println("RELATORIO de Imposto do computador");
         System.out.println("Nome: " + tomate.getNome());
