@@ -24,11 +24,17 @@ public class CalculadoraImposto {
 
     public static void CalcularImpost(Produto produto) {
 
-        System.out.println("-------------------------------");
         System.out.println("RELATORIO DE IMPOSTO");
         System.out.println("PRODUTO: " + produto.getNome());
         System.out.println("Valor: " + produto.getValor());
         System.out.println("IMPOSTO A SER PAGO: " + produto.calcularImposto());
+        if (produto instanceof Tomate) {
+            //Tomate tomate = (Tomate) produto;
+            //System.out.println(tomate.getDataValidade());
+            System.out.println( ((Tomate) produto).getDataValidade() );
+        }
+
+
         System.out.println("-------------------------------");
     }
 }
