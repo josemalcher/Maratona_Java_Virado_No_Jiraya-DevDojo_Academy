@@ -10925,12 +10925,6 @@ Interfaces são uma ferramenta essencial em Java para construir sistemas flexív
 
 ---
 
-### RESUMO GEMINI
-
-
-
----
-
 [Voltar ao Índice](#indice)
 
 ---
@@ -10938,7 +10932,231 @@ Interfaces são uma ferramenta essencial em Java para construir sistemas flexív
 
 ## <a name="parte97">97 - 094 - Orientação Objetos - Polimorfismo pt 05 - Programação orientada a interface</a>
 
+- https://www.youtube.com/watch?v=lDsO78xFp9Y
 
+### RESUMO GEMINI SOBRE POLIMORFISMO
+
+# Polimorfismo em Java: Um Guia Completo
+
+Este documento é um resumo consolidado sobre o conceito de Polimorfismo em Java, baseado nas aulas da playlist "Java e Orientação a Objetos" do professor Dr. Nelio Alves.
+
+## 1. O que é Polimorfismo? (Aula 90)
+
+**Polimorfismo** vem do grego e significa "muitas formas". Em programação, é a capacidade de um objeto poder ser referenciado de múltiplas formas, ou mais especificamente, é a capacidade de uma variável de um tipo mais genérico (superclasse ou interface) referenciar um objeto de um tipo mais específico (subclasse).
+
+Isso permite que você trate objetos de diferentes classes de maneira uniforme, desde que eles compartilhem uma superclasse ou interface em comum.
+
+**Exemplo Básico:**
+
+Imagine uma hierarquia de `Conta` bancária.
+
+```java
+// Superclasse
+public class Account {
+    private Integer number;
+    private String holder;
+    protected Double balance; // protected para ser acessível na subclasse
+
+    // Construtores, Getters e Setters...
+
+    public void withdraw(double amount) {
+        balance -= amount;
+    }
+}
+
+// Subclasse
+public class SavingsAccount extends Account {
+    private Double interestRate;
+
+    // Construtores, etc...
+}
+```
+
+Com o polimorfismo, podemos fazer o seguinte:
+
+```java
+// A variável 'acc1' é do tipo genérico 'Account'
+// mas aponta para um objeto específico 'Account'.
+Account acc1 = new Account(1001, "Alex", 1000.0);
+
+// A variável 'acc2' também é do tipo genérico 'Account'
+// mas aponta para um objeto específico 'SavingsAccount'.
+Account acc2 = new SavingsAccount(1002, "Maria", 1000.0, 0.01);
+```
+
+Ambas as variáveis (`acc1` e `acc2`) são do tipo `Account`, mas apontam para objetos de tipos diferentes. Isso é a base do polimorfismo.
+
+---
+
+## 2. Como o Polimorfismo Funciona (Late Binding)? (Aula 91)
+
+O polimorfismo brilha quando temos métodos sobrescritos (`@Override`). Quando você chama um método a partir de uma variável de tipo genérico, o Java decide qual versão do método executar em **tempo de execução**, com base no tipo real do objeto para o qual a variável está apontando. Esse mecanismo é chamado de **ligação tardia** (late binding).
+
+**Exemplo Complexo:**
+
+Vamos adicionar uma taxa de 5.0 ao saque da `Account` e sobrescrever o método `withdraw` em `SavingsAccount` para que o saque seja isento dessa taxa.
+
+```java
+// Na classe Account
+public void withdraw(double amount) {
+    balance -= amount + 5.0; // Adiciona uma taxa de saque
+}
+
+// Na classe SavingsAccount
+@Override
+public void withdraw(double amount) {
+    balance -= amount; // Saque sem taxa
+}
+```
+
+Agora, vamos executar o código:
+
+```java
+Account acc1 = new Account(1001, "Alex", 1000.0);
+Account acc2 = new SavingsAccount(1002, "Maria", 1000.0, 0.01);
+
+// Saque de 200.0
+acc1.withdraw(200.0);
+acc2.withdraw(200.0);
+
+System.out.println(acc1.getBalance()); // Imprime 795.0 (1000 - 200 - 5)
+System.out.println(acc2.getBalance()); // Imprime 800.0 (1000 - 200)
+```
+
+**O que aconteceu?**
+Embora ambas as variáveis `acc1` e `acc2` sejam do tipo `Account`, na hora de executar `withdraw()`, o Java verificou:
+1.  `acc1` aponta para um `Account`. **Executa o `withdraw` da classe `Account`**.
+2.  `acc2` aponta para um `SavingsAccount`. **Executa o `withdraw` da classe `SavingsAccount`** (a versão sobrescrita).
+
+Essa decisão em tempo de execução é o coração do polimorfismo.
+
+---
+
+## 3. Parâmetros Polimórficos (Aula 92)
+
+Uma das maiores vantagens do polimorfismo é a capacidade de criar métodos que aceitam parâmetros de um tipo genérico (superclasse ou interface). Esses métodos se tornam extremamente reutilizáveis, pois podem operar sobre qualquer objeto que seja uma subclasse daquele tipo.
+
+**Exemplo:**
+
+Imagine um método para imprimir o saldo de qualquer tipo de conta.
+
+```java
+public class Bank {
+    // Este método aceita QUALQUER objeto que seja uma 'Account'
+    public void showBalance(Account account) {
+        System.out.println("Account balance: " + account.getBalance());
+    }
+}
+
+// Uso:
+Bank myBank = new Bank();
+Account normalAccount = new Account(1001, "Alex", 1000.0);
+Account savings = new SavingsAccount(1002, "Maria", 1500.0, 0.01);
+Account business = new BusinessAccount(1003, "Bob", 5000.0, 400.0);
+
+myBank.showBalance(normalAccount); // Funciona
+myBank.showBalance(savings);       // Funciona
+myBank.showBalance(business);      // Funciona
+```
+
+Sem polimorfismo, você precisaria criar um método `showBalance` para cada tipo de conta, o que seria terrível.
+
+---
+
+## 4. Downcasting e o Operador `instanceof` (Aula 93)
+
+* **Upcasting:** É o ato de atribuir um objeto de uma subclasse a uma variável da superclasse. Isso é natural, implícito e seguro. Fizemos isso nos exemplos anteriores (`Account acc = new SavingsAccount()`).
+* **Downcasting:** É o processo inverso: converter uma variável da superclasse de volta para um tipo da subclasse. Isso é uma operação que **pode falhar** e precisa ser **explícita**.
+
+Você faz o downcasting quando precisa acessar um método ou atributo que só existe na subclasse.
+
+**Exemplo:**
+
+A classe `SavingsAccount` tem um método `updateBalance()` que a `Account` não tem.
+
+```java
+// Na classe SavingsAccount
+public void updateBalance() {
+    balance += balance * interestRate;
+}
+
+// Tentativa de uso
+Account acc = new SavingsAccount(1002, "Maria", 1000.0, 0.01);
+
+// acc.updateBalance(); // ERRO DE COMPILAÇÃO! O compilador só enxerga os métodos de Account.
+```
+
+Para resolver, precisamos fazer o downcast. Mas antes, devemos **verificar** se o objeto é realmente do tipo que queremos, usando o operador `instanceof`.
+
+```java
+if (acc instanceof SavingsAccount) {
+    // 1. O cast explícito: (SavingsAccount) acc
+    SavingsAccount sa = (SavingsAccount) acc;
+
+    // 2. Agora podemos chamar o método específico
+    sa.updateBalance();
+    System.out.println("Update successful!");
+}
+```
+
+---
+
+## 5. Programação Orientada a Interface (Aula 94)
+
+Este é o auge do uso do polimorfismo. A melhor prática é depender de **abstrações** (interfaces), e não de **implementações** (classes concretas). Isso torna seu código ainda mais flexível e desacoplado.
+
+**Exemplo:**
+
+Vamos refatorar o exemplo para usar uma interface `Transactable`.
+
+```java
+public interface Transactable {
+    void withdraw(double amount);
+    void deposit(double amount);
+}
+
+// Ambas as classes agora cumprem o contrato da interface
+public class Account implements Transactable { ... }
+public class SavingsAccount extends Account { ... } // Já herda a implementação de Transactable
+
+// Uso ideal:
+Transactable myTransaction;
+
+// Podemos atribuir qualquer classe que implemente a interface
+myTransaction = new Account(1001, "Alex", 1000.0);
+myTransaction.withdraw(100.0);
+
+myTransaction = new SavingsAccount(1002, "Maria", 2000.0, 0.01);
+myTransaction.withdraw(100.0);
+```
+
+O código que usa a variável `myTransaction` não tem ideia de qual é a classe real do objeto. Ele só sabe que o objeto é "transacionável", ou seja, que ele cumpre o contrato da interface `Transactable`.
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Declare variáveis com o tipo mais genérico possível:** Sempre prefira `List<T> list = new ArrayList<>();` em vez de `ArrayList<T> list = new ArrayList<>();`. Prefira `Account acc = new SavingsAccount();` em vez de `SavingsAccount acc = new SavingsAccount();` (a menos que precise de métodos específicos da subclasse imediatamente).
+2.  ✅ **Use a anotação `@Override`:** Sempre que sobrescrever um método. Isso ajuda o compilador a garantir que você não cometeu erros de digitação no nome do método ou nos parâmetros.
+3.  ✅ **Favoreça Interfaces sobre Classes:** Ao declarar variáveis, parâmetros de métodos e tipos de retorno, use interfaces sempre que possível (`Transactable` em vez de `Account`). Isso maximiza a flexibilidade.
+4.  ✅ **Use Parâmetros Polimórficos:** Crie métodos genéricos que operem sobre superclasses ou interfaces para promover o reuso de código.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Abusar de `instanceof` e Downcasting:** Se o seu código está cheio de testes `if (obj instanceof ClasseA)`, `else if (obj instanceof ClasseB)`, isso é um forte indício de que seu design está errado. O comportamento deveria ser resolvido pelo polimorfismo (sobrescrita de métodos), não por condicionais.
+2.  ❌ **Declarar variáveis com tipos concretos sem necessidade:** Declarar `SavingsAccount acc = new SavingsAccount();` limita a variável `acc` a receber apenas objetos `SavingsAccount`, reduzindo a flexibilidade.
+3.  ❌ **Não usar polimorfismo:** Criar métodos diferentes para cada tipo de subclasse em vez de usar um único método polimórfico.
+    ```java
+    // RUIM
+    public void process(SavingsAccount acc) { ... }
+    public void process(BusinessAccount acc) { ... }
+
+    // BOM
+    public void process(Account acc) { ... }
+
+
+
+---
 
 [Voltar ao Índice](#indice)
 
