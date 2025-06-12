@@ -1,10 +1,11 @@
 package services;
 
 import entities.Computador;
+import entities.Produto;
 import entities.Tomate;
 
 public class CalculadoraImposto {
-
+/*
     public static void calculaImpostoComputdor(Computador computador) {
         double imposto = computador.calcularImposto();
         System.out.println("RELATORIO de Imposto do computador");
@@ -19,5 +20,15 @@ public class CalculadoraImposto {
         System.out.println("Nome: " + tomate.getNome());
         System.out.println("VALOR: " + tomate.getValor());
         System.out.println("Imposto a ser pago" + imposto);
+    }*/
+
+    public static void CalcularImpost(Produto produto) {
+
+        System.out.println("-------------------------------");
+        System.out.println("RELATORIO DE IMPOSTO");
+        System.out.println("PRODUTO: " + produto.getNome());
+        System.out.println("Valor: " + produto.getValor());
+        System.out.println("IMPOSTO A SER PAGO: " + produto.calcularImposto());
+        System.out.println("-------------------------------");
     }
 }

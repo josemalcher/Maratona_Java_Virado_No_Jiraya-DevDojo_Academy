@@ -16,4 +16,9 @@ public abstract class Produto implements Taxavel{
         this.nome = nome;
         this.valor = valor;
     }
+
+    @Override
+    public double calcularImposto() {
+        return 0;
+    }
 }
