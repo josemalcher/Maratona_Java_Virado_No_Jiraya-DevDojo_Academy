@@ -11165,7 +11165,11 @@ O código que usa a variável `myTransaction` não tem ideia de qual é a classe
 
 ## <a name="parte98">98 - 095 - Exceções pt 01 - Errors</a>
 
+- https://www.youtube.com/watch?v=30D9z8M3eCQ
 
+Representa erros graves e irrecuperáveis que não devem ser tratados pela sua aplicação. 
+Geralmente são problemas da JVM (Máquina Virtual Java), como `StackOverflowError` (estouro de pilha) ou `OutOfMemoryError` (falta de memória).
+**Você não captura ou lança `Error`s.**
 
 [Voltar ao Índice](#indice)
 
