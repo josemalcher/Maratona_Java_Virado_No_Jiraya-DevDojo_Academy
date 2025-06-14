@@ -11178,6 +11178,12 @@ Geralmente são problemas da JVM (Máquina Virtual Java), como `StackOverflowErr
 
 ## <a name="parte99">99 - 096 - Exceções pt 02 - RuntimeException</a>
 
+* **`Exception`:** Representa condições anormais que uma aplicação robusta **pode e deve** tratar. Ela se divide em dois grandes grupos:
+
+    * **`RuntimeException` (Exceções "Unchecked" - Aula 96):** São exceções que o compilador **não** te obriga a tratar. Elas geralmente indicam erros de lógica na programação, como:
+        * `NullPointerException`: Tentar acessar um membro de uma variável nula.
+        * `IllegalArgumentException`: Passar um argumento inválido para um método.
+        * `IndexOutOfBoundsException`: Tentar acessar um índice inválido em um array ou lista.
 
 
 [Voltar ao Índice](#indice)
