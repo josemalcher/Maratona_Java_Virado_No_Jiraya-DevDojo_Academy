@@ -11193,7 +11193,10 @@ Geralmente são problemas da JVM (Máquina Virtual Java), como `StackOverflowErr
 
 ## <a name="parte100">100 - 097 - Exceções pt 03 - Exception</a>
 
-
+**Outras subclasses de `Exception` (Exceções "Checked" - Aula 97):** São exceções que o compilador **te obriga** a tratar (com `try-catch` ou `throws`). Elas representam problemas externos e previsíveis, como:
+  * `IOException`: Erro ao ler um arquivo.
+  * `SQLException`: Erro ao se comunicar com o banco de dados.
+  * `ParseException`: Erro ao converter uma String para uma data.
 
 [Voltar ao Índice](#indice)
 
@@ -11202,6 +11205,19 @@ Geralmente são problemas da JVM (Máquina Virtual Java), como `StackOverflowErr
 
 ## <a name="parte101">101 - 098 - Exceções pt 04 - Lançando exceção unchecked</a>
 
+Podemos usar a palavra-chave `throw` para lançar uma exceção manualmente quando uma condição de erro é detectada em nosso código.
+
+* **Lançando Exceção Unchecked (Aula 98):** Simples e direto, ideal para validar argumentos de métodos.
+
+    ```java
+    public void deposit(double amount) {
+        if (amount <= 0) {
+            // Lança uma exceção para indicar que o argumento é inválido.
+            throw new IllegalArgumentException("Amount must be positive.");
+        }
+        this.balance += amount;
+    }
+    ```
 
 
 [Voltar ao Índice](#indice)
@@ -11211,6 +11227,21 @@ Geralmente são problemas da JVM (Máquina Virtual Java), como `StackOverflowErr
 
 ## <a name="parte102">102 - 099 - Exceções pt 05 - Lançando exceção checked</a>
 
+https://www.youtube.com/watch?v=Gc5SIWgcsYI 
+
+* **Lançando Exceção Checked (Aula 99):** Requer que o método declare que pode lançar essa exceção usando a palavra-chave `throws`.
+
+    ```java
+    // O método "avisa" ao compilador que ele pode lançar uma IOException.
+    public void readFile(String path) throws IOException {
+        File file = new File(path);
+        if (!file.exists()) {
+            // Lança uma exceção checked.
+            throw new IOException("File not found at: " + path);
+        }
+        // ...lógica de leitura do arquivo...
+    }
+    ```
 
 
 [Voltar ao Índice](#indice)
@@ -11220,6 +11251,31 @@ Geralmente são problemas da JVM (Máquina Virtual Java), como `StackOverflowErr
 
 ## <a name="parte103">103 - 100 - Exceções pt 06 - Bloco Finally</a>
 
+Para tratar exceções, usamos o bloco `try-catch`.
+
+* **`try`:** Contém o código que pode, potencialmente, lançar uma exceção.
+* **`catch`:** Captura e trata a exceção. A execução pula para este bloco se uma exceção do tipo especificado ocorrer dentro do `try`.
+* **`finally` (Aula 100):** Este bloco é **sempre** executado, tenha ocorrido uma exceção ou não. É o local ideal para liberar recursos, como fechar conexões com arquivos ou banco de dados.
+
+**Exemplo Básico:**
+
+```java
+Scanner sc = null;
+try {
+    sc = new Scanner(new File("in.txt"));
+    while (sc.hasNextLine()) {
+        System.out.println(sc.nextLine());
+    }
+} catch (FileNotFoundException e) {
+    // Trata o erro específico de arquivo não encontrado.
+    System.out.println("Error opening file: " + e.getMessage());
+} finally {
+    // Garante que o Scanner será fechado.
+    if (sc != null) {
+        sc.close();
+    }
+}
+```
 
 
 [Voltar ao Índice](#indice)
@@ -11229,7 +11285,17 @@ Geralmente são problemas da JVM (Máquina Virtual Java), como `StackOverflowErr
 
 ## <a name="parte104">104 - 101 - Exceções pt 07 - Capturando múltiplas exceções</a>
 
+* **Multi-catch em Bloco (antigo):** Você pode ter vários blocos `catch`, do mais específico para o mais genérico.
 
+   ```java
+   try {
+       // ... código ...
+   } catch (FileNotFoundException e) {
+       System.out.println("File not found!");
+   } catch (IOException e) {
+       System.out.println("Generic IO error!");
+   }
+   ```
 
 [Voltar ao Índice](#indice)
 
