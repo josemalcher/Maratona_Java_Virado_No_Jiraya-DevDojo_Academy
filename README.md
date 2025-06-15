@@ -11304,6 +11304,16 @@ try {
 
 ## <a name="parte105">105 - 102 - Exceções pt 08 - Multi catch em linha</a>
 
+* **Multi-catch em Linha (Java 7+):** Mais conciso, para quando o tratamento do erro é o mesmo para várias exceções.
+
+        ```java
+        try {
+            // ... código ...
+        } catch (InputMismatchException | ArithmeticException e) {
+            System.out.println("Invalid input error.");
+            // e.printStackTrace(); // Imprime o rastro da pilha para debug
+        }
+        ```
 
 
 [Voltar ao Índice](#indice)
@@ -11313,6 +11323,26 @@ try {
 
 ## <a name="parte106">106 - 103 - Exceções pt 09 - Try with resources</a>
 
+Introduzido no Java 7, o `try-with-resources` simplifica muito o gerenciamento de recursos que precisam ser fechados (como streams de arquivos, conexões de banco de dados, etc.).
+
+Ele garante que o recurso declarado nos parênteses do `try` será fechado automaticamente ao final do bloco, eliminando a necessidade de um bloco `finally` para isso.
+
+**Exemplo Moderno:**
+
+```java
+String path = "c:\\temp\\in.txt";
+
+// O 'BufferedReader' será fechado automaticamente.
+try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+    String line = br.readLine();
+    while (line != null) {
+        System.out.println(line);
+        line = br.readLine();
+    }
+} catch (IOException e) {
+    System.out.println("Error: " + e.getMessage());
+}
+```
 
 
 [Voltar ao Índice](#indice)
@@ -11322,6 +11352,36 @@ try {
 
 ## <a name="parte107">107 - 104 - Exceções pt 10 - Exceção customizada</a>
 
+Às vezes, as exceções padrão do Java não descrevem bem um erro de regra de negócio específico. Nesses casos, podemos criar nossas próprias exceções.
+
+* **Regra:** Se a exceção for um erro que o chamador do método **deve** tratar (checked), herde de `Exception`. Se for um erro de programação que não deveria ocorrer (unchecked), herde de `RuntimeException`.
+
+**Exemplo Complexo (Reserva de Hotel):**
+
+```java
+// 1. Criando a exceção customizada (checked)
+public class DomainException extends Exception {
+    public DomainException(String msg) {
+        super(msg);
+    }
+}
+
+// 2. Usando na classe de domínio
+public class Reservation {
+    // ...atributos...
+    public void updateDates(LocalDate checkIn, LocalDate checkOut) throws DomainException {
+        LocalDate now = LocalDate.now();
+        if (checkIn.isBefore(now) || checkOut.isBefore(now)) {
+            throw new DomainException("Reservation dates for update must be future dates");
+        }
+        if (!checkOut.isAfter(checkIn)) {
+            throw new DomainException("Check-out date must be after check-in date");
+        }
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+    }
+}
+```
 
 
 [Voltar ao Índice](#indice)
@@ -11331,6 +11391,62 @@ try {
 
 ## <a name="parte108">108 - 105 - Exceções pt 11 - Exceção e regras de sobrescrita</a>
 
+Quando um método em uma subclasse sobrescreve um método da superclasse, existem regras sobre as exceções:
+
+* Um método sobrescrito **não pode** declarar uma exceção `checked` que não foi declarada no método original da superclasse.
+* Ele **pode** declarar exceções `unchecked` livremente.
+* Ele **pode** declarar exceções `checked` que sejam subtipos das exceções declaradas no método original.
+
+**Exemplo:**
+
+```java
+class SuperClasse {
+    // Declara que pode lançar IOException
+    public void meuMetodo() throws IOException { ... }
+}
+
+class SubClasse extends SuperClasse {
+    @Override
+    // OK: Pode não lançar nada.
+    // public void meuMetodo() { ... }
+
+    // OK: Pode lançar a mesma exceção.
+    // public void meuMetodo() throws IOException { ... }
+
+    // OK: Pode lançar um subtipo.
+    public void meuMetodo() throws FileNotFoundException { ... }
+
+    // ERRO DE COMPILAÇÃO: Não pode adicionar uma nova exceção checked.
+    // public void meuMetodo() throws SQLException { ... }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `try-with-resources`:** Sempre que lidar com recursos que implementam `AutoCloseable` (streams, scanners, conexões). É mais seguro e mais limpo.
+2.  ✅ **Seja Específico nos `catch`:** Capture a exceção mais específica possível. Evite o `catch (Exception e)` genérico, pois ele pode esconder bugs.
+3.  ✅ **Crie Exceções Customizadas:** Para erros de regra de negócio, crie suas próprias exceções. Isso torna o código mais legível e expressivo.
+4.  ✅ **Use Exceções `Unchecked` para Erros de Programação:** Se uma exceção pode ser evitada com uma verificação (ex: `if (obj != null)`), ela provavelmente deveria ser uma `RuntimeException` se ocorrer.
+5.  ✅ **Lance Exceções Cedo, Capture Tarde:** Deixe a exceção ser propagada pela pilha de chamadas até um ponto onde ela possa ser tratada de forma significativa (por exemplo, na camada de interface com o usuário para exibir uma mensagem).
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Engolir Exceções:** Nunca deixe um bloco `catch` vazio ou apenas com um comentário. Isso esconde problemas e torna o debug um pesadelo.
+
+    ```java
+    // TERRÍVEL!
+    try {
+        // ...
+    } catch (Exception e) {
+        // TODO: handle exception
+    }
+    ```
+
+2.  ❌ **Usar Exceções para Controle de Fluxo:** Exceções são para situações **excepcionais**. Usá-las para lógica de programa normal (como um `break` em um loop) é extremamente ineficiente e confuso.
+3.  ❌ **Capturar `Throwable`, `Error` ou `RuntimeException` de forma genérica:** Capturar `Error` pode impedir a JVM de reportar um erro crítico. Capturar `RuntimeException` de forma genérica pode mascarar bugs de programação que deveriam ser corrigidos.
+4.  ❌ **Declarar `throws Exception`:** É vago e força o chamador a usar um `catch(Exception e)` genérico, anulando os benefícios das exceções `checked`. Seja específico (`throws IOException, SQLException`).
 
 
 [Voltar ao Índice](#indice)
