@@ -11466,6 +11466,163 @@ class SubClasse extends SuperClasse {
 ## <a name="parte110">110 - 107 - Classes Utilitárias - Wrappers pt 02</a>
 
 
+# Guia Completo sobre Classes Wrapper em Java
+
+Este guia aborda o conceito de Classes Wrapper (ou invólucro) em Java, com base nas aulas 106 e 107 da playlist do curso de Java do professor Dr. Nelio Alves.
+
+## 1. O que são Classes Wrapper? (Aula 106)
+
+Em Java, temos dois "universos" de tipos:
+
+1.  **Tipos Primitivos:** São os tipos de dados básicos, que não são objetos. Eles são armazenados diretamente na memória e são muito eficientes (`int`, `double`, `char`, `boolean`, etc.).
+2.  **Tipos por Referência (Objetos):** São instâncias de classes (`String`, `Scanner`, ou qualquer classe que você crie).
+
+O problema é que certas estruturas do Java, como as **Collections** (`List`, `Map`, `Set`), só conseguem armazenar **Objetos**. Elas não podem armazenar tipos primitivos diretamente.
+
+As **Classes Wrapper** são a ponte entre esses dois universos. Elas são classes que "embrulham" ou "encapsulam" um valor de tipo primitivo dentro de um objeto.
+
+| Tipo Primitivo | Classe Wrapper Correspondente |
+| :------------- | :---------------------------- |
+| `int`          | `Integer`                     |
+| `double`       | `Double`                      |
+| `char`         | `Character`                   |
+| `boolean`      | `Boolean`                     |
+| `long`         | `Long`                        |
+| `float`        | `Float`                       |
+| `short`        | `Short`                       |
+| `byte`         | `Byte`                        |
+
+---
+
+## 2. Boxing, Unboxing e Autoboxing (Aulas 106-107)
+
+Esses são os processos de conversão entre tipos primitivos e seus wrappers.
+
+### Boxing (Empacotar)
+É o processo de converter um valor primitivo para um objeto wrapper.
+
+```java
+// Forma manual (antiga, antes do Java 5)
+int x = 20;
+Integer obj = Integer.valueOf(x); // Forma preferida
+// Integer obj2 = new Integer(x); // Forma depreciada
+
+System.out.println(obj); // Imprime 20
+```
+
+### Unboxing (Desempacotar)
+É o processo inverso: extrair o valor primitivo de um objeto wrapper.
+
+```java
+// Forma manual (antiga)
+Integer obj = Integer.valueOf(100);
+int y = obj.intValue(); // Extrai o valor int
+
+System.out.println(y); // Imprime 100
+```
+
+### Autoboxing e Auto-unboxing (Java 5+)
+A partir do Java 5, o compilador passou a fazer esses processos **automaticamente**, o que tornou o código muito mais limpo.
+
+* **Autoboxing:** O Java "empacota" o primitivo para você.
+* **Auto-unboxing:** O Java "desempacota" o objeto para você.
+
+**Exemplo Básico (Autoboxing):**
+
+```java
+int x = 20;
+
+// Autoboxing: o compilador converte 'x' para 'Integer.valueOf(x)' por baixo dos panos.
+Integer obj = x;
+
+System.out.println(obj); // Imprime 20
+```
+
+**Exemplo Básico (Auto-unboxing):**
+
+```java
+Integer obj = 100;
+
+// Auto-unboxing: o compilador converte 'obj' para 'obj.intValue()'.
+int y = obj;
+
+System.out.println(y); // Imprime 100
+```
+
+---
+
+## 3. Exemplo Avançado: A Necessidade em Collections
+
+A principal razão para a existência das Wrappers é a sua aplicação em estruturas de dados genéricas, como as Collections.
+
+```java
+// Uma lista só pode armazenar OBJETOS.
+// Portanto, não podemos fazer List<int>. Usamos List<Integer>.
+List<Integer> list = new ArrayList<>();
+
+// Autoboxing em ação!
+// Estamos adicionando um 'int', mas o Java o converte para 'Integer' automaticamente.
+list.add(10);
+list.add(25);
+list.add(33);
+
+// Auto-unboxing em ação!
+// O 'num' é um objeto 'Integer', mas é desempacotado para um 'int' para a soma.
+int sum = 0;
+for (Integer num : list) {
+    sum += num;
+}
+
+System.out.println("Soma: " + sum); // Imprime 68
+
+// Removendo um elemento
+list.remove(Integer.valueOf(25)); // Passamos o objeto wrapper para remover
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Confie no Autoboxing:** Para código do dia a dia, deixe o Java fazer a conversão automática. O código fica mais limpo e legível.
+2.  ✅ **Esteja Ciente de `NullPointerException`:** Um tipo primitivo (`int`) não pode ser nulo, mas um wrapper (`Integer`) pode. Tentar fazer o auto-unboxing de uma referência `null` causará uma `NullPointerException`.
+
+    ```java
+    Integer myNumber = null;
+    // A linha abaixo lança NullPointerException, pois tenta fazer 'myNumber.intValue()'
+    // int n = myNumber;
+    ```
+3.  ✅ **Use `.equals()` para Comparar Wrappers:** Nunca use `==` para comparar o valor de dois objetos wrapper, pois `==` compara a referência de memória.
+
+    ```java
+    Integer a = 128;
+    Integer b = 128;
+    System.out.println(a == b);      // Pode imprimir 'false'!
+    System.out.println(a.equals(b)); // Imprime 'true' (correto).
+    ```
+    *Nota: O Java possui um cache para `Integer`s de -128 a 127. Para números nesse intervalo, `==` pode funcionar por coincidência, mas nunca confie nisso!*
+
+4.  ✅ **Use Métodos Utilitários:** As classes Wrapper oferecem métodos úteis, como `Integer.parseInt("100")` para converter Strings.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Cálculos em Loop com Wrappers:** Evite usar tipos wrapper como contadores ou acumuladores em loops intensivos. A criação e destruição constante de objetos (autoboxing/unboxing a cada iteração) pode degradar a performance. Use tipos primitivos nesses casos.
+
+    ```java
+    // RUIM (performance)
+    Integer sum = 0;
+    for (int i = 0; i < 1000000; i++) {
+        sum += i; // Gera muitos objetos Integer desnecessários
+    }
+
+    // BOM
+    int sumPrimitive = 0;
+    for (int i = 0; i < 1000000; i++) {
+        sumPrimitive += i;
+    }
+    ```
+2.  ❌ **Usar `new` para Criar Wrappers:** A forma `new Integer(10)` está depreciada. Prefira o autoboxing (`Integer i = 10;`) ou o método estático `Integer.valueOf(10)`, que é mais eficiente por usar o cache interno.
+
+
 
 [Voltar ao Índice](#indice)
 
