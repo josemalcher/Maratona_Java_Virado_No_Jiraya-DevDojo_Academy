@@ -11631,6 +11631,22 @@ list.remove(Integer.valueOf(25)); // Passamos o objeto wrapper para remover
 
 ## <a name="parte111">111 - 108 - Classes Utilitárias - Strings pt 01</a>
 
+Em Java, `String` não é um tipo primitivo, mas sim uma classe. Um dos seus conceitos mais importantes é a **imutabilidade**.
+
+**O que é Imutabilidade?**
+Uma vez que um objeto `String` é criado, ele **nunca** pode ser alterado. Qualquer operação que pareça modificar uma string (como `replace` ou `toUpperCase`) na verdade cria um **novo** objeto `String` em memória com o resultado da modificação.
+
+```java
+String nome = "Goku"; // Cria um objeto "Goku" na memória
+nome.toUpperCase();    // Cria um NOVO objeto "GOKU", mas não altera 'nome'
+System.out.println(nome); // Imprime "Goku"
+
+// Para ver a mudança, você precisa reatribuir a referência
+nome = nome.toUpperCase();
+System.out.println(nome); // Agora imprime "GOKU"
+```
+
+As strings são armazenadas em uma área especial da memória chamada "String Pool". Quando você cria uma string literal como `String s1 = "Olá";`, a JVM primeiro verifica se "Olá" já existe no pool. Se sim, ela reutiliza a mesma referência.
 
 
 [Voltar ao Índice](#indice)
@@ -11639,6 +11655,31 @@ list.remove(Integer.valueOf(25)); // Passamos o objeto wrapper para remover
 
 
 ## <a name="parte112">112 - 109 - Classes Utilitárias - Strings pt 02</a>
+
+
+A classe `String` oferece vários métodos para manipulação de texto.
+
+* **`charAt(int index)`**: Retorna o caractere em uma posição específica.
+* **`length()`**: Retorna o número de caracteres.
+* **`replace(char oldChar, char newChar)`**: Substitui todas as ocorrências de um caractere (ou string) por outro.
+* **`toLowerCase()` / `toUpperCase()`**: Converte a string para minúsculas ou maiúsculas.
+* **`substring(int beginIndex, int endIndex)`**: Extrai uma parte da string.
+* **`trim()`**: Remove espaços em branco no início e no fim da string.
+
+**Exemplo Prático:**
+
+```java
+String texto = "  Naruto Uzumaki  ";
+String numero = "012345-6789";
+
+System.out.println("Char na posição 5: " + texto.trim().charAt(5)); // Imprime 'o'
+System.out.println("Tamanho: " + texto.length()); // Imprime 18 (com espaços)
+System.out.println("Substituir 'Uzumaki' por 'Hokage': " + texto.replace("Uzumaki", "Hokage"));
+System.out.println("Minúsculas: " + texto.toLowerCase());
+System.out.println("Maiúsculas: " + texto.toUpperCase());
+System.out.println("Substring (0 a 6): '" + texto.trim().substring(0, 6) + "'"); // Imprime 'Naruto'
+System.out.println("Sem espaços: '" + texto.trim() + "'");
+```
 
 
 
