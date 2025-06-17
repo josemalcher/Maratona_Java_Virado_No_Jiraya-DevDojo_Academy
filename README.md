@@ -11691,6 +11691,22 @@ System.out.println("Sem espaços: '" + texto.trim() + "'");
 ## <a name="parte113">113 - 110 - Classes Utilitárias - Strings pt 03 - Desempenho</a>
 
 
+A imutabilidade, que traz segurança, tem um custo de performance em cenários específicos: **concatenação de strings em loop**.
+
+Quando você faz isso, a cada iteração, a JVM é forçada a descartar o objeto antigo e criar um novo com o conteúdo concatenado. Isso gera uma sobrecarga enorme de criação de objetos e uso do Garbage Collector.
+
+**Exemplo (Ruim):**
+
+```java
+public void concatenaString(int tamanho) {
+    String texto = "";
+    for (int i = 0; i < tamanho; i++) {
+        texto += i; // A CADA loop, um novo objeto String é criado!
+    }
+}
+```
+Para `tamanho = 100.000`, este método pode levar vários segundos para ser executado.
+
 
 [Voltar ao Índice](#indice)
 
@@ -11699,6 +11715,61 @@ System.out.println("Sem espaços: '" + texto.trim() + "'");
 
 ## <a name="parte114">114 - 111 - Classes Utilitárias - Strings pt 04 - StringBuilder</a>
 
+
+Para resolver o problema da concatenação em loop, o Java oferece as classes `StringBuilder` e `StringBuffer`. Ambas são **mutáveis**, ou seja, permitem modificar a sequência de caracteres sem criar novos objetos.
+
+* **`StringBuilder`**: Mais rápida, mas **não** é "thread-safe". É a escolha ideal para a maioria dos casos em que a manipulação da string ocorre em uma única thread (o que é 99% das vezes).
+* **`StringBuffer`**: Um pouco mais lenta porque seus métodos são sincronizados, o que a torna "thread-safe". Use apenas se a mesma string for ser modificada por múltiplas threads simultaneamente.
+
+**Exemplo (Bom):**
+
+`StringBuilder` funciona como um "construtor de strings". Você utiliza o método `append()` para adicionar conteúdo.
+
+```java
+public void concatenaStringBuilder(int tamanho) {
+    StringBuilder sb = new StringBuilder(tamanho); // Boa prática: inicializar com a capacidade
+    for (int i = 0; i < tamanho; i++) {
+        sb.append(i); // Modifica o mesmo objeto em memória. Muito mais rápido!
+    }
+    // Para obter a String final, chame toString() uma única vez, no final.
+    String resultado = sb.toString();
+}
+```
+Para `tamanho = 100.000`, este método executa quase instantaneamente.
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `String` para Imutabilidade:** Prefira `String` para valores que não mudam, como constantes, chaves de `Map`, parâmetros de métodos, etc. Sua segurança e previsibilidade são uma vantagem.
+2.  ✅ **Use `StringBuilder` para Construção Dinâmica:** Sempre que precisar montar uma string em partes, especialmente dentro de loops, use `StringBuilder`.
+3.  ✅ **Inicialize a Capacidade do `StringBuilder`:** Se você sabe o tamanho aproximado da string final, use `new StringBuilder(capacidade)`. Isso evita que o `StringBuilder` precise se redimensionar internamente, melhorando a performance.
+4.  ✅ **Use `.equals()` para Comparar Conteúdo:** Lembre-se que `==` compara referências de memória. Para comparar o texto de duas strings, use sempre `s1.equals(s2)`.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Concatenar `String` em Loop:** A pior prática de todas. Nunca use o operador `+` ou o método `concat()` para juntar strings dentro de um loop.
+
+    ```java
+    // NUNCA FAÇA ISSO!
+    String nomes = "";
+    for (String nome : listaDeNomes) {
+        nomes += nome + ", ";
+    }
+    ```
+
+2.  ❌ **Converter para `String` dentro do Loop:** Chamar `toString()` em um `StringBuilder` a cada iteração anula o benefício de performance, pois cria um novo objeto `String` a cada chamada. Chame-o apenas uma vez, no final.
+
+    ```java
+    // RUIM
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < 10; i++) {
+        sb.append(i);
+        System.out.println(sb.toString()); // Cria 10 objetos String
+    }
+    ```
+
+3.  ❌ **Usar `StringBuffer` sem Necessidade:** `StringBuffer` só é necessário em ambientes concorrentes (multi-thread). Para uso local em um método, `StringBuilder` é sempre a melhor escolha por ser mais rápido.
 
 
 [Voltar ao Índice](#indice)
