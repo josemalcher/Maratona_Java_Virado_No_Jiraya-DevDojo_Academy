@@ -11779,7 +11779,127 @@ Para `tamanho = 100.000`, este método executa quase instantaneamente.
 
 ## <a name="parte115">115 - 112 - Classes Utilitárias - Date</a>
 
+---
 
+### Resumo GEMINI
+
+# Guia Completo: A Classe `java.util.Date` em Java
+
+Este guia aborda o conceito e uso da classe `java.util.Date` em Java, com base na aula 112 da playlist do curso DevDojo. O foco principal é entender seu funcionamento e por que ela é considerada uma API legada.
+
+---
+
+## 1. O que é a classe `Date`?
+
+A classe `java.util.Date`, introduzida nas primeiras versões do Java, foi a principal forma de se trabalhar com datas e horas. No entanto, ela possui várias falhas de design que a tornaram obsoleta e difícil de usar.
+
+O conceito central da classe `Date` é que ela armazena um instante no tempo. Especificamente, ela armazena a quantidade de **milissegundos** que se passaram desde a **Época Unix** (01 de janeiro de 1970, 00:00:00 GMT).
+
+```java
+// Importa a classe
+import java.util.Date;
+
+public class DateTest {
+    public static void main(String[] args) {
+        // Cria um objeto Date representando o instante ATUAL
+        Date date = new Date(); // aloca um objeto com a data e hora correntes
+
+        // Imprime o objeto Date. O método toString() formata a saída.
+        System.out.println(date);
+        // Exemplo de saída: Sun Jun 22 23:04:00 BRT 2025
+
+        // Imprime os milissegundos desde a Época Unix
+        System.out.println("Milliseconds since epoch: " + date.getTime());
+    }
+}
+```
+
+---
+
+## 2. Construtores e Manipulação (A Forma Antiga)
+
+A classe `Date` possui construtores para criar datas específicas. Um deles aceita um `long` com o número de milissegundos.
+
+```java
+// Cria uma data com 0 milissegundos (a própria Época Unix)
+Date dateEpoch = new Date(0L);
+System.out.println(dateEpoch); // Saída: Wed Dec 31 21:00:00 BRT 1969 (Ajustado para o fuso horário de Brasília)
+
+// Adicionando uma hora (3600 segundos * 1000 milissegundos)
+Date datePlusOneHour = new Date(3_600_000L);
+System.out.println(datePlusOneHour); // Saída: Wed Dec 31 22:00:00 BRT 1969
+```
+
+A classe também possuía métodos como `getYear()`, `getMonth()`, `getDate()`, mas eles são **depreciados (@Deprecated)**. Isso significa que não devem mais ser usados, pois são problemáticos e podem ser removidos em versões futuras do Java.
+
+**Exemplo Complexo (Mostrando o Problema):**
+O problema desses métodos é que eles são confusos. Por exemplo, `getYear()` retorna o ano subtraído de 1900, e `getMonth()` retorna o mês começando em 0 (janeiro = 0).
+
+```java
+Date date = new Date();
+
+// Forma DEPRECIADA e confusa de obter os dados
+int ano = date.getYear() + 1900;
+int mes = date.getMonth() + 1;
+
+System.out.println("Ano (forma antiga e errada): " + ano);
+System.out.println("Mês (forma antiga e errada): " + mes);
+```
+
+---
+
+## 3. Por que a classe `Date` é considerada legada?
+
+A API antiga de datas (`java.util.Date` e `java.util.Calendar`) tem várias falhas críticas:
+
+1.  **É Mutável:** Um objeto `Date` pode ser alterado depois de criado (usando métodos como `setTime()`). Isso é perigoso, pois uma data que deveria ser constante pode ser modificada acidentalmente em outra parte do código.
+2.  **API Confusa:** Como visto, os métodos para obter ano, mês e dia são contra-intuitivos.
+3.  **Não é "Timezone-aware":** A classe `Date` não lida bem com fusos horários, o que é uma fonte constante de bugs em aplicações globais.
+4.  **Não é "Type-safe":** Não há uma separação clara entre "data" (apenas dia, mês e ano) e "data e hora". `Date` sempre representa um instante preciso.
+
+Por causa desses problemas, a partir do **Java 8**, foi introduzida a nova API **`java.time`**, que é imutável, mais clara e poderosa.
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **EVITE `java.util.Date` EM CÓDIGO NOVO:** A melhor prática absoluta é **não usar** `Date`, `Calendar` ou `SimpleDateFormat`. Use sempre a nova API `java.time`.
+    * Use `LocalDate` para datas (ano-mês-dia).
+    * Use `LocalTime` para horas (hora-minuto-segundo).
+    * Use `LocalDateTime` para data e hora combinadas.
+    * Use `Instant` para trabalhar com instantes no tempo (equivalente ao `long` de milissegundos do `Date`).
+    * Use `ZonedDateTime` para lidar com fusos horários.
+
+2.  ✅ **CONVERTA PARA A NOVA API:** Se você precisa interagir com um sistema ou biblioteca antiga que retorna um `Date`, converta-o para a nova API o mais rápido possível e trabalhe com ela.
+
+    ```java
+    import java.time.Instant;
+    import java.time.LocalDateTime;
+    import java.time.ZoneId;
+    import java.util.Date;
+
+    // Suponha que este 'legacyDate' veio de uma API antiga
+    Date legacyDate = new Date();
+
+    // 1. Converta o Date para um Instant
+    Instant instant = legacyDate.toInstant();
+
+    // 2. Converta o Instant para um LocalDateTime no fuso horário do sistema
+    LocalDateTime modernDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+
+    System.out.println("Data Legada: " + legacyDate);
+    System.out.println("Data Moderna: " + modernDate);
+    ```
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Usar `new Date(year, month, day)`:** Este construtor está depreciado e é extremamente confuso. Nunca o utilize.
+2.  ❌ **Usar `getYear()`, `getMonth()`, `getDay()`:** Todos depreciados. Não use.
+3.  ❌ **Realizar Cálculos Manuais:** Tentar somar dias ou meses manipulando milissegundos diretamente é uma receita para o desastre (por causa de anos bissextos, fusos horários, etc.). A nova API `java.time` tem métodos seguros para isso (`plusDays()`, `minusMonths()`).
+4.  ❌ **Escrever qualquer código novo que dependa de `java.util.Date`:** Simplesmente não há mais razão para isso. A API `java.time` é superior em todos os aspectos: é imutável, mais segura, mais clara e mais poderosa.
+
+
+---
 
 [Voltar ao Índice](#indice)
 
