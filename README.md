@@ -11908,7 +11908,143 @@ Por causa desses problemas, a partir do **Java 8**, foi introduzida a nova API *
 
 ## <a name="parte116">116 - 113 - Classes Utilitárias - Calendar</a>
 
+---
 
+### Resumo Gemini
+
+# Guia Completo: A Classe `java.util.Calendar` em Java
+
+Este guia aborda o conceito e uso da classe `java.util.Calendar`, com base na aula 113 da playlist do curso DevDojo. O objetivo é entender seu funcionamento, suas melhorias em relação à classe `Date` e por que, mesmo assim, ela também é considerada uma API legada.
+
+---
+
+## 1. O que é e por que a classe `Calendar` foi criada?
+
+Após perceberem as falhas da classe `Date` (ser mutável, ter uma API confusa e não lidar bem com internacionalização), os desenvolvedores do Java introduziram a classe `java.util.Calendar`.
+
+`Calendar` é uma **classe abstrata** que provê métodos para converter um instante no tempo (representado por um `Date`) em campos como ano, mês, dia, hora, etc. Ela também permite a manipulação desses campos, como adicionar ou remover dias de uma data.
+
+**Ponto Chave:** Enquanto um objeto `Date` representa apenas um instante (um número de milissegundos), um objeto `Calendar` é um interpretador desses milissegundos, aplicando regras de um calendário específico (geralmente o Gregoriano).
+
+---
+
+## 2. Obtendo e Manipulando uma Instância de `Calendar`
+
+Como `Calendar` é uma classe abstrata, você não a instancia com `new Calendar()`. Em vez disso, você usa o método estático `getInstance()`.
+
+```java
+import java.util.Calendar;
+import java.util.Date;
+
+public class CalendarTest {
+    public static void main(String[] args) {
+        // Pega uma instância do calendário padrão (Gregoriano) com a data/hora atual
+        Calendar c = Calendar.getInstance();
+
+        // Convertendo um Calendar para um Date
+        Date date = c.getTime();
+        System.out.println("Data obtida do Calendar: " + date);
+
+        // O Calendar é mutável. Podemos alterar sua data.
+        // O mês ainda é problemático: Janeiro = 0, Fevereiro = 1...
+        c.set(2025, Calendar.DECEMBER, 25);
+        date = c.getTime();
+        System.out.println("Data alterada para o Natal: " + date);
+    }
+}
+```
+
+### Obtendo campos da data (`get`)
+
+O método `get(int field)` permite extrair partes específicas da data.
+
+```java
+Calendar c = Calendar.getInstance();
+
+int ano = c.get(Calendar.YEAR);
+int mes = c.get(Calendar.MONTH); // Lembre-se: 0 = Janeiro
+int dia = c.get(Calendar.DAY_OF_MONTH);
+int diaDaSemana = c.get(Calendar.DAY_OF_WEEK); // 1 = Domingo, 2 = Segunda...
+
+System.out.println("Ano: " + ano);
+System.out.println("Mês (0-11): " + mes);
+System.out.println("Dia: " + dia);
+System.out.println("Dia da Semana (1-7): " + diaDaSemana);
+```
+
+---
+
+## 3. Manipulação de Datas com `add()`
+
+A grande vantagem do `Calendar` sobre o `Date` era a capacidade de manipular datas de forma segura, sem cálculos manuais de milissegundos. Para isso, usa-se o método `add(int field, int amount)`.
+
+**Exemplo Avançado (Manipulando datas):**
+
+```java
+Calendar c = Calendar.getInstance(); // Pega a data de hoje
+
+System.out.println("Data Original: " + c.getTime());
+
+// Adicionar 10 dias à data atual
+c.add(Calendar.DAY_OF_MONTH, 10);
+System.out.println("Daqui a 10 dias: " + c.getTime());
+
+// Subtrair 2 meses
+c.add(Calendar.MONTH, -2);
+System.out.println("2 meses atrás: " + c.getTime());
+
+// Adicionar 5 anos
+c.add(Calendar.YEAR, 5);
+System.out.println("Daqui a 5 anos: " + c.getTime());
+
+// O método 'roll' é similar, mas não "vira" unidades maiores.
+// Ex: rolar 10 dias em 25/12 não mudaria o mês para janeiro. É menos usado.
+```
+
+---
+
+## 4. Por que `Calendar` também é uma API Legada?
+
+Apesar de ser uma melhoria, a classe `Calendar` ainda carrega problemas:
+
+1.  **Ainda é Mutável:** Assim como `Date`, um objeto `Calendar` pode ser alterado, o que não é ideal para programação segura.
+2.  **API Confusa:** O sistema de meses começando em 0 ainda existe. Os campos são representados por constantes inteiras (`Calendar.YEAR`) em vez de tipos mais expressivos.
+3.  **Performance:** Pode ser menos performático que a nova API.
+4.  **Dificuldade com Fusos Horários:** Embora melhor que `Date`, ainda não é tão robusto e claro para lidar com fusos horários quanto a API `java.time`.
+
+Por esses motivos, o **Java 8** introduziu a API definitiva para datas e horas, a **`java.time`**.
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **EVITE `Calendar` EM CÓDIGO NOVO:** Assim como `Date`, a melhor prática é **não usar** `Calendar`. Dê preferência total à API `java.time` (`LocalDate`, `LocalDateTime`, `ZonedDateTime`, etc.). Ela é imutável, mais segura e muito mais intuitiva.
+
+2.  ✅ **CONVERTA PARA A NOVA API:** Ao interagir com código legado que usa `Calendar`, converta o objeto para a nova API para fazer a manipulação de forma segura.
+
+    ```java
+    import java.time.ZonedDateTime;
+    import java.util.Calendar;
+    import java.util.GregorianCalendar;
+
+    // Suponha que este 'legacyCalendar' veio de uma API antiga
+    Calendar legacyCalendar = Calendar.getInstance();
+
+    // 1. Converta o Calendar para um ZonedDateTime
+    ZonedDateTime modernDateTime = ((GregorianCalendar) legacyCalendar).toZonedDateTime();
+
+    System.out.println("Data Legada (Calendar): " + legacyCalendar.getTime());
+    System.out.println("Data Moderna (ZonedDateTime): " + modernDateTime);
+    ```
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Confundir Mês e Dia:** Um erro clássico é esquecer que os meses no `Calendar` são baseados em zero (`Janeiro = 0`). Isso é uma fonte comum de bugs.
+2.  ❌ **Compartilhar Instâncias Mutáveis:** Passar a mesma instância de `Calendar` para diferentes partes do seu código é perigoso, pois um método pode alterar a data e causar efeitos colaterais inesperados em outro.
+3.  ❌ **Escrever qualquer código novo que dependa de `java.util.Calendar`:** Repetindo a prática principal: não há mais necessidade de usar esta classe. Todo problema que ela resolve é tratado de forma muito superior pela API `java.time`.
+
+
+---
 
 [Voltar ao Índice](#indice)
 
