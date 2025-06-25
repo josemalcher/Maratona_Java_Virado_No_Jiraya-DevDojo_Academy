@@ -12053,7 +12053,191 @@ Por esses motivos, o **Java 8** introduziu a API definitiva para datas e horas, 
 
 ## <a name="parte117">117 - 114 - Classes Utilitárias - DateFormat</a>
 
+### Resumo Gemini
 
+# Guia Completo: Formatação com `DateFormat` em Java
+
+Este guia aborda o uso das classes `DateFormat` e `SimpleDateFormat` para formatação e parsing de datas, com base na aula 114 da playlist do curso DevDojo. O foco é entender seu funcionamento e as razões pelas quais foram substituídas pela API `java.time` do Java 8.
+
+---
+
+## 1. O que é `DateFormat`?
+
+`DateFormat` é uma classe abstrata usada para duas operações principais:
+
+1.  **Formatação (Formatting):** Converter um objeto `Date` ou `Calendar` em uma `String` legível para humanos. Ex: `Date` -> `"25/12/2025"`.
+2.  **Parsing:** Converter uma `String` que representa uma data de volta para um objeto `Date`. Ex: `"25/12/2025"` -> `Date`.
+
+Como é uma classe abstrata, você não a instancia com `new`, mas sim através de métodos de fábrica estáticos.
+
+---
+
+## 2. Usando Estilos Padrão com `DateFormat`
+
+A maneira mais simples de usar `DateFormat` é pedir uma instância com um estilo de formatação pré-definido. Existem quatro estilos principais:
+
+* `DateFormat.SHORT`
+* `DateFormat.MEDIUM`
+* `DateFormat.LONG`
+* `DateFormat.FULL`
+
+**Exemplo Básico (Formatando com estilos):**
+
+```java
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class DateFormatTest {
+    public static void main(String[] args) {
+        Calendar c = Calendar.getInstance();
+        Date date = c.getTime();
+
+        // Criando formatadores para cada estilo
+        DateFormat[] formatters = new DateFormat[4];
+        formatters[0] = DateFormat.getDateInstance(DateFormat.SHORT);
+        formatters[1] = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        formatters[2] = DateFormat.getDateInstance(DateFormat.LONG);
+        formatters[3] = DateFormat.getDateInstance(DateFormat.FULL);
+
+        System.out.println("--- Formatando a mesma data com estilos diferentes ---");
+        for (DateFormat df : formatters) {
+            System.out.println(df.format(date));
+        }
+    }
+}
+// Saída (pode variar com a localidade):
+// --- Formatando a mesma data com estilos diferentes ---
+// 24/06/2025
+//        24 de jun. de 2025
+//        24 de junho de 2025
+//terça-feira, 24 de junho de 2025
+```
+
+---
+
+## 3. Formatação Personalizada com `SimpleDateFormat`
+
+Para a maioria dos casos, você precisa de um formato específico (ex: "dd/MM/yyyy"). Para isso, usamos a classe concreta `SimpleDateFormat`, que permite definir um padrão customizado.
+
+**Exemplo Avançado (Padrão customizado):**
+
+```java
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class SimpleDateFormatTest {
+    public static void main(String[] args) {
+        // Padrão comum no Brasil
+        String pattern = "dd/MM/yyyy HH:mm:ss 'BRT'";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+
+        Date now = new Date();
+        String formattedDate = sdf.format(now);
+
+        System.out.println("Data formatada com padrão customizado:");
+        System.out.println(formattedDate);
+    }
+}
+```
+
+---
+
+## 4. Parsing: Convertendo `String` em `Date`
+
+A operação inversa, chamada *parsing*, é feita com o método `parse()`. Este método pode lançar uma `ParseException` (uma exceção do tipo *checked*), que você é obrigado a tratar.
+
+```java
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class ParsingTest {
+    public static void main(String[] args) {
+        String dateStr = "25/12/2025 10:30:00";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+        try {
+            // Tenta converter a String para um objeto Date
+            Date parsedDate = sdf.parse(dateStr);
+            System.out.println("String original: " + dateStr);
+            System.out.println("Objeto Date gerado: " + parsedDate);
+        } catch (ParseException e) {
+            // Ocorre se a String não corresponder ao padrão do SimpleDateFormat
+            System.out.println("Erro ao fazer o parse da data!");
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+---
+
+## 5. Por que `DateFormat` e `SimpleDateFormat` são Problemáticos?
+
+Esta API, embora funcional, é considerada legada e perigosa por um motivo principal:
+
+**NÃO É THREAD-SAFE!**
+
+Um objeto `DateFormat` (e `SimpleDateFormat`) é **mutável**. Se você criar uma única instância estática e compartilhá-la entre várias threads (o que é comum em aplicações web), ocorrerão erros de formatação e parsing, além de exceções. Os resultados se tornam imprevisíveis e incorretos.
+
+Por causa disso e de sua dependência das confusas classes `Date` e `Calendar`, toda a API foi substituída no Java 8.
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **NÃO USE `DateFormat` EM CÓDIGO NOVO:** A prática definitiva é abandonar `DateFormat` e usar a API `java.time` e sua classe `DateTimeFormatter`. Ela é **imutável**, **thread-safe** e muito mais poderosa.
+
+    **Exemplo (A Forma Moderna e Correta):**
+    ```java
+    import java.time.LocalDateTime;
+    import java.time.format.DateTimeFormatter;
+
+    // 1. Defina o formatador (é thread-safe e pode ser uma constante estática)
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+    // 2. Formatting (Objeto -> String)
+    LocalDateTime now = LocalDateTime.now();
+    String formatted = now.format(formatter);
+    System.out.println("Formatado: " + formatted);
+
+    // 3. Parsing (String -> Objeto)
+    String dateStr = "25/12/2025 10:30:00";
+    LocalDateTime parsed = LocalDateTime.parse(dateStr, formatter);
+    System.out.println("Parseado: " + parsed);
+    ```
+
+2.  ✅ **CRIE NOVAS INSTÂNCIAS SE PRECISAR USAR (Legado):** Se você for obrigado a trabalhar com código antigo, a forma mais segura (embora menos performática) de usar `SimpleDateFormat` é criar uma nova instância toda vez que precisar.
+
+    ```java
+    // Em código legado, faça isso dentro do método
+    public String formatDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(date);
+    }
+    ```
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **COMPARTILHAR UMA INSTÂNCIA ESTÁTICA:** A pior prática possível, e uma fonte clássica de bugs em sistemas concorrentes.
+
+    ```java
+    // NUNCA FAÇA ISSO! ISTO NÃO É THREAD-SAFE!
+    public class BadUtils {
+        private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        public static String formatDate(Date date) {
+            return sdf.format(date); // Perigoso em ambiente multi-thread
+        }
+    }
+    ```
+
+2.  ❌ **Ignorar a Localidade (`Locale`):** A formatação de datas (nomes de meses, dias da semana) depende da localidade. Não especificar um `Locale` pode gerar resultados diferentes em máquinas diferentes. A nova API `java.time` lida com isso de forma muito mais explícita e segura.
+3.  ❌ **Escrever qualquer código novo que dependa de `java.text.DateFormat`:** A API `java.time` é superior em todos os aspectos: segurança, imutabilidade, clareza e funcionalidade.
+
+
+---
 
 [Voltar ao Índice](#indice)
 
