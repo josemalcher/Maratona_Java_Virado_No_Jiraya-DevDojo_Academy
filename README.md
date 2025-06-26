@@ -12246,7 +12246,137 @@ Por causa disso e de sua dependência das confusas classes `Date` e `Calendar`, 
 
 ## <a name="parte118">118 - 115 - Classes Utilitárias - Internacionalização Datas com Locale</a>
 
+### Resmo Gemini
 
+# Guia Completo: Internacionalização de Datas com `Locale`
+
+Este guia aborda o uso da classe `java.util.Locale` para internacionalização (i18n) de datas com a API legada (`DateFormat`), com base na aula 115 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `Locale`?
+
+Um `Locale` é um objeto que representa uma região geográfica, política ou cultural específica. Ele não é um formatador em si, mas sim um **identificador** que informa a outras classes (como `DateFormat`) como elas devem se comportar para se adequar àquela região.
+
+Um `Locale` é tipicamente definido por:
+
+* **Língua (Language):** Um código de duas letras (padrão ISO 639), como "pt" (português), "en" (inglês), "it" (italiano).
+* **País (Country):** Um código de duas letras (padrão ISO 3166), como "BR" (Brasil), "US" (Estados Unidos), "IT" (Itália).
+
+Por exemplo:
+* `pt-BR` representa o português falado no Brasil.
+* `en-US` representa o inglês falado nos Estados Unidos.
+
+---
+
+## 2. Usando `Locale` com `DateFormat`
+
+A principal utilidade do `Locale` na API legada é instruir o `DateFormat` sobre como formatar uma data. Isso afeta o nome dos meses, os dias da semana, a ordem dos elementos (dia/mês/ano vs. mês/dia/ano) e os separadores.
+
+Para isso, usamos a sobrecarga do método `getDateInstance` que aceita um `Locale`.
+
+**Exemplo Básico e Avançado (Formatando para diferentes países):**
+
+```java
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
+public class LocaleTest {
+    public static void main(String[] args) {
+        // Definindo locales para diferentes regiões
+        Locale localeItaly = new Locale("it", "IT"); // Italiano da Itália
+        Locale localeSwitzerland = new Locale("it", "CH"); // Italiano da Suíça
+        Locale localeIndia = new Locale("hi", "IN"); // Hindi da Índia
+        Locale localeJapan = new Locale("ja"); // Japonês
+
+        // Pegando a data atual
+        Calendar c = Calendar.getInstance();
+
+        // Criando formatadores para cada locale com o estilo FULL
+        DateFormat dfItaly = DateFormat.getDateInstance(DateFormat.FULL, localeItaly);
+        DateFormat dfSwitzerland = DateFormat.getDateInstance(DateFormat.FULL, localeSwitzerland);
+        DateFormat dfIndia = DateFormat.getDateInstance(DateFormat.FULL, localeIndia);
+        DateFormat dfJapan = DateFormat.getDateInstance(DateFormat.FULL, localeJapan);
+
+        System.out.println("--- Formatando a mesma data para diferentes Locales ---");
+
+        System.out.println("Itália: " + dfItaly.format(c.getTime()));
+        System.out.println("Suíça (italiano): " + dfSwitzerland.format(c.getTime()));
+        System.out.println("Índia (hindi): " + dfIndia.format(c.getTime()));
+        System.out.println("Japão: " + dfJapan.format(c.getTime()));
+
+        // Exemplo de como obter a língua e o país de um locale
+        System.out.println("\nLíngua de exibição para pt-BR: " + localeItaly.getDisplayLanguage(new Locale("pt", "BR")));
+    }
+}
+```
+
+**Saída Esperada (os nomes podem variar um pouco):**
+```
+--- Formatando a mesma data para diferentes Locales ---
+Itália: mercoledì 25 giugno 2025
+Suíça (italiano): mercoledì, 25 giugno 2025
+Índia (hindi): बुधवार, 25 जून 2025
+Japão: 2025年6月25日水曜日
+
+Língua de exibição para pt-BR: italiano
+
+```
+Observe como a mesma data é representada de formas completamente diferentes, incluindo o nome dos dias da semana, o formato e até mesmo o calendário (no caso do Japão).
+
+---
+
+## 3. Por que `Locale` com `DateFormat` é Legado?
+
+Embora o conceito de `Locale` seja poderoso e ainda exista, usá-lo com `DateFormat` e `Calendar` carrega os problemas dessas APIs antigas:
+
+1.  **Dependência de APIs Problemáticas:** Ele está atrelado a `DateFormat`, que **não é thread-safe**, e a `Calendar`, que é **mutável** e confusa.
+2.  **Menos Flexível:** A nova API `java.time` oferece um controle muito mais granular e expressivo sobre a formatação e a localização.
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **USE A API `java.time` PARA INTERNACIONALIZAÇÃO:** A prática definitiva é usar `DateTimeFormatter` com o método `.withLocale()`. É thread-safe, imutável e muito mais claro.
+
+    **Exemplo (A Forma Moderna e Correta):**
+    ```java
+        package app;
+        
+        import java.time.LocalDateTime;
+        import java.time.ZonedDateTime;
+        import java.time.format.DateTimeFormatter;
+        import java.time.format.FormatStyle;
+        import java.util.Locale;
+        
+        public class Program2 {
+        public static void main(String[] args) {
+        // Use ZonedDateTime para incluir informações de fuso horário
+        ZonedDateTime now = ZonedDateTime.now(); // MUDANÇA AQUI
+        Locale localeItaly = new Locale("it", "IT");
+        
+                // Cria um formatador para um estilo localizado e aplica o Locale
+                DateTimeFormatter formatter = DateTimeFormatter
+                        .ofLocalizedDateTime(FormatStyle.FULL)
+                        .withLocale(localeItaly);
+        
+                System.out.println(now.format(formatter)); //mercoledì 25 giugno 2025 22:23:58 Ora standard di Brasilia
+            }
+        }
+
+    ```
+
+2.  ✅ **Seja Explícito sobre o `Locale`:** Nunca confie no `Locale` padrão da JVM (`Locale.getDefault()`), pois ele pode ser diferente no servidor de produção e na sua máquina de desenvolvimento, causando resultados inesperados. Sempre especifique o `Locale` que você deseja.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Escrever Código Novo com `DateFormat` e `Locale`:** Tendo a API `java.time` disponível desde o Java 8, não há motivo para iniciar um novo projeto usando a combinação de `DateFormat` e `Locale`. Herda-se todos os problemas de thread-safety e mutabilidade.
+2.  ❌ **Implementar Lógica de Localização Manualmente:** Nunca escreva código como `if (pais.equals("BR")) { formato = "dd/MM/yyyy"; }`. A classe `Locale` e as APIs de i18n foram criadas exatamente para evitar esse tipo de código frágil e difícil de manter.
+3.  ❌ **Ignorar a Internacionalização:** Desenvolver uma aplicação assumindo que todos os usuários estão no mesmo país ou falam a mesma língua é um erro comum que limita o alcance do software. Pense em i18n desde o início.
+
+
+---
 
 [Voltar ao Índice](#indice)
 
