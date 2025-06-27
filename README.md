@@ -12537,6 +12537,127 @@ public class ParsingTest {
 
 ## <a name="parte120">120 - 117 - Classes Utilitárias - Internacionalização de moeda com Locale</a>
 
+### RESUMO GEMINI
+
+# Guia Completo: Internacionalização de Moedas com `Locale`
+
+Este guia detalha o uso do `NumberFormat` para a formatação específica de valores monetários, com base na aula 117 da playlist do curso DevDojo.
+
+---
+
+## 1. `getCurrencyInstance`: O Formatador de Moedas
+
+Como vimos na aula anterior, para formatar valores monetários, usamos o método de fábrica `NumberFormat.getCurrencyInstance(locale)`.
+
+O que torna este método especial é que ele não apenas formata o número com os separadores corretos, mas também:
+1.  Adiciona o **símbolo da moeda** correto para o `Locale` especificado (ex: "R$", "$", "€").
+2.  Posiciona o símbolo corretamente (antes ou depois do número).
+3.  Usa o número padrão de casas decimais para aquela moeda (ex: 2 para Real e Dólar, 0 para Iene Japonês).
+
+---
+
+## 2. A Classe `Currency`
+
+Cada formatador de moeda (`NumberFormat`) está associado a um objeto da classe `java.util.Currency`. Esta classe contém informações sobre uma moeda específica, como seu código ISO 4217 ("BRL", "USD"), seu símbolo e seu nome de exibição.
+
+Podemos obter o objeto `Currency` a partir de uma instância de `NumberFormat` usando o método `getCurrency()`.
+
+**Exemplo Avançado (Formatando e Extraindo Detalhes da Moeda):**
+
+Este exemplo demonstra não apenas a formatação, mas como inspecionar o objeto `Currency` para obter mais detalhes.
+
+```java
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.Locale;
+
+public class CurrencyFormatTest {
+    public static void main(String[] args) {
+        double valor = 12345.67;
+
+        // Definindo Locales
+        Locale localeBR = new Locale("pt", "BR");
+        Locale localeUS = Locale.US;
+        Locale localeJP = Locale.JAPAN;
+        Locale localeDE = Locale.GERMANY;
+
+        // Criando formatadores de moeda
+        NumberFormat nfBR = NumberFormat.getCurrencyInstance(localeBR);
+        NumberFormat nfUS = NumberFormat.getCurrencyInstance(localeUS);
+        NumberFormat nfJP = NumberFormat.getCurrencyInstance(localeJP);
+        NumberFormat nfDE = NumberFormat.getCurrencyInstance(localeDE);
+
+        System.out.println("--- Formatando o mesmo valor para diferentes moedas ---");
+        System.out.println("Brasil: " + nfBR.format(valor));
+        System.out.println("EUA: " + nfUS.format(valor));
+        System.out.println("Japão: " + nfJP.format(valor)); // Note o arredondamento e a falta de casas decimais
+        System.out.println("Alemanha: " + nfDE.format(valor));
+
+        System.out.println("\n--- Inspecionando a Moeda (Classe Currency) ---");
+        
+        // Obtendo o objeto Currency a partir do formatador
+        Currency currencyUS = nfUS.getCurrency();
+        
+        // Obtendo informações do objeto Currency
+        System.out.println("Moeda (EUA): " + currencyUS.getDisplayName());
+        System.out.println("Código ISO 4217 (EUA): " + currencyUS.getCurrencyCode());
+        System.out.println("Símbolo padrão (EUA): " + currencyUS.getSymbol());
+
+        // Opcional: como o símbolo é visto em outro país?
+        System.out.println("Símbolo (EUA) visto no Brasil: " + currencyUS.getSymbol(localeBR));
+    }
+}
+```
+
+**Saída Esperada:**
+```
+--- Formatando o mesmo valor para diferentes moedas ---
+Brasil: R$ 12.345,67
+EUA: $12,345.67
+Japão: ￥12,346
+Alemanha: 12.345,67 €
+
+--- Inspecionando a Moeda (Classe Currency) ---
+Moeda (EUA): Dólar americano
+Código ISO 4217 (EUA): USD
+Símbolo padrão (EUA): $
+Símbolo (EUA) visto no Brasil: US$
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `getCurrencyInstance` para Dinheiro:** É a forma correta e segura de garantir que todos os aspectos da formatação monetária (símbolo, posição, separadores, casas decimais) sejam respeitados de acordo com o `Locale`.
+2.  ✅ **Use `BigDecimal` para Cálculos Financeiros:** Esta é a prática mais importante. **NUNCA** use `double` ou `float` para representar ou calcular valores monetários em aplicações reais. Esses tipos sofrem de imprecisão de ponto flutuante. `BigDecimal` foi criado para cálculos exatos.
+
+    ```java
+    // Forma correta de trabalhar com dinheiro
+    import java.math.BigDecimal;
+    import java.text.NumberFormat;
+    import java.util.Locale;
+
+    BigDecimal preco = new BigDecimal("199.99");
+    BigDecimal quantidade = new BigDecimal("3");
+    BigDecimal total = preco.multiply(quantidade); // Cálculo exato
+
+    NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+    System.out.println(nf.format(total)); // Exibe "R$ 599,97"
+    ```
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Tentar Formatar Moeda com `getInstance`:** Usar o formatador numérico genérico e concatenar o símbolo manualmente é um erro grave.
+
+    ```java
+    // NUNCA FAÇA ISSO
+    NumberFormat nf = NumberFormat.getInstance(Locale.US);
+    String valorFormatado = "$" + nf.format(123.45); // ERRADO!
+    ```
+    Isso não respeita a posição do símbolo, as casas decimais da moeda ou outras regras específicas do `Locale`.
+
+2.  ❌ **Armazenar Valores Monetários como Strings Formatadas:** Sempre armazene dinheiro em seu tipo numérico apropriado (`BigDecimal`). A formatação deve ser aplicada apenas na camada de apresentação (quando o valor é exibido para o usuário).
+3.  ❌ **Usar `double` ou `float` para Dinheiro:** Repetindo a melhor prática, evitar `double` e `float` para finanças é crucial para prevenir erros de arredondamento que podem ter consequências sérias.
 
 
 [Voltar ao Índice](#indice)
