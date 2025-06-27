@@ -12385,6 +12385,149 @@ Embora o conceito de `Locale` seja poderoso e ainda exista, usá-lo com `DateFor
 
 ## <a name="parte119">119 - 116 - Classes Utilitárias - Internacionalização Números com Locale</a>
 
+### RESUMO GEMINI
+
+# Guia Completo: Internacionalização de Números com `Locale`
+
+Este guia aborda o uso da classe `java.text.NumberFormat` para internacionalização (i18n) de números, moedas e porcentagens, com base na aula 116 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `NumberFormat`?
+
+Assim como `DateFormat` lida com datas, `NumberFormat` é a classe abstrata responsável por formatar e fazer o *parsing* (interpretação) de números de acordo com as regras de um `Locale` específico.
+
+Isso é crucial porque diferentes culturas representam números de maneiras diferentes:
+* **Separador Decimal:** No Brasil e na Europa, usamos a vírgula (`1.234,56`). Nos Estados Unidos, usa-se o ponto (`1,234.56`).
+* **Separador de Milhar:** O inverso do decimal.
+* **Símbolo de Moeda:** "R$", "$", "€", "¥", etc.
+* **Posição do Símbolo:** O "R$" vem antes do número, enquanto o "€" geralmente vem depois.
+
+`NumberFormat` é uma classe abstrata, então a obtemos através de métodos de fábrica estáticos.
+
+---
+
+## 2. Formatando Números, Moedas e Porcentagens
+
+Existem três tipos principais de formatadores que podemos obter:
+
+* **`getInstance(locale)`**: Para formatação de números em geral.
+* **`getCurrencyInstance(locale)`**: Para formatação de valores monetários.
+* **`getPercentInstance(locale)`**: Para formatação de porcentagens.
+
+**Exemplo Básico e Avançado (Formatando para diferentes países):**
+
+```java
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
+public class NumberFormatTest {
+    public static void main(String[] args) {
+        double valor = 123_456.789;
+
+        // Definindo locales para diferentes regiões
+        Locale localeBR = new Locale("pt", "BR");
+        Locale localeJP = Locale.JAPAN;
+        Locale localeIT = Locale.ITALY;
+        Locale localeUS = Locale.US;
+
+        // Criando formatadores para cada locale
+        NumberFormat[] formatters = new NumberFormat[4];
+        formatters[0] = NumberFormat.getInstance(localeBR);
+        formatters[1] = NumberFormat.getInstance(localeJP);
+        formatters[2] = NumberFormat.getInstance(localeIT);
+        formatters[3] = NumberFormat.getInstance(localeUS);
+
+        System.out.println("--- Formatando Números ---");
+        for (NumberFormat nf : formatters) {
+            System.out.println(nf.format(valor));
+        }
+
+        System.out.println("\n--- Formatando Moedas ---");
+        NumberFormat nfCurrencyBR = NumberFormat.getCurrencyInstance(localeBR);
+        NumberFormat nfCurrencyJP = NumberFormat.getCurrencyInstance(localeJP);
+        NumberFormat nfCurrencyIT = NumberFormat.getCurrencyInstance(localeIT);
+        NumberFormat nfCurrencyUS = NumberFormat.getCurrencyInstance(localeUS);
+
+        System.out.println("Brasil: " + nfCurrencyBR.format(valor));
+        System.out.println("Japão: " + nfCurrencyJP.format(valor));
+        System.out.println("Itália: " + nfCurrencyIT.format(valor));
+        System.out.println("EUA: " + nfCurrencyUS.format(valor));
+
+        // Configuração adicional: controlar o número de casas decimais
+        System.out.println("\n--- Controlando a precisão ---");
+        nfCurrencyBR.setMaximumFractionDigits(4);
+        System.out.println("Brasil (4 casas decimais): " + nfCurrencyBR.format(valor));
+    }
+}
+```
+**Saída Esperada:**
+```
+--- Formatando Números ---
+123.456,789
+123,456.789
+123.456,789
+123,456.789
+
+--- Formatando Moedas ---
+Brasil: R$ 123.456,79
+Japão: ￥123,457
+Itália: 123.456,79 €
+EUA: $123,456.79
+
+--- Controlando a precisão ---
+Brasil (4 casas decimais): R$ 123.456,7890
+```
+
+---
+
+## 3. Parsing: Convertendo `String` em `Number`
+
+A operação inversa, *parsing*, converte uma `String` formatada de volta para um objeto `Number` (que pode ser `Double`, `Long`, etc.). O método `parse()` pode lançar uma `ParseException`, que é uma exceção do tipo *checked*.
+
+**Exemplo (Parsing):**
+```java
+public class ParsingTest {
+    public static void main(String[] args) {
+        // String formatada no padrão alemão (vírgula como decimal)
+        String valorStr = "1.234,56";
+        NumberFormat nfDE = NumberFormat.getInstance(Locale.GERMANY);
+
+        try {
+            // Usa o formatador alemão para interpretar a string corretamente
+            double parsedValue = nfDE.parse(valorStr).doubleValue();
+            System.out.println("String original: " + valorStr);
+            System.out.println("Valor parseado: " + parsedValue); // 1234.56
+
+            // Tentar fazer o parse com o formatador errado (americano)
+            NumberFormat nfUS = NumberFormat.getInstance(Locale.US);
+            // Isso interpretará a vírgula como separador de milhar e ignorará o resto.
+            System.out.println("Parse com locale US: " + nfUS.parse(valorStr)); // 1234
+
+        } catch (ParseException e) {
+            System.out.println("Erro: A string não corresponde ao formato esperado.");
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `NumberFormat` para Exibição:** Sempre que for exibir um número para um usuário, use `NumberFormat` com o `Locale` apropriado. Isso garante que os separadores e símbolos estejam corretos para a região do usuário.
+2.  ✅ **Seja Explícito sobre o `Locale`:** Assim como com datas, não confie no `Locale` padrão da JVM. Sempre especifique o `Locale` desejado para garantir um comportamento consistente.
+3.  ✅ **Use `getCurrencyInstance` para Valores Monetários:** Ele cuida automaticamente do símbolo da moeda, sua posição e das regras de arredondamento padrão para aquele `Locale`.
+4.  ✅ **Use `parse()` para Entradas de Usuário:** Ao ler um número digitado por um usuário, use `NumberFormat.parse()`. Tentar usar `Double.parseDouble()` pode falhar se o usuário digitar "10,50" em um sistema configurado para o `Locale` americano.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Formatação Manual com Concatenação de String:** A pior prática de todas. Nunca construa uma string de moeda manualmente (`"R$ " + valor`). Isso não respeita o `Locale` e é extremamente frágil.
+2.  ❌ **Assumir o Separador Decimal:** Nunca assuma que o ponto (`.`) é o separador decimal universal. Em grande parte do mundo, é a vírgula (`,`). Deixe o `NumberFormat` lidar com isso.
+3.  ❌ **Usar `double` para Dinheiro:** Embora os exemplos usem `double` por simplicidade, em aplicações financeiras reais, **NUNCA** use `double` ou `float` para representar dinheiro devido a problemas de arredondamento de ponto flutuante. Use a classe `BigDecimal` para precisão absoluta.
+4.  ❌ **Compartilhar `NumberFormat` Modificado entre Threads:** Embora `NumberFormat` seja mais seguro que `SimpleDateFormat`, se você modificar suas propriedades (como `setMaximumFractionDigits`), não é garantido que seja thread-safe. A prática mais segura em ambientes concorrentes é usar instâncias locais ao método ou usar `ThreadLocal`.
 
 
 [Voltar ao Índice](#indice)
