@@ -12667,6 +12667,135 @@ Símbolo (EUA) visto no Brasil: US$
 
 ## <a name="parte121">121 - 118 - Classes Utilitárias - SimpleDateFormat</a>
 
+### RESUMO GEMINI
+
+# Guia Completo: `SimpleDateFormat` em Java
+
+Este guia detalha o uso da classe `java.text.SimpleDateFormat` para criar padrões de formatação de data e hora customizados, com base na aula 118 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `SimpleDateFormat`?
+
+Enquanto `DateFormat.getDateInstance()` nos dá estilos pré-definidos (`SHORT`, `MEDIUM`, etc.), na maioria das vezes precisamos de um formato exato, como "dd/MM/yyyy" ou "HH:mm:ss".
+
+`SimpleDateFormat` é a classe concreta que nos permite fazer isso. Ela é uma subclasse de `DateFormat` que permite que você especifique um **padrão (pattern)** de formatação usando uma string com caracteres especiais.
+
+---
+
+## 2. Criando um Padrão de Formatação
+
+Você define o formato desejado usando uma combinação de letras que representam partes da data e da hora.
+
+| Letra | Significado                     | Exemplo            |
+| :---- | :------------------------------ | :----------------- |
+| `y`   | Ano                             | `yy` (25), `yyyy` (2025) |
+| `M`   | Mês                             | `M` (6), `MM` (06), `MMM` (jun), `MMMM` (junho) |
+| `d`   | Dia do mês                      | `d` (5), `dd` (05) |
+| `h`   | Hora em am/pm (1-12)            | `h` (9), `hh` (09) |
+| `H`   | Hora do dia (0-23)              | `H` (21), `HH` (21) |
+| `m`   | Minuto                          | `m` (5), `mm` (05) |
+| `s`   | Segundo                         | `s` (8), `ss` (08) |
+| `E`   | Dia da semana                   | `E` (ter), `EEEE` (terça-feira) |
+| `'`   | Texto literal (escape)          | `'data:' dd/MM` -> data: 25/06 |
+
+**Exemplo Básico (Aplicando um padrão):**
+
+```java
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class SimpleDateFormatTest {
+    public static void main(String[] args) {
+        // Padrão brasileiro comum
+        String pattern = "'Brasil,' dd 'de' MMMM 'de' yyyy 'às' HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+
+        Date now = new Date();
+        String formattedDate = sdf.format(now);
+
+        System.out.println("Data formatada com padrão customizado:");
+        System.out.println(formattedDate);
+    }
+}
+```
+**Saída Esperada:**
+```
+Data formatada com padrão customizado:
+Brasil, 27 de junho de 2025 às 21:38:00
+```
+
+---
+
+## 3. Parsing com `SimpleDateFormat`
+
+O processo de converter uma `String` de volta para um `Date` (*parsing*) também funciona com `SimpleDateFormat`. É crucial que a `String` corresponda **exatamente** ao padrão definido no construtor do `SimpleDateFormat`.
+
+**Exemplo Avançado (Parsing):**
+
+```java
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class ParsingTest {
+    public static void main(String[] args) {
+        String dateStr = "25/12/2025";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        
+        try {
+            // Tenta converter a String para um objeto Date
+            Date parsedDate = sdf.parse(dateStr);
+            System.out.println("String original: " + dateStr);
+            System.out.println("Objeto Date gerado: " + parsedDate);
+            
+            // Opcional: Re-formatar o Date para outro padrão para confirmar
+            SimpleDateFormat sdfOutro = new SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy");
+            System.out.println("Data re-formatada: " + sdfOutro.format(parsedDate));
+            
+        } catch (ParseException e) {
+            // Este bloco é executado se a String 'dateStr' não seguir o formato "dd/MM/yyyy"
+            System.out.println("Erro: A string não corresponde ao formato esperado.");
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **SEMPRE USE `java.time.format.DateTimeFormatter`:** Esta é a regra de ouro. Toda a funcionalidade de `SimpleDateFormat` existe na nova API de forma mais segura, poderosa e clara. `DateTimeFormatter` é **imutável e thread-safe**.
+
+    **Exemplo (A Forma Moderna e Correta):**
+```java
+    import java.time.LocalDateTime;
+    import java.time.format.DateTimeFormatter;
+
+// O formatador é imutável e pode ser uma constante estática segura
+//    private static final DateTimeFormatter BRAZIL_FORMATTER =
+//            DateTimeFormatter.ofPattern("'Brasil,' dd 'de' MMMM 'de' yyyy 'às' HH:mm:ss");
+
+        final DateTimeFormatter BRAZIL_FORMATTER =
+                DateTimeFormatter.ofPattern("'Brasil,' dd 'de' MMMM 'de' yyyy 'às' HH:mm:ss");
+
+        LocalDateTime now = LocalDateTime.now();
+        String formatted = now.format(BRAZIL_FORMATTER);
+        System.out.println(formatted);
+
+    
+```
+
+2.  ✅ **Crie Instâncias Locais (se obrigado a usar código legado):** Se você precisa manter um código que usa `SimpleDateFormat`, a abordagem mais segura para evitar problemas de concorrência é criar uma nova instância dentro do método toda vez que for usá-la.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Compartilhar uma Instância Estática de `SimpleDateFormat`:** Este é o erro mais perigoso e comum. Por ser uma classe mutável, compartilhá-la entre threads (por exemplo, como uma constante `static final` em uma classe de utilitários) causará resultados incorretos e exceções em uma aplicação web ou qualquer sistema concorrente. **NÃO FAÇA ISSO!**
+2.  ❌ **Escrever Código Novo com `SimpleDateFormat`:** Com a API `java.time` disponível desde 2014 (Java 8), não há nenhuma justificativa para usar `SimpleDateFormat` em novos projetos. Você estaria deliberadamente escolhendo uma API inferior e perigosa.
+3.  ❌ **Ignorar a `ParseException`:** Nunca deixe o bloco `catch (ParseException e)` vazio. Se o parse de uma data falhar, sua aplicação precisa saber e reagir a isso, seja logando o erro, exibindo uma mensagem para o usuário ou tomando outra ação. Engolir a exceção esconde bugs.
+
+
 
 
 [Voltar ao Índice](#indice)
