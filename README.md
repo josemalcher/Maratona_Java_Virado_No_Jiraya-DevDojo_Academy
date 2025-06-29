@@ -12805,6 +12805,144 @@ public class ParsingTest {
 
 ## <a name="parte122">122 - 119 - Classes Utilitárias - LocalDate</a>
 
+### Resumo Gemini
+
+# Guia Completo: `java.time.LocalDate` em Java
+
+Este guia detalha o uso da classe `LocalDate`, parte da moderna API `java.time` introduzida no Java 8, com base na aula 119 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `LocalDate`?
+
+`LocalDate` é uma das principais classes da nova API de Data e Hora do Java. Ela representa uma **data** no formato ISO (ano-mês-dia), como "2025-06-28", **sem a parte de hora, minuto, segundo ou fuso horário**.
+
+É a classe ideal para representar aniversários, feriados, ou qualquer evento em que a hora e o fuso horário não são relevantes.
+
+**Características Principais:**
+
+* **Imutável:** Assim como uma `String`, um objeto `LocalDate` não pode ser alterado após sua criação. Qualquer método de manipulação (como `plusDays`) retorna um **novo** objeto `LocalDate` com o valor modificado. Isso a torna completamente **thread-safe**.
+* **Clara e Intuitiva:** A API é fluente e fácil de ler. Os meses são representados por um `enum` (`Month.JUNE`) ou por números de 1 a 12, eliminando a confusão dos meses baseados em zero da API legada.
+
+---
+
+## 2. Criando Instâncias de `LocalDate`
+
+Existem várias formas de se obter um objeto `LocalDate`.
+
+**a) Data Atual (`now`)**
+A forma mais simples de obter a data corrente.
+
+```java
+import java.time.LocalDate;
+
+LocalDate hoje = LocalDate.now();
+System.out.println("Hoje é: " + hoje); // Ex: 2025-06-28
+```
+
+**b) Data Específica (`of`)**
+Para criar uma data específica, use o método estático `of`.
+
+```java
+LocalDate natal = LocalDate.of(2025, 12, 25);
+System.out.println("Natal 2025: " + natal);
+
+// Usando o enum Month para mais clareza
+import java.time.Month;
+LocalDate independencia = LocalDate.of(2025, Month.SEPTEMBER, 7);
+System.out.println("Independência: " + independencia);
+```
+
+**c) A partir de uma String (`parse`)**
+Converte uma string para `LocalDate`. Por padrão, a string deve estar no formato ISO "yyyy-MM-dd".
+
+```java
+LocalDate dataParse = LocalDate.parse("2026-01-20");
+System.out.println("Data parseada: " + dataParse);
+```
+
+---
+
+## 3. Obtendo Informações de uma Data
+
+Uma vez que você tem um objeto `LocalDate`, pode extrair facilmente suas partes.
+
+**Exemplo Básico:**
+
+```java
+LocalDate hoje = LocalDate.now();
+
+int ano = hoje.getYear();
+Month mes = hoje.getMonth(); // Retorna o enum Month
+int numeroDoMes = hoje.getMonthValue(); // Retorna o mês como int (1-12)
+int diaDoMes = hoje.getDayOfMonth();
+int diaDoAno = hoje.getDayOfYear();
+DayOfWeek diaDaSemana = hoje.getDayOfWeek(); // Retorna o enum DayOfWeek
+
+System.out.println("Ano: " + ano);
+System.out.println("Mês: " + mes);
+System.out.println("Número do Mês: " + numeroDoMes);
+System.out.println("Dia do Mês: " + diaDoMes);
+System.out.println("Dia do Ano: " + diaDoAno);
+System.out.println("Dia da Semana: " + diaDaSemana);
+System.out.println("É ano bissexto? " + hoje.isLeapYear());
+```
+
+---
+
+## 4. Manipulando Datas (Imutabilidade em Ação)
+
+Qualquer alteração em uma `LocalDate` retorna uma nova instância.
+
+**Exemplo Avançado (Cálculos de datas):**
+
+```java
+LocalDate data = LocalDate.of(2025, Month.AUGUST, 15);
+
+System.out.println("Data original: " + data);
+
+// Adicionando e subtraindo
+LocalDate dataFutura = data.plusDays(10).plusMonths(2).plusYears(1);
+System.out.println("Data futura: " + dataFutura);
+
+LocalDate dataPassada = data.minusWeeks(3);
+System.out.println("Data passada: " + dataPassada);
+
+// Modificando um campo específico com 'with'
+LocalDate mesmaDataOutroAno = data.withYear(2030);
+System.out.println("Mesma data em 2030: " + mesmaDataOutroAno);
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **SEMPRE USE `java.time`:** Abandone completamente `java.util.Date` e `java.util.Calendar` para todo código novo. A API `java.time` é superior em todos os aspectos.
+2.  ✅ **Use a Classe Correta para o Problema Certo:** Se você só precisa da data (ano-mês-dia), use `LocalDate`. Se precisar da hora, use `LocalTime`. Se precisar de ambos, `LocalDateTime`. Se precisar de fuso horário, `ZonedDateTime`.
+3.  ✅ **Abrace a Imutabilidade:** Lembre-se que métodos como `plusDays` não alteram o objeto original. Sempre atribua o resultado a uma nova variável ou reatribua à original.
+    ```java
+    // CORRETO
+    data = data.plusDays(1);
+    ```
+4.  ✅ **Use `TemporalAdjusters` para Cálculos Complexos:** Para lógicas como "a primeira terça-feira do mês", explore a classe `TemporalAdjusters`.
+    ```java
+    import java.time.temporal.TemporalAdjusters;
+    LocalDate data = LocalDate.now();
+    LocalDate proximaSexta = data.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+    ```
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Misturar APIs:** Evite misturar a API `java.time` com a API legada (`Date`, `Calendar`) o máximo possível. Se precisar interagir com um sistema antigo, converta para `java.time` na fronteira do seu código e trabalhe internamente apenas com a nova API.
+2.  ❌ **Esquecer de Reatribuir:** Um erro comum para iniciantes é chamar um método de manipulação e esperar que o objeto original mude.
+    ```java
+    // ERRADO! A data original não será alterada.
+    LocalDate data = LocalDate.of(2025, 1, 1);
+    data.plusDays(5); // Esta linha não faz nada útil, o resultado foi descartado.
+    ```
+3.  ❌ **Usar `LocalDate` quando o Fuso Horário Importa:** Se você está registrando um evento global ou uma transação, onde o instante exato no tempo é crucial, `LocalDate` não é a classe certa. Use `ZonedDateTime` ou `Instant` para esses casos.
+
+
 
 
 [Voltar ao Índice](#indice)
