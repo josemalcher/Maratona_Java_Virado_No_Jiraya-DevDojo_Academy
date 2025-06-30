@@ -12952,6 +12952,137 @@ System.out.println("Mesma data em 2030: " + mesmaDataOutroAno);
 
 ## <a name="parte123">123 - 120 - Classes Utilitárias - LocalTime</a>
 
+### RESUMO GEMINI
+
+# Guia Completo: `java.time.LocalTime` em Java
+
+Este guia detalha o uso da classe `LocalTime`, parte da moderna API `java.time` introduzida no Java 8, com base na aula 120 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `LocalTime`?
+
+`LocalTime` é a classe que representa uma **hora** no formato ISO (HH:mm:ss.nano), como "21:52:30.123456789". Ela é o par da `LocalDate` e, assim como ela, é "local", ou seja, **não possui informação de data ou fuso horário**.
+
+É a classe ideal para representar horários de funcionamento, alarmes, ou qualquer evento em que a data e o fuso horário não são relevantes.
+
+**Características Principais:**
+
+* **Imutável:** Um objeto `LocalTime` não pode ser alterado após sua criação. Qualquer método de manipulação (como `plusHours`) retorna um **novo** objeto `LocalTime` com o valor modificado. Isso garante a segurança em ambientes multi-thread.
+* **Precisa:** Pode representar a hora com precisão de nanossegundos.
+* **Clara e Intuitiva:** A API é fluente e fácil de ler, seguindo o mesmo padrão da `LocalDate`.
+
+---
+
+## 2. Criando Instâncias de `LocalTime`
+
+Existem várias formas de se obter um objeto `LocalTime`.
+
+**a) Hora Atual (`now`)**
+A forma mais simples de obter a hora corrente do relógio do sistema.
+
+```java
+import java.time.LocalTime;
+
+LocalTime agora = LocalTime.now();
+System.out.println("Agora é: " + agora); // Ex: 21:52:30.987654321
+```
+
+**b) Hora Específica (`of`)**
+Para criar uma hora específica, use um dos métodos estáticos `of`.
+
+```java
+// Criando uma hora com hora e minuto
+LocalTime almoco = LocalTime.of(12, 30);
+System.out.println("Hora do almoço: " + almoco);
+
+// Criando com hora, minuto e segundo
+LocalTime inicioFilme = LocalTime.of(20, 0, 0);
+System.out.println("Início do filme: " + inicioFilme);
+
+// Criando com precisão de nanossegundos
+LocalTime largada = LocalTime.of(9, 5, 10, 123456789);
+System.out.println("Largada da corrida: " + largada);
+```
+
+**c) A partir de uma String (`parse`)**
+Converte uma string para `LocalTime`. Por padrão, a string deve estar no formato ISO "HH:mm:ss".
+
+```java
+LocalTime horaParse = LocalTime.parse("23:59:59");
+System.out.println("Hora parseada: " + horaParse);
+```
+
+---
+
+## 3. Obtendo Informações de uma Hora
+
+Uma vez que você tem um objeto `LocalTime`, pode extrair facilmente suas partes.
+
+**Exemplo Básico:**
+
+```java
+LocalTime agora = LocalTime.now();
+
+int hora = agora.getHour();
+int minuto = agora.getMinute();
+int segundo = agora.getSecond();
+int nano = agora.getNano(); // Nanossegundo daquele segundo
+
+System.out.println("Hora: " + hora);
+System.out.println("Minuto: " + minuto);
+System.out.println("Segundo: " + segundo);
+System.out.println("Nanossegundo: " + nano);
+```
+
+---
+
+## 4. Manipulando Horas (Imutabilidade em Ação)
+
+Qualquer alteração em um `LocalTime` retorna uma nova instância.
+
+**Exemplo Avançado (Cálculos de horas):**
+
+```java
+LocalTime hora = LocalTime.of(10, 30, 0);
+
+System.out.println("Hora original: " + hora);
+
+// Adicionando e subtraindo
+LocalTime horaMaisTarde = hora.plusHours(2).plusMinutes(15);
+System.out.println("Hora mais tarde: " + horaMaisTarde);
+
+LocalTime horaMaisCedo = hora.minusSeconds(45);
+System.out.println("Hora mais cedo: " + horaMaisCedo);
+
+// Verificando o máximo e mínimo
+System.out.println("Meia-noite: " + LocalTime.MIDNIGHT); // 00:00
+System.out.println("Máxima hora: " + LocalTime.MAX); // 23:59:59.999999999
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `LocalTime` para Horários sem Data:** É a ferramenta perfeita para representar um horário fixo que não depende de um dia específico (ex: "o expediente começa às 09:00").
+2.  ✅ **Combine com `LocalDate` quando necessário:** Para criar uma data e hora completas, combine um `LocalDate` e um `LocalTime` para formar um `LocalDateTime`.
+    ```java
+    LocalDate hoje = LocalDate.now();
+    LocalTime agora = LocalTime.now();
+    LocalDateTime dataHoraCompleta = hoje.atTime(agora);
+    ```
+3.  ✅ **Abrace a Imutabilidade:** Lembre-se que métodos como `plusHours` não alteram o objeto original. Sempre atribua o resultado a uma nova variável.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Usar `LocalTime` para Instantes no Tempo:** Se você precisa registrar o momento exato em que um evento ocorreu (uma transação, um log), `LocalTime` é a classe errada, pois não tem data nem fuso horário. Para isso, use `Instant` ou `ZonedDateTime`.
+2.  ❌ **Esquecer de Reatribuir o Resultado:** Assim como com `LocalDate`, um erro comum é chamar um método de manipulação e descartar o resultado, esperando que o objeto original mude.
+    ```java
+    // ERRADO! A hora original não será alterada.
+    LocalTime hora = LocalTime.of(14, 0);
+    hora.plusMinutes(30); // O resultado "14:30" foi criado e imediatamente descartado.
+    ```
+3.  ❌ **Fazer Parsing de Strings com Formato Incorreto:** Tentar fazer o `parse` de uma string que não está no formato ISO "HH:mm" ou "HH:mm:ss" sem usar um `DateTimeFormatter` customizado resultará em uma `DateTimeParseException`.
 
 
 [Voltar ao Índice](#indice)
