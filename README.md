@@ -13092,6 +13092,115 @@ System.out.println("Máxima hora: " + LocalTime.MAX); // 23:59:59.999999999
 
 ## <a name="parte124">124 - 121 - Classes Utilitárias - LocalDateTime</a>
 
+### GEMINI
+
+# Guia Completo: `java.time.LocalDateTime` em Java
+
+Este guia detalha o uso da classe `LocalDateTime`, a junção de data e hora na API `java.time`, com base na aula 121 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `LocalDateTime`?
+
+`LocalDateTime` é a classe que representa uma **data e hora**, como "2025-07-02T21:45:30". Ela é, literalmente, a combinação de um `LocalDate` com um `LocalTime`.
+
+Assim como suas partes, ela é "local", o que significa que **não armazena informações de fuso horário (timezone)**. Ela representa a data e hora em um ponto genérico, sem especificar *onde* no mundo aquela data e hora se aplicam.
+
+**Características Principais:**
+
+* **Imutável:** A característica mais importante. Qualquer método de manipulação retorna um **novo** objeto `LocalDateTime`, garantindo segurança e previsibilidade.
+* **Precisa:** Herda a precisão de nanossegundos do `LocalTime`.
+* **Intuitiva:** Segue o mesmo padrão de design fluente e claro de `LocalDate` и `LocalTime`.
+
+---
+
+## 2. Criando Instâncias de `LocalDateTime`
+
+**a) Data e Hora Atuais (`now`)**
+
+```java
+import java.time.LocalDateTime;
+
+LocalDateTime agora = LocalDateTime.now();
+System.out.println("Data e hora atuais: " + agora);
+// Exemplo de saída: 2025-07-02T21:45:30.123456789
+```
+
+**b) Data e Hora Específicas (`of`)**
+
+```java
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Month;
+
+// Criando a partir de valores primitivos
+LocalDateTime dataHoraEspecifica = LocalDateTime.of(2025, Month.DECEMBER, 25, 10, 30, 0);
+System.out.println("Data e hora específicas: " + dataHoraEspecifica);
+
+// Criando a partir de objetos LocalDate e LocalTime (forma muito comum)
+LocalDate data = LocalDate.of(2026, Month.JANUARY, 1);
+LocalTime hora = LocalTime.of(0, 0, 0);
+LocalDateTime anoNovo = LocalDateTime.of(data, hora);
+System.out.println("Ano Novo 2026: " + anoNovo);
+```
+
+**c) A partir de uma String (`parse`)**
+Por padrão, a string deve estar no formato ISO "yyyy-MM-dd'T'HH:mm:ss".
+
+```java
+LocalDateTime dataParse = LocalDateTime.parse("2025-08-15T14:00:00");
+System.out.println("Data e hora parseadas: " + dataParse);
+```
+
+---
+
+## 3. Manipulando `LocalDateTime` (Imutabilidade em Ação)
+
+A manipulação funciona exatamente como em `LocalDate` e `LocalTime`, sempre retornando uma nova instância.
+
+**Exemplo Avançado (Cálculos e conversões):**
+
+```java
+LocalDateTime evento = LocalDateTime.of(2025, 10, 20, 19, 0);
+System.out.println("Evento original: " + evento);
+
+// Adicionando 3 dias e subtraindo 2 horas
+LocalDateTime eventoAjustado = evento.plusDays(3).minusHours(2);
+System.out.println("Evento ajustado: " + eventoAjustado);
+
+// Extraindo as partes LocalDate e LocalTime
+LocalDate dataDoEvento = evento.toLocalDate();
+LocalTime horaDoEvento = evento.toLocalTime();
+
+System.out.println("Apenas a data do evento: " + dataDoEvento);
+System.out.println("Apenas a hora do evento: " + horaDoEvento);
+
+// Combinando de volta com o método 'atTime'
+LocalDateTime eventoRecriado = dataDoEvento.atTime(20, 30, 0);
+System.out.println("Evento recriado para outro horário: " + eventoRecriado);
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `LocalDateTime` para Agendamentos Locais:** É a classe perfeita para registrar eventos onde o fuso horário não é relevante ou é implícito (ex: um agendamento em uma clínica local, um lembrete no seu próprio computador).
+2.  ✅ **Abrace a Imutabilidade:** Sempre atribua o resultado de uma operação de manipulação a uma variável.
+3.  ✅ **Use `DateTimeFormatter` para Formatação Customizada:** Para exibir ou fazer o parse de datas em formatos diferentes do padrão ISO (ex: "dd/MM/yyyy HH:mm"), use um `DateTimeFormatter`.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **USAR `LocalDateTime` PARA EVENTOS GLOBAIS:** Este é o erro mais crítico. **Nunca** use `LocalDateTime` para registrar um instante no tempo que precisa ser universalmente consistente, como o momento de uma transação financeira, um post em uma rede social global ou um log de sistema. Sem o fuso horário, a informação "2025-07-02T21:00" é ambígua (pode ser 21h em São Paulo ou 21h em Tóquio, que são momentos completamente diferentes no tempo).
+    * **Solução Correta:** Para esses casos, use `ZonedDateTime` (que armazena a data, a hora e o fuso horário) ou `Instant` (que representa um ponto único na linha do tempo UTC, ideal para armazenamento em banco de dados).
+
+2.  ❌ **Esquecer de Reatribuir o Resultado:**
+    ```java
+    // ERRADO! O objeto 'agora' não muda.
+    LocalDateTime agora = LocalDateTime.now();
+    agora.plusHours(1); // O resultado (uma hora depois) foi descartado.
+    ```
+
+3.  ❌ **Fazer Cálculos de Duração Através de Fusos Horários:** Tentar calcular a diferença de tempo entre dois `LocalDateTime`s que ocorreram em fusos horários diferentes levará a um resultado incorreto. A conversão para `ZonedDateTime` ou `Instant` é necessária antes de qualquer cálculo desse tipo.
 
 
 [Voltar ao Índice](#indice)
