@@ -13210,6 +13210,128 @@ System.out.println("Evento recriado para outro horário: " + eventoRecriado);
 
 ## <a name="parte125">125 - 122 - Classes Utilitárias - Instant</a>
 
+### Resumo Gemini
+
+# Guia Completo: `java.time.Instant` em Java
+
+Este guia detalha o uso da classe `Instant`, o coração da representação de tempo na API `java.time`, com base na aula 122 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `Instant`?
+
+`Instant` representa um **ponto único e instantâneo na linha do tempo**. Pense nele como um carimbo de data/hora (timestamp) universal.
+
+A principal característica do `Instant` é que ele é sempre representado em **UTC (Coordinated Universal Time)**, também conhecido como "Zulu time" ou GMT. Ele não tem conceito de fuso horário, pois representa o mesmo momento para todos no mundo.
+
+Internamente, ele armazena o tempo como um número de segundos e nanossegundos desde a **Época Unix** (01 de janeiro de 1970, 00:00:00 UTC). Isso o torna o sucessor direto e muito mais seguro do `long` de milissegundos da antiga classe `java.util.Date`.
+
+**Características Principais:**
+
+* **Imutável:** Assim como as outras classes da API `java.time`, é thread-safe.
+* **Universal (UTC):** Não está atrelado a nenhum fuso horário local, o que o torna perfeito para armazenamento e comunicação entre sistemas.
+* **Orientado à Máquina:** É ideal para lógica de máquina, não para exibição direta ao usuário (que geralmente prefere ver a hora em seu fuso horário local).
+
+---
+
+## 2. Criando e Manipulando um `Instant`
+
+**a) O Momento Atual (`now`)**
+
+```java
+import java.time.Instant;
+
+Instant agora = Instant.now();
+System.out.println("Instante atual (UTC): " + agora);
+// Exemplo de saída: 2025-07-07T23:49:00.123456789Z
+// A letra 'Z' no final significa Zulu Time (UTC).
+```
+
+**b) A partir de Segundos/Milissegundos da Época**
+
+Isso é útil para interoperabilidade com sistemas que usam timestamps Unix.
+
+```java
+// Criando a partir de milissegundos (similar a new Date(long))
+Instant deMilis = Instant.ofEpochMilli(1000L);
+System.out.println("1 segundo após a Época: " + deMilis);
+
+// Criando a partir de segundos
+Instant deSegundos = Instant.ofEpochSecond(3600);
+System.out.println("1 hora após a Época: " + deSegundos);
+```
+
+**c) Manipulação (Imutável)**
+
+```java
+Instant agora = Instant.now();
+System.out.println("Agora: " + agora);
+
+// Adicionando 2 horas
+Instant duasHorasDepois = agora.plusSeconds(7200);
+System.out.println("Duas horas depois: " + duasHorasDepois);
+
+// Subtraindo 10 minutos
+Instant dezMinutosAntes = agora.minusSeconds(600);
+System.out.println("Dez minutos antes: " + dezMinutosAntes);
+```
+
+---
+
+## 3. `Instant` vs. `LocalDateTime`
+
+Esta é a distinção mais importante a se fazer:
+
+* `LocalDateTime`: Representa uma data e hora **sem fuso horário**. "25/12/2025 às 20:00". É uma descrição humana, mas ambígua. Pode ser 20h em São Paulo ou 20h em Tóquio.
+* `Instant`: Representa um **momento único e global**. É um ponto específico na linha do tempo.
+
+**Exemplo Avançado (Convertendo entre tipos):**
+
+Você não pode obter "o dia do mês" de um `Instant` diretamente, pois ele não tem conceito de calendário. Para isso, você precisa aplicar um fuso horário, convertendo-o para um `ZonedDateTime` ou `LocalDateTime`.
+
+```java
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+Instant agora = Instant.now();
+System.out.println("Instant (UTC): " + agora);
+
+// Convertendo o Instant para um LocalDateTime no fuso horário de São Paulo
+LocalDateTime emSaoPaulo = LocalDateTime.ofInstant(agora, ZoneId.of("America/Sao_Paulo"));
+System.out.println("Mesmo instante em São Paulo: " + emSaoPaulo);
+
+// Convertendo o Instant para um LocalDateTime no fuso horário de Tóquio
+LocalDateTime emToquio = LocalDateTime.ofInstant(agora, ZoneId.of("Asia/Tokyo"));
+System.out.println("Mesmo instante em Tóquio: " + emToquio);
+```
+
+**Saída Esperada (considerando o horário de Brasília -03:00):**
+```
+Instant (UTC): 2025-07-07T23:49:00.123Z
+Mesmo instante em São Paulo: 2025-07-07T20:49:00.123
+Mesmo instante em Tóquio: 2025-07-08T08:49:00.123
+```
+Note como o **mesmo `Instant`** resulta em horas e até mesmo dias diferentes dependendo do fuso horário aplicado.
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **USE `Instant` PARA TIMESTAMPS:** É a melhor classe para registrar quando um evento ocorreu. Ideal para logs, campos como `data_criacao` ou `data_modificacao` em bancos de dados.
+2.  ✅ **ARMAZENE DATAS EM UTC:** A prática padrão em desenvolvimento de software é armazenar todas as datas e horas no banco de dados em UTC (usando `Instant` ou um tipo de timestamp equivalente).
+3.  ✅ **CONVERTA APENAS NA EXIBIÇÃO:** Mantenha o `Instant` por toda a sua lógica de negócio e só o converta para um `ZonedDateTime` ou `LocalDateTime` na camada de apresentação (quando for mostrar a data/hora para o usuário no fuso horário dele).
+4.  ✅ **USE `Duration` PARA CALCULAR DIFERENÇA:** Para saber o tempo entre dois `Instant`s, use a classe `Duration`.
+    ```java
+    Duration tempoDecorrido = Duration.between(dezMinutosAntes, agora);
+    System.out.println("Segundos decorridos: " + tempoDecorrido.getSeconds());
+    ```
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **USAR `Instant` PARA DATAS DE NASCIMENTO:** Uma data de nascimento é um `LocalDate`, não um `Instant`. Uma pessoa que nasceu em 10 de maio não nasceu em um instante UTC específico, mas sim no dia 10 de maio do seu fuso horário local.
+2.  ❌ **TENTAR EXTRAIR CAMPOS DE CALENDÁRIO DIRETAMENTE:** Tentar fazer `instant.getDayOfMonth()` não existe. Um `Instant` não tem "dia do mês" sem o contexto de um fuso horário. Se precisar disso, converta-o primeiro.
+3.  ❌ **ASSUMIR QUE O `Instant` ESTÁ NO FUSO HORÁRIO LOCAL:** Um erro comum é obter um `Instant.now()` e pensar que ele representa a hora local. Ele sempre representa a hora UTC, que pode ser diferente da hora do seu relógio.
 
 
 [Voltar ao Índice](#indice)
