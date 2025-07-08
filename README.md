@@ -13341,6 +13341,132 @@ Note como o **mesmo `Instant`** resulta em horas e até mesmo dias diferentes de
 
 ## <a name="parte126">126 - 123 - Classes Utilitárias - Duration</a>
 
+### Resumo Gemini
+
+# Guia Completo: `java.time.Duration` em Java
+
+Este guia detalha o uso da classe `Duration`, a ferramenta da API `java.time` para medir quantidades de tempo baseadas em horas, minutos e segundos, com base na aula 123 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `Duration`?
+
+`Duration` representa uma **duração de tempo** medida em **segundos e nanossegundos**. É a classe ideal para medir um intervalo de tempo preciso e baseado em horas (diferente da classe `Period`, que mede em anos, meses e dias).
+
+Pense nela como a resposta para a pergunta: "Quanto tempo se passou entre o início e o fim de uma tarefa?".
+
+**Características Principais:**
+
+* **Imutável:** Assim como as outras classes da API `java.time`, é thread-safe.
+* **Baseada em Tempo:** Trabalha com unidades de tempo precisas (dias, horas, minutos, segundos, nanossegundos).
+* **Não é vinculada a um calendário:** Uma duração de "24 horas" é sempre 24 horas, independentemente de horário de verão ou outras regras de calendário.
+
+---
+
+## 2. Criando Instâncias de `Duration`
+
+**a) Calculando a Duração Entre Dois Pontos no Tempo (`between`)**
+
+Esta é a forma mais comum de usar `Duration`. O método estático `between()` calcula o intervalo entre dois objetos temporais.
+
+**Importante:** `Duration.between()` funciona com objetos que possuem informação de tempo:
+* `LocalTime`
+* `LocalDateTime`
+* `Instant`
+* `ZonedDateTime`
+
+**Não funciona** com `LocalDate`, pois não há como medir segundos entre duas datas sem a hora.
+
+**Exemplo Básico:**
+```java
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+public class DurationTest {
+    public static void main(String[] args) {
+        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime proximoNatal = LocalDateTime.of(2025, 12, 25, 0, 0, 0);
+
+        LocalTime agoraTime = LocalTime.now();
+        LocalTime horaDoAlmoco = LocalTime.of(12, 0);
+
+        // Calculando a duração entre duas datas e horas
+        Duration duracaoAteNatal = Duration.between(agora, proximoNatal);
+        System.out.println("Duração até o próximo Natal: " + duracaoAteNatal);
+        System.out.println("Em dias: " + duracaoAteNatal.toDays());
+        System.out.println("Em horas: " + duracaoAteNatal.toHours());
+
+        // Calculando a duração entre duas horas
+        Duration duracaoAteAlmoco = Duration.between(agoraTime, horaDoAlmoco);
+        System.out.println("\nDuração até o almoço: " + duracaoAteAlmoco);
+        System.out.println("Em minutos: " + duracaoAteAlmoco.toMinutes());
+    }
+}
+```
+
+**b) Criando uma Duração a partir de uma Quantidade (`of...`)**
+Você também pode criar uma `Duration` a partir de uma quantidade específica de tempo.
+
+```java
+Duration duracaoDe2Dias = Duration.ofDays(2); // 48 horas
+Duration duracaoDe10Horas = Duration.ofHours(10);
+Duration duracaoDe5Minutos = Duration.ofMinutes(5);
+
+System.out.println("2 dias em horas: " + duracaoDe2Dias.toHours()); // 48
+System.out.println("10 horas em minutos: " + duracaoDe10Horas.toMinutes()); // 600
+```
+
+---
+
+## 3. Exemplo Avançado: Parsing e Manipulação
+
+`Duration` também pode ser criada a partir de uma `String` no formato padrão ISO-8601 (`PnDTnHnMn.nS`).
+
+```java
+// Padrão ISO-8601 para duração
+// PT = Period Time
+// 2D = 2 Dias, 10H = 10 Horas, 30M = 30 Minutos
+Duration d1 = Duration.parse("PT10H30M");
+System.out.println("Duração parseada: " + d1);
+
+// Manipulando durações (são imutáveis)
+Duration d2 = d1.plusMinutes(15).minusSeconds(30);
+System.out.println("Duração manipulada: " + d2);
+
+// Extraindo partes da duração (Java 9+)
+System.out.println("Parte das horas: " + d2.toHoursPart());
+System.out.println("Parte dos minutos: " + d2.toMinutesPart());
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `Duration` para Medir Tempo de Máquina:** É a ferramenta perfeita para medir o tempo de execução de um algoritmo, o tempo de resposta de uma API, ou qualquer intervalo preciso.
+2.  ✅ **Use `Duration.between()` com `Instant`:** Para a medição mais precisa e livre de ambiguidades de fuso horário, calcule a duração entre dois objetos `Instant`.
+    ```java
+    Instant inicio = Instant.now();
+    // ... alguma tarefa demorada ...
+    Instant fim = Instant.now();
+    Duration tempoDeExecucao = Duration.between(inicio, fim);
+    System.out.println("A tarefa levou: " + tempoDeExecucao.toMillis() + " ms");
+    ```
+3.  ✅ **Use `Period` para Datas de Calendário:** Se precisar calcular a diferença em "anos, meses e dias" entre duas `LocalDate`, use a classe `Period`, não a `Duration`.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Tentar Usar `Duration` com `LocalDate`:** Este é o erro mais comum. O código abaixo lançará uma `UnsupportedTemporalTypeException`.
+    ```java
+    // NUNCA FAÇA ISSO!
+    LocalDate d1 = LocalDate.of(2025, 1, 1);
+    LocalDate d2 = LocalDate.of(2025, 1, 10);
+    // Duration.between(d1, d2); // LANÇA EXCEÇÃO!
+    ```
+    A razão é que a "duração" de um dia pode não ser sempre 24 horas (por exemplo, durante a mudança para o horário de verão). `Duration` mede tempo físico, enquanto `LocalDate` lida com o calendário.
+
+2.  ❌ **Confundir `toDays()` com "dias do calendário":** `duration.toDays()` retorna o número total de períodos de 24 horas contidos na duração. Uma duração de "1 mês" não pode ser representada de forma confiável por `Duration`, pois um mês pode ter 28, 29, 30 ou 31 dias.
+
 
 
 [Voltar ao Índice](#indice)
