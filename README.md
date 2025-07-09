@@ -13476,6 +13476,120 @@ System.out.println("Parte dos minutos: " + d2.toMinutesPart());
 
 ## <a name="parte127">127 - 124 - Classes Utilitárias - Period</a>
 
+### RESUMO Gemini
+
+# Guia Completo: `java.time.Period` em Java
+
+Este guia detalha o uso da classe `Period`, a ferramenta da API `java.time` para medir quantidades de tempo baseadas em anos, meses e dias, com base na aula 124 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `Period`?
+
+`Period` representa uma **quantidade de tempo** medida em **anos, meses e dias**. É a classe ideal para medir um intervalo de tempo de forma humana, como a idade de uma pessoa ou o tempo de uma assinatura.
+
+**A Diferença Crucial: `Period` vs. `Duration`**
+
+* **`Period`**: Baseada no calendário (`LocalDate`). Lida com conceitos como "1 mês" (que pode ter 28, 30 ou 31 dias) ou "1 ano".
+* **`Duration`**: Baseada no tempo físico (`LocalTime`, `LocalDateTime`, `Instant`). Lida com unidades exatas como segundos e nanossegundos. Um "dia" para a `Duration` é sempre exatamente 24 horas.
+
+**Características Principais:**
+
+* **Imutável:** É thread-safe.
+* **Baseada em Calendário:** Leva em consideração as regras do calendário ISO.
+
+---
+
+## 2. Criando Instâncias de `Period`
+
+**a) Calculando o Período Entre Duas Datas (`between`)**
+
+Esta é a forma mais comum de usar `Period`. O método estático `between()` calcula o intervalo entre dois objetos `LocalDate`.
+
+**Importante:** `Period.between()` funciona **apenas** com `LocalDate`. Tentar usá-lo com `LocalDateTime` ou `Instant` pode levar a resultados inesperados ou erros.
+
+**Exemplo Básico:**
+```java
+import java.time.LocalDate;
+import java.time.Period;
+
+public class PeriodTest {
+    public static void main(String[] args) {
+        LocalDate agora = LocalDate.now();
+        LocalDate proximoAniversario = LocalDate.of(2026, 8, 15);
+
+        // Calculando o período entre duas datas
+        Period periodoAteAniversario = Period.between(agora, proximoAniversario);
+
+        System.out.println("Período até o próximo aniversário: " + periodoAteAniversario);
+        System.out.println("Anos: " + periodoAteAniversario.getYears());
+        System.out.println("Meses: " + periodoAteAniversario.getMonths());
+        System.out.println("Dias: " + periodoAteAniversario.getDays());
+    }
+}
+```
+
+**b) Criando um Período a partir de uma Quantidade (`of...`)**
+Você também pode criar um `Period` a partir de uma quantidade específica de anos, meses ou dias.
+
+```java
+Period p1 = Period.ofYears(2);
+Period p2 = Period.ofMonths(5);
+Period p3 = Period.ofWeeks(3); // Cria um período de 21 dias
+Period p4 = Period.of(1, 6, 15); // 1 ano, 6 meses e 15 dias
+
+System.out.println("Período de 2 anos: " + p1);
+System.out.println("Período de 5 meses: " + p2);
+System.out.println("Período de 3 semanas: " + p3);
+System.out.println("Período combinado: " + p4);
+```
+
+---
+
+## 3. Exemplo Avançado: Adicionando um Período a uma Data
+
+Você pode usar um objeto `Period` para manipular uma `LocalDate`.
+
+```java
+public class PeriodManipulationTest {
+    public static void main(String[] args) {
+        LocalDate hoje = LocalDate.now();
+        System.out.println("Data de hoje: " + hoje);
+
+        // Criando um período de 2 anos e 3 meses
+        Period periodoDeAssinatura = Period.of(2, 3, 0);
+
+        // Adicionando o período à data de hoje para saber quando a assinatura expira
+        LocalDate dataExpiracao = hoje.plus(periodoDeAssinatura);
+        System.out.println("A assinatura expira em: " + dataExpiracao);
+
+        // Verificando se uma data está normalizada
+        Period periodoNaoNormalizado = Period.ofMonths(15);
+        System.out.println("Período não normalizado: " + periodoNaoNormalizado); // P15M
+        System.out.println("Período normalizado: " + periodoNaoNormalizado.normalized()); // P1Y3M
+    }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `Period` para Diferenças de Datas Humanas:** É a ferramenta perfeita para calcular idade, tempo de serviço, validade de assinaturas, etc.
+2.  ✅ **Use `Period.between()` exclusivamente com `LocalDate`:** Esta é a forma correta e segura de garantir que os cálculos levem em conta as regras do calendário.
+3.  ✅ **Use `ChronoUnit` para Totais:** Se você não quer o período quebrado em "X anos, Y meses, Z dias", mas sim o total em uma única unidade (como o número total de meses entre duas datas), use `ChronoUnit`.
+    ```java
+    import java.time.temporal.ChronoUnit;
+
+    long mesesTotais = ChronoUnit.MONTHS.between(agora, proximoAniversario);
+    System.out.println("Total de meses até o aniversário: " + mesesTotais);
+    ```
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Tentar Usar `Period` com `LocalDateTime` ou `Instant`:** Este é um erro conceitual. `Period` não entende de horas ou segundos. Tentar calcular o período entre duas `LocalDateTime` ignora a parte do tempo, o que pode levar a resultados incorretos, especialmente se houver mudança de horário de verão entre as datas.
+2.  ❌ **Assumir que `Period` é uma Quantidade Fixa de Tempo:** Um `Period.ofMonths(1)` não é igual a uma `Duration` de 30 dias. O resultado de adicionar `Period.ofMonths(1)` a uma data depende do mês em questão (fevereiro vs. março).
+3.  ❌ **Confundir os Métodos `get` com um Total:** `periodo.getDays()` não retorna o número total de dias no período. Ele retorna apenas a parte dos "dias" após os anos e meses terem sido contabilizados. Para obter um total aproximado de dias, você teria que fazer o cálculo manual (`anos*365 + meses*30 + dias`), o que não é preciso. Use `ChronoUnit.DAYS.between()` para isso.
 
 
 [Voltar ao Índice](#indice)
