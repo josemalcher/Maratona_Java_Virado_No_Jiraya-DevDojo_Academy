@@ -13599,6 +13599,123 @@ public class PeriodManipulationTest {
 
 ## <a name="parte128">128 - 125 - Classes Utilitárias - ChronoUnit</a>
 
+### Resumo Gemini
+
+# Guia Completo: `java.time.temporal.ChronoUnit` em Java
+
+Este guia detalha o uso do enum `ChronoUnit`, uma ferramenta poderosa da API `java.time` para calcular a diferença entre datas em unidades específicas, com base na aula 125 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `ChronoUnit`?
+
+`ChronoUnit` é um **enum** que implementa a interface `TemporalUnit`. Ele representa um conjunto padrão de unidades de data e hora, desde nanossegundos até milênios.
+
+Enquanto `Period` nos dá a diferença quebrada em anos, meses e dias (ex: "1 ano, 2 meses e 15 dias") e `Duration` nos dá em segundos e nanossegundos, `ChronoUnit` responde a uma pergunta diferente: **"Qual é a quantidade total de tempo entre dois pontos, medida em uma única unidade específica?"**.
+
+**Exemplo de Unidades Disponíveis:**
+* `NANOS`
+* `MICROS`
+* `MILLIS`
+* `SECONDS`
+* `MINUTES`
+* `HOURS`
+* `DAYS`
+* `WEEKS`
+* `MONTHS`
+* `YEARS`
+* `DECADES`
+* `CENTURIES`
+* `MILLENNIA`
+* `ERAS`
+
+---
+
+## 2. O Método `between()`
+
+A principal forma de usar `ChronoUnit` é através do seu método estático `between(Temporal startInclusive, Temporal endExclusive)`.
+
+Ele calcula a quantidade total daquela unidade entre dois objetos temporais.
+
+**Exemplo Básico (Comparando com `Period`):**
+
+Vamos ver a diferença entre `Period.between` e `ChronoUnit.DAYS.between`.
+
+```java
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+
+public class ChronoUnitTest {
+    public static void main(String[] args) {
+        LocalDate aniversario = LocalDate.of(1990, Month.AUGUST, 15);
+        LocalDate hoje = LocalDate.now();
+
+        // Usando Period
+        Period periodo = Period.between(aniversario, hoje);
+        System.out.println("Periodo (quebrado): " + periodo);
+
+        // Usando ChronoUnit para obter o total em unidades únicas
+        System.out.println("\n--- Usando ChronoUnit ---");
+        System.out.println("Total de Anos: " + ChronoUnit.YEARS.between(aniversario, hoje));
+        System.out.println("Total de Meses: " + ChronoUnit.MONTHS.between(aniversario, hoje));
+        System.out.println("Total de Semanas: " + ChronoUnit.WEEKS.between(aniversario, hoje));
+        System.out.println("Total de Dias: " + ChronoUnit.DAYS.between(aniversario, hoje));
+    }
+}
+```
+**Saída Esperada (considerando a data atual como 10/07/2025):**
+```
+Periodo (quebrado): P34Y10M25D
+--- Usando ChronoUnit ---
+Total de Anos: 34
+Total de Meses: 418
+Total de Semanas: 1821
+Total de Dias: 12748
+```
+Observe como `Period` quebra o resultado, enquanto `ChronoUnit` fornece o valor total em uma única unidade.
+
+---
+
+## 3. Exemplo Avançado: Usando com `LocalDateTime`
+
+`ChronoUnit` é versátil e funciona com diferentes tipos da API `java.time`.
+
+```java
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+public class ChronoUnitAdvancedTest {
+    public static void main(String[] args) {
+        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime proximaSemana = agora.plusWeeks(1);
+
+        System.out.println("Horas até a próxima semana: " + ChronoUnit.HOURS.between(agora, proximaSemana));
+        System.out.println("Minutos até a próxima semana: " + ChronoUnit.MINUTES.between(agora, proximaSemana));
+    }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `ChronoUnit` para Totais em Unidade Única:** É a ferramenta perfeita quando a pergunta é "quantos dias se passaram no total?" em vez de "quantos anos, meses e dias se passaram?".
+2.  ✅ **Escolha a Ferramenta Certa:**
+    * Precisa de "anos, meses, dias"? Use `Period`.
+    * Precisa de tempo preciso de máquina (segundos, nanos)? Use `Duration`.
+    * Precisa do total em uma unidade específica (dias totais, meses totais)? Use `ChronoUnit`.
+3.  ✅ **Combine com `LocalDate` para Cálculos de Calendário:** `ChronoUnit` é especialmente útil com `LocalDate` para obter totais de dias, meses ou anos, pois lida corretamente com as regras do calendário (anos bissextos, etc.).
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Tentar Obter Unidades Incompatíveis:** O sistema de tipos do Java ajuda a prevenir isso, mas conceitualmente, não faz sentido pedir a diferença em `HOURS` entre dois `LocalDate` (que não têm horas). Isso resultará em uma `UnsupportedTemporalTypeException`.
+    ```java
+    // LANÇA EXCEÇÃO!
+    // ChronoUnit.HOURS.between(LocalDate.now(), LocalDate.now().plusDays(1));
+    ```
+2.  ❌ **Confundir com `Period.getDays()`:** Um erro comum é pensar que `periodo.getDays()` e `ChronoUnit.DAYS.between()` são a mesma coisa. Lembre-se: `getDays()` retorna apenas a "sobra" de dias após contar os anos e meses, enquanto `ChronoUnit` retorna o total absoluto.
 
 
 [Voltar ao Índice](#indice)
