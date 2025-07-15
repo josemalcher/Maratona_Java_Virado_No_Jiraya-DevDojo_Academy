@@ -13725,6 +13725,141 @@ public class ChronoUnitAdvancedTest {
 
 ## <a name="parte129">129 - 126 - Classes Utilitárias - TemporalAdjusters</a>
 
+# Guia Completo: `java.time.temporal.TemporalAdjusters` em Java
+
+Este guia detalha o uso da classe utilitária `TemporalAdjusters`, uma ferramenta poderosa para manipulação avançada de datas na API `java.time`, com base na aula 126 da playlist do curso DevDojo.
+
+---
+
+## 1. O que são `TemporalAdjusters`?
+
+Muitas vezes, precisamos fazer cálculos de data que vão além de simplesmente adicionar ou subtrair dias, como "encontrar a próxima sexta-feira" ou "o último dia do mês".
+
+A interface `TemporalAdjuster` é uma **interface funcional** que define uma estratégia para ajustar um objeto temporal. A classe `TemporalAdjusters` (com "s" no final) é uma classe utilitária que contém métodos de fábrica estáticos que retornam implementações comuns dessa interface.
+
+A forma de usar um ajustador é através do método `with()` de uma classe temporal como `LocalDate`.
+
+```java
+LocalDate hoje = LocalDate.now();
+LocalDate proximoMes = hoje.with(TemporalAdjusters.firstDayOfNextMonth());
+```
+Essa abordagem torna o código extremamente legível, quase como se estivéssemos escrevendo em inglês.
+
+---
+
+## 2. Usando os Ajustadores Pré-definidos
+
+A classe `TemporalAdjusters` oferece uma vasta gama de métodos estáticos para os cenários mais comuns.
+
+**Exemplo Básico (Explorando os ajustadores):**
+
+```java
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+
+public class TemporalAdjustersTest {
+    public static void main(String[] args) {
+        LocalDate agora = LocalDate.now();
+        System.out.println("Data de hoje: " + agora);
+        System.out.println("Dia da semana: " + agora.getDayOfWeek());
+
+        System.out.println("\n--- Ajustes Comuns ---");
+
+        // Próxima terça-feira (não inclui hoje se hoje for terça)
+        LocalDate proximaTerca = agora.with(TemporalAdjusters.next(DayOfWeek.TUESDAY));
+        System.out.println("Próxima terça-feira: " + proximaTerca);
+
+        // Próxima terça-feira (inclui hoje se hoje for terça)
+        LocalDate proximaOuAtualTerca = agora.with(TemporalAdjusters.nextOrSame(DayOfWeek.TUESDAY));
+        System.out.println("Próxima ou atual terça-feira: " + proximaOuAtualTerca);
+
+        // Terça-feira anterior
+        LocalDate tercaAnterior = agora.with(TemporalAdjusters.previous(DayOfWeek.TUESDAY));
+        System.out.println("Terça-feira anterior: " + tercaAnterior);
+
+        // Primeiro dia do mês
+        LocalDate primeiroDiaDoMes = agora.with(TemporalAdjusters.firstDayOfMonth());
+        System.out.println("Primeiro dia do mês: " + primeiroDiaDoMes);
+
+        // Último dia do mês
+        LocalDate ultimoDiaDoMes = agora.with(TemporalAdjusters.lastDayOfMonth());
+        System.out.println("Último dia do mês: " + ultimoDiaDoMes);
+
+        // Primeiro dia do próximo ano
+        LocalDate primeiroDiaProximoAno = agora.with(TemporalAdjusters.firstDayOfNextYear());
+        System.out.println("Primeiro dia do próximo ano: " + primeiroDiaProximoAno);
+    }
+}
+```
+
+---
+
+## 3. Criando seu Próprio `TemporalAdjuster`
+
+A verdadeira força da API é a capacidade de criar seus próprios ajustadores para regras de negócio específicas. Como `TemporalAdjuster` é uma interface funcional, podemos implementá-la facilmente usando uma expressão lambda.
+
+**Exemplo Avançado (Encontrando o próximo dia útil):**
+
+Vamos criar uma regra que, dada uma data, retorna o próximo dia. Se o próximo dia for sábado, ele ajusta para a próxima segunda. Se for domingo, também ajusta para a próxima segunda.
+
+```java
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAdjuster;
+
+// Criando uma classe para nosso ajustador customizado
+class ObterProximoDiaUtil implements TemporalAdjuster {
+    @Override
+    public Temporal adjustInto(Temporal temporal) {
+        // Pega o dia da semana do temporal passado como argumento
+        DayOfWeek dayOfWeek = DayOfWeek.of(temporal.get(ChronoField.DAY_OF_WEEK));
+
+        int diasParaAdicionar;
+        if (dayOfWeek == DayOfWeek.FRIDAY) {
+            diasParaAdicionar = 3; // Se for sexta, pula para segunda
+        } else if (dayOfWeek == DayOfWeek.SATURDAY) {
+            diasParaAdicionar = 2; // Se for sábado, pula para segunda
+        } else {
+            diasParaAdicionar = 1; // Para os outros dias, apenas adiciona 1
+        }
+        return temporal.plus(diasParaAdicionar, ChronoUnit.DAYS);
+    }
+}
+
+public class CustomAdjusterTest {
+    public static void main(String[] args) {
+        LocalDate hoje = LocalDate.now();
+        System.out.println("Hoje: " + hoje + " (" + hoje.getDayOfWeek() + ")");
+
+        // Usando nosso ajustador customizado
+        LocalDate proximoDiaUtil = hoje.with(new ObterProximoDiaUtil());
+        System.out.println("Próximo dia útil: " + proximoDiaUtil + " (" + proximoDiaUtil.getDayOfWeek() + ")");
+
+        // Testando com uma sexta-feira
+        LocalDate sexta = LocalDate.of(2025, 7, 18); // Uma sexta-feira
+        System.out.println("\nSexta-feira: " + sexta);
+        LocalDate proximoDiaUtilDepoisDeSexta = sexta.with(new ObterProximoDiaUtil());
+        System.out.println("Próximo dia útil depois de sexta: " + proximoDiaUtilDepoisDeSexta);
+    }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `TemporalAdjusters` para Lógica de Calendário:** Sempre que a lógica de manipulação de data for mais complexa do que um simples `plus` ou `minus`, verifique se já não existe um ajustador pronto em `TemporalAdjusters`.
+2.  ✅ **Crie Seus Próprios Ajustadores para Lógica de Negócio:** Se você tem uma regra de data que se repete em vários lugares do seu sistema (ex: "calcular a próxima data de pagamento", "encontrar o dia de vencimento"), encapsule essa lógica em sua própria classe que implementa `TemporalAdjuster`. Isso torna o código mais limpo, reutilizável e fácil de testar.
+3.  ✅ **Use `DayOfWeek` e outros Enums:** Prefira usar os enums da API, como `DayOfWeek.FRIDAY`, em vez de números mágicos (como `5`) para representar dias da semana.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Reimplementar a Roda:** Não escreva manualmente a lógica para encontrar o "último dia do mês" ou a "próxima terça-feira". O código será mais longo, mais difícil de ler e mais propenso a erros do que usar o ajustador pré-definido.
+2.  ❌ **Escrever Lógica de Data Complexa "Solta" no Código:** Evite ter blocos de `if/else` complexos para manipular datas espalhados pelo seu código de negócio. Se a lógica é reutilizável, transforme-a em um `TemporalAdjuster`.
+3.  ❌ **Confundir `next()` com `nextOrSame()`:** Preste atenção na diferença sutil. `next()` sempre avança para a próxima ocorrência do dia, mesmo que hoje já seja esse dia. `nextOrSame()` retorna a data de hoje se ela já corresponder ao dia pedido. Escolha o método que representa corretamente sua regra de negócio.
 
 
 [Voltar ao Índice](#indice)
