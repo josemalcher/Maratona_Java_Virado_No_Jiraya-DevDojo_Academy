@@ -13793,6 +13793,19 @@ public class TemporalAdjustersTest {
 }
 ```
 
+```
+Data de hoje: 2025-07-15
+Dia da semana: TUESDAY
+
+--- Ajustes Comuns ---
+Próxima terça-feira: 2025-07-22
+Próxima ou atual terça-feira: 2025-07-15
+Terça-feira anterior: 2025-07-08
+Primeiro dia do mês: 2025-07-01
+Último dia do mês: 2025-07-31
+Primeiro dia do próximo ano: 2026-01-01
+```
+
 ---
 
 ## 3. Criando seu Próprio `TemporalAdjuster`
@@ -13845,6 +13858,15 @@ public class CustomAdjusterTest {
         System.out.println("Próximo dia útil depois de sexta: " + proximoDiaUtilDepoisDeSexta);
     }
 }
+```
+
+```
+Hoje: 2025-07-15 (TUESDAY)
+Próximo dia útil: 2025-07-16 (WEDNESDAY)
+
+Sexta-feira: 2025-07-18
+Próximo dia útil depois de sexta: 2025-07-21
+
 ```
 
 ---
