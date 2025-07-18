@@ -14196,6 +14196,133 @@ System.out.println("Data com offset: " + odt);
 
 ## <a name="parte132">132 - 129 - Classes Utilitárias - DateTimeFormatter</a>
 
+# Guia Completo: `java.time.format.DateTimeFormatter` em Java
+
+Este guia detalha o uso da classe `DateTimeFormatter`, a ferramenta moderna e segura da API `java.time` para formatação e parsing de datas e horas, com base na aula 129 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `DateTimeFormatter`?
+
+`DateTimeFormatter` é a classe usada para duas operações essenciais:
+
+1.  **Formatação (Formatting):** Converter um objeto da API `java.time` (`LocalDate`, `LocalDateTime`, `ZonedDateTime`, etc.) em uma `String`.
+2.  **Parsing:** Converter uma `String` que representa uma data/hora de volta para um objeto da API `java.time`.
+
+É a substituição direta da antiga `SimpleDateFormat`, mas com duas vantagens cruciais: é **imutável** e **thread-safe**. Isso significa que você pode criar uma instância e compartilhá-la por toda a sua aplicação sem se preocupar com problemas de concorrência.
+
+---
+
+## 2. Usando Formatadores Pré-definidos
+
+A classe `DateTimeFormatter` já vem com várias constantes estáticas para os formatos mais comuns, como o padrão ISO.
+
+**Exemplo Básico (Formatadores ISO):**
+
+```java
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class DateTimeFormatterTest {
+    public static void main(String[] args) {
+        LocalDate hoje = LocalDate.now();
+        LocalDateTime agora = LocalDateTime.now();
+
+        // Formatando com padrões ISO pré-definidos
+        System.out.println("ISO DATE: " + hoje.format(DateTimeFormatter.ISO_DATE));
+        System.out.println("ISO WEEK DATE: " + hoje.format(DateTimeFormatter.ISO_WEEK_DATE));
+        System.out.println("ISO DATE TIME: " + agora.format(DateTimeFormatter.ISO_DATE_TIME));
+    }
+}
+```
+
+---
+
+## 3. Formatação e Parsing com Padrões Customizados
+
+Para a maioria dos casos, você precisará de um formato específico. Para isso, usamos o método de fábrica `ofPattern(String pattern)`.
+
+**a) Formatação (Objeto para String)**
+
+```java
+// Criando um formatador com um padrão brasileiro
+DateTimeFormatter formatterBR = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+LocalDateTime agora = LocalDateTime.now();
+
+String dataFormatada = agora.format(formatterBR);
+System.out.println("Data formatada para o padrão BR: " + dataFormatada);
+```
+
+**b) Parsing (String para Objeto)**
+
+O método `parse()` é usado para a operação inversa.
+
+```java
+String dataEmTexto = "25/12/2025 10:30:00";
+DateTimeFormatter parserBR = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+// Fazendo o parse do texto para um objeto LocalDateTime
+LocalDateTime dataParseada = LocalDateTime.parse(dataEmTexto, parserBR);
+System.out.println("Data parseada: " + dataParseada);
+```
+
+---
+
+## 4. Exemplo Avançado: Formatação Localizada
+
+`DateTimeFormatter` também pode criar formatos que se adaptam a um `Locale`, usando `ofLocalized...`.
+
+```java
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
+
+public class LocalizedFormatterTest {
+    public static void main(String[] args) {
+        LocalDateTime agora = LocalDateTime.now();
+        Locale localeBR = new Locale("pt", "BR");
+        Locale localeJP = Locale.JAPAN;
+        Locale localeIT = Locale.ITALY;
+
+        // Criando formatadores localizados
+        DateTimeFormatter formatterBR = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(localeBR);
+        DateTimeFormatter formatterJP = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(localeJP);
+        DateTimeFormatter formatterIT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(localeIT);
+
+        System.out.println("Brasil: " + agora.format(formatterBR));
+        System.out.println("Japão: " + agora.format(formatterJP));
+        System.out.println("Itália: " + agora.format(formatterIT));
+    }
+}
+```
+**Saída Esperada:**
+```
+Brasil: 18/07/2025 15:56:00
+Japão: 2025/07/19 3:56:00
+Itália: 18 lug 2025, 20:56:00
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **SEMPRE USE `DateTimeFormatter`:** Abandone completamente `SimpleDateFormat`. `DateTimeFormatter` é a ferramenta padrão, segura e correta para formatação em Java moderno.
+2.  ✅ **Declare Formatadores como Constantes Estáticas:** Por ser imutável e thread-safe, a melhor prática é declarar seus formatadores como constantes (`static final`). Isso melhora a performance, pois o padrão não precisa ser compilado toda vez.
+    ```java
+    public class DateUtils {
+        public static final DateTimeFormatter BRAZIL_DATE_FORMATTER =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    }
+    ```
+3.  ✅ **Use os Formatadores ISO para Comunicação entre Sistemas:** Ao gerar uma `String` de data para ser consumida por outra API ou sistema (ex: em um JSON), prefira os formatos padrão ISO, como `DateTimeFormatter.ISO_DATE_TIME`. Eles são universais e menos ambíguos.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Usar `SimpleDateFormat` em Código Novo:** Não há nenhuma razão para usar a API legada em novos projetos. Você estaria escolhendo uma ferramenta comprovadamente perigosa em ambientes concorrentes.
+2.  ❌ **Ignorar `DateTimeParseException`:** Nunca deixe um bloco `catch` vazio ao fazer o parse de uma string. Se a string estiver em um formato inesperado, sua aplicação precisa saber e tratar o erro.
+3.  ❌ **Criar um Novo Formatador a Cada Uso sem Necessidade:** Embora não seja perigoso como com `SimpleDateFormat`, criar um `DateTimeFormatter` com `ofPattern` repetidamente dentro de um loop é menos performático do que criar uma única instância e reutilizá-la.
 
 
 [Voltar ao Índice](#indice)
