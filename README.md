@@ -13891,6 +13891,160 @@ Próximo dia útil depois de sexta: 2025-07-21
 
 ## <a name="parte130">130 - 127 - Classes Utilitárias - TemporalAdjuster</a>
 
+# Guia Completo: `java.time.temporal.TemporalAdjuster` em Java
+
+Este guia detalha o uso da interface `TemporalAdjuster` e da classe utilitária `TemporalAdjusters`, com foco na criação de ajustes de data customizados, com base nas aulas 126 e 127 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é um `TemporalAdjuster`?
+
+Muitas vezes, precisamos fazer cálculos de data que vão além de simplesmente adicionar ou subtrair dias, como "encontrar a próxima sexta-feira" ou "o último dia do mês".
+
+A `TemporalAdjuster` é uma **interface funcional** que define uma estratégia para ajustar um objeto temporal. Por ser uma interface funcional, ela possui um único método abstrato: `adjustInto(Temporal temporal)`.
+
+A classe `TemporalAdjusters` (com "s" no final) é uma classe utilitária que contém métodos de fábrica estáticos que retornam implementações prontas dessa interface para os cenários mais comuns.
+
+A forma de usar um ajustador é através do método `with()` de uma classe temporal como `LocalDate`.
+
+```java
+LocalDate hoje = LocalDate.now();
+LocalDate proximoMes = hoje.with(TemporalAdjusters.firstDayOfNextMonth());
+```
+Essa abordagem torna o código extremamente legível, quase como se estivéssemos escrevendo em inglês.
+
+---
+
+## 2. Usando os Ajustadores Pré-definidos
+
+A classe `TemporalAdjusters` oferece uma vasta gama de métodos estáticos para os cenários mais comuns.
+
+**Exemplo Básico (Explorando os ajustadores):**
+
+```java
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+
+public class TemporalAdjustersTest {
+    public static void main(String[] args) {
+        LocalDate agora = LocalDate.now();
+        System.out.println("Data de hoje: " + agora);
+        System.out.println("Dia da semana: " + agora.getDayOfWeek());
+
+        System.out.println("\n--- Ajustes Comuns ---");
+
+        // Próxima terça-feira (não inclui hoje se hoje for terça)
+        LocalDate proximaTerca = agora.with(TemporalAdjusters.next(DayOfWeek.TUESDAY));
+        System.out.println("Próxima terça-feira: " + proximaTerca);
+
+        // Próxima terça-feira (inclui hoje se hoje for terça)
+        LocalDate proximaOuAtualTerca = agora.with(TemporalAdjusters.nextOrSame(DayOfWeek.TUESDAY));
+        System.out.println("Próxima ou atual terça-feira: " + proximaOuAtualTerca);
+
+        // Terça-feira anterior
+        LocalDate tercaAnterior = agora.with(TemporalAdjusters.previous(DayOfWeek.TUESDAY));
+        System.out.println("Terça-feira anterior: " + tercaAnterior);
+
+        // Primeiro dia do mês
+        LocalDate primeiroDiaDoMes = agora.with(TemporalAdjusters.firstDayOfMonth());
+        System.out.println("Primeiro dia do mês: " + primeiroDiaDoMes);
+
+        // Último dia do mês
+        LocalDate ultimoDiaDoMes = agora.with(TemporalAdjusters.lastDayOfMonth());
+        System.out.println("Último dia do mês: " + ultimoDiaDoMes);
+
+        // Primeiro dia do próximo ano
+        LocalDate primeiroDiaProximoAno = agora.with(TemporalAdjusters.firstDayOfNextYear());
+        System.out.println("Primeiro dia do próximo ano: " + primeiroDiaProximoAno);
+    }
+}
+```
+
+---
+
+## 3. Criando seu Próprio `TemporalAdjuster` (Foco da Aula 127)
+
+A verdadeira força da API é a capacidade de criar seus próprios ajustadores para regras de negócio específicas. Como `TemporalAdjuster` é uma interface funcional, podemos implementá-la de forma verbosa (com uma classe) ou de forma concisa (com uma expressão lambda).
+
+**Exemplo Avançado (Encontrando o próximo dia útil):**
+
+Vamos criar uma regra que, dada uma data, retorna o próximo dia. Se o dia atual for sexta ou sábado, ele deve ajustar para a próxima segunda-feira.
+
+**a) Implementação com uma Classe (Forma verbosa)**
+
+```java
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAdjuster;
+
+// Criando uma classe para nosso ajustador customizado
+class ObterProximoDiaUtil implements TemporalAdjuster {
+    @Override
+    public Temporal adjustInto(Temporal temporal) {
+        // Pega o dia da semana do temporal passado como argumento
+        DayOfWeek dayOfWeek = DayOfWeek.of(temporal.get(ChronoField.DAY_OF_WEEK));
+
+        int diasParaAdicionar;
+        if (dayOfWeek == DayOfWeek.FRIDAY) {
+            diasParaAdicionar = 3; // Se for sexta, pula para segunda
+        } else if (dayOfWeek == DayOfWeek.SATURDAY) {
+            diasParaAdicionar = 2; // Se for sábado, pula para segunda
+        } else {
+            diasParaAdicionar = 1; // Para os outros dias, apenas adiciona 1
+        }
+        return temporal.plus(diasParaAdicionar, ChronoUnit.DAYS);
+    }
+}
+```
+
+**b) Implementação com Expressão Lambda (Forma moderna e concisa)**
+
+Como `TemporalAdjuster` é uma interface funcional, podemos definir a mesma lógica diretamente no local de uso com uma expressão lambda.
+
+```java
+public class CustomAdjusterTest {
+    public static void main(String[] args) {
+        // Usando a implementação com lambda
+        TemporalAdjuster proximoDiaUtilAdjuster = temporal -> {
+            DayOfWeek dayOfWeek = DayOfWeek.of(temporal.get(ChronoField.DAY_OF_WEEK));
+            int diasParaAdicionar = (dayOfWeek == DayOfWeek.FRIDAY) ? 3 :
+                                    (dayOfWeek == DayOfWeek.SATURDAY) ? 2 : 1;
+            return temporal.plus(diasParaAdicionar, ChronoUnit.DAYS);
+        };
+
+        LocalDate hoje = LocalDate.now();
+        System.out.println("Hoje: " + hoje + " (" + hoje.getDayOfWeek() + ")");
+
+        // Usando nosso ajustador customizado (versão lambda)
+        LocalDate proximoDiaUtil = hoje.with(proximoDiaUtilAdjuster);
+        System.out.println("Próximo dia útil: " + proximoDiaUtil + " (" + proximoDiaUtil.getDayOfWeek() + ")");
+
+        // Testando com uma sexta-feira
+        LocalDate sexta = LocalDate.of(2025, 7, 18); // Uma sexta-feira
+        System.out.println("\nSexta-feira: " + sexta);
+        LocalDate proximoDiaUtilDepoisDeSexta = sexta.with(proximoDiaUtilAdjuster);
+        System.out.println("Próximo dia útil depois de sexta: " + proximoDiaUtilDepoisDeSexta);
+    }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `TemporalAdjusters` para Lógica de Calendário:** Sempre que a lógica de manipulação de data for mais complexa do que um simples `plus` ou `minus`, verifique se já não existe um ajustador pronto em `TemporalAdjusters`.
+2.  ✅ **Crie Seus Próprios Ajustadores para Lógica de Negócio:** Se você tem uma regra de data que se repete em vários lugares do seu sistema (ex: "calcular a próxima data de pagamento", "encontrar o dia de vencimento"), encapsule essa lógica em sua própria classe que implementa `TemporalAdjuster` ou em uma variável estática que armazena a expressão lambda. Isso torna o código mais limpo, reutilizável e fácil de testar.
+3.  ✅ **Prefira Lambdas para Ajustadores Simples:** Se o ajustador for usado apenas em um local específico e sua lógica for simples, uma expressão lambda é mais concisa e direta.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Reimplementar a Roda:** Não escreva manualmente a lógica para encontrar o "último dia do mês" ou a "próxima terça-feira". O código será mais longo, mais difícil de ler e mais propenso a erros do que usar o ajustador pré-definido.
+2.  ❌ **Escrever Lógica de Data Complexa "Solta" no Código:** Evite ter blocos de `if/else` complexos para manipular datas espalhados pelo seu código de negócio. Se a lógica é reutilizável, transforme-a em um `TemporalAdjuster`.
+3.  ❌ **Confundir `next()` com `nextOrSame()`:** Preste atenção na diferença sutil. `next()` sempre avança para a próxima ocorrência do dia, mesmo que hoje já seja esse dia. `nextOrSame()` retorna a data de hoje se ela já corresponder ao dia pedido. Escolha o método que representa corretamente sua regra de negócio.
 
 
 [Voltar ao Índice](#indice)
