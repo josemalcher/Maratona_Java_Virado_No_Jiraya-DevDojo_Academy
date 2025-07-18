@@ -14054,6 +14054,139 @@ public class CustomAdjusterTest {
 
 ## <a name="parte131">131 - 128 - Classes Utilitárias - ZonedDateTime, ZoneId, OffsetDateTime</a>
 
+# Guia Completo: `ZonedDateTime`, `ZoneId` e `OffsetDateTime`
+
+Este guia detalha o uso das classes da API `java.time` que lidam com fusos horários, com base na aula 128 da playlist do curso DevDojo.
+
+---
+
+## 1. O Problema: A Ambiguidade do Tempo Local
+
+Como vimos, `LocalDateTime` representa uma data e hora, mas sem o contexto de onde no mundo ela ocorre. "Meio-dia de 25 de dezembro" é um momento diferente em São Paulo e em Tóquio. Para resolver isso, precisamos associar um fuso horário à nossa data e hora.
+
+### `ZoneId` e `ZoneOffset`
+
+* **`ZoneId`**: Representa um identificador de fuso horário baseado em regras, como "America/Sao_Paulo" ou "Europe/London". Ele contém todo o histórico de regras daquela região, incluindo o **horário de verão (Daylight Saving Time - DST)**. Esta é a forma preferida de se trabalhar com fusos horários.
+* **`ZoneOffset`**: Representa apenas um desvio (offset) fixo em relação ao UTC, como "-03:00" ou "+09:00". Ele não contém as regras de horário de verão.
+
+**Exemplo Básico (Listando fusos horários):**
+
+```java
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Map;
+
+public class ZoneTest {
+    public static void main(String[] args) {
+        // Imprime todos os ZoneIds disponíveis
+        for (String zoneId : ZoneId.getAvailableZoneIds()) {
+            // System.out.println(zoneId);
+        }
+
+        // Obtendo o ZoneId do sistema e um específico
+        ZoneId systemDefaultZone = ZoneId.systemDefault();
+        ZoneId saoPauloZone = ZoneId.of("America/Sao_Paulo");
+        System.out.println("Fuso horário do sistema: " + systemDefaultZone);
+        System.out.println("Fuso horário de São Paulo: " + saoPauloZone);
+
+        // Criando um ZoneOffset
+        ZoneOffset offsetMinus3 = ZoneOffset.of("-03:00");
+        System.out.println("Offset de -3 horas: " + offsetMinus3);
+    }
+}
+```
+
+---
+
+## 2. `ZonedDateTime`: A Data/Hora com Fuso Horário
+
+`ZonedDateTime` é a classe que une um `LocalDateTime` com um `ZoneId`. Ela representa um momento exato no tempo, com total consciência das regras de fuso horário daquela região.
+
+**Exemplo (Criando e convertendo `ZonedDateTime`):**
+
+```java
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
+public class ZonedDateTimeTest {
+    public static void main(String[] args) {
+        // Criando a partir da data/hora atual com o fuso do sistema
+        ZonedDateTime agoraComZona = ZonedDateTime.now();
+        System.out.println("Agora com zona: " + agoraComZona);
+
+        // Criando a partir de um LocalDateTime e um ZoneId
+        LocalDateTime dataHoraLocal = LocalDateTime.parse("2025-08-20T10:00:00");
+        ZoneId tokyoZone = ZoneId.of("Asia/Tokyo");
+
+        ZonedDateTime emToquio = ZonedDateTime.of(dataHoraLocal, tokyoZone);
+        // OU
+        // ZonedDateTime emToquio = dataHoraLocal.atZone(tokyoZone);
+        System.out.println("10h da manhã em Tóquio: " + emToquio);
+    }
+}
+```
+
+### Exemplo Avançado: Lidando com Horário de Verão
+
+A grande vantagem do `ZonedDateTime` é que ele lida com o horário de verão automaticamente.
+
+```java
+// Exemplo hipotético de mudança de horário de verão no Brasil
+// Suponha que em 19/10/2025 à 00:00, o relógio adianta para 01:00.
+LocalDateTime dataLocal = LocalDateTime.of(2025, 10, 19, 0, 0);
+ZoneId saoPauloZone = ZoneId.of("America/Sao_Paulo");
+
+ZonedDateTime inicioHorarioVerao = dataLocal.atZone(saoPauloZone);
+System.out.println("Antes da mudança: " + inicioHorarioVerao);
+
+// Adicionando 1 hora
+ZonedDateTime umaHoraDepois = inicioHorarioVerao.plusHours(1);
+System.out.println("Uma hora depois: " + umaHoraDepois);
+// Note que o offset mudou de -03:00 para -02:00
+```
+O `ZonedDateTime` entende que, naquele instante, o offset da zona "America/Sao_Paulo" mudou.
+
+---
+
+## 3. `OffsetDateTime`: Data/Hora com Desvio Fixo
+
+`OffsetDateTime` é similar, mas une um `LocalDateTime` com um `ZoneOffset`. Ele sabe que a hora tem um desvio de, por exemplo, "-03:00", mas não sabe *por quê*. Ele não tem as regras do horário de verão.
+
+É útil para formatos de dados (como alguns XMLs) que exigem um offset explícito em vez de um nome de zona.
+
+**Exemplo:**
+
+```java
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+
+LocalDateTime dataLocal = LocalDateTime.now();
+ZoneOffset offset = ZoneOffset.of("-05:00");
+
+OffsetDateTime odt = OffsetDateTime.of(dataLocal, offset);
+System.out.println("Data com offset: " + odt);
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Use `ZonedDateTime` para Eventos de Usuário:** É a classe ideal para agendar reuniões, marcar compromissos ou qualquer evento que dependa do fuso horário local do usuário.
+2.  ✅ **Use `Instant` para Armazenamento:** A melhor prática para persistir um momento no tempo em um banco de dados é usar `Instant`. Ele é sempre UTC, não tem ambiguidade e é mais compacto.
+    ```java
+    ZonedDateTime zdt = ZonedDateTime.now();
+    Instant instantParaSalvar = zdt.toInstant(); // Salve este no banco
+    ```
+3.  ✅ **Seja Explícito com `ZoneId`:** Nunca presuma o fuso horário. Sempre que possível, peça o `ZoneId` do usuário ou use um `ZoneId` explícito em suas conversões.
+4.  ✅ **Use `OffsetDateTime` para Interoperabilidade:** Use-o quando um sistema externo ou um formato de arquivo (como XML/JSON em alguns padrões) exigir um offset numérico em vez de um nome de zona.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **Usar `LocalDateTime` para Registrar Eventos Globais:** Como já mencionado, usar `LocalDateTime` para um timestamp é o erro mais crítico, pois a informação é incompleta e ambígua.
+2.  ❌ **Confundir `ZoneId` com `ZoneOffset`:** Usar um `ZoneOffset` fixo quando você na verdade precisa das regras de horário de verão de um `ZoneId` levará a bugs difíceis de rastrear quando o horário de verão começar ou terminar.
+3.  ❌ **Realizar Cálculos de Fuso Horário Manualmente:** Nunca tente adicionar ou subtrair horas manualmente para "converter" fusos horários. Deixe a API `java.time` fazer isso por você, pois ela conhece todas as regras complexas.
 
 
 [Voltar ao Índice](#indice)
