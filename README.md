@@ -14332,6 +14332,158 @@ Itália: 18 lug 2025, 20:56:00
 
 ## <a name="parte133">133 - 130 - Classes Utilitárias - ResourceBundle</a>
 
+### RESUMO GEMINI
+
+# Guia Completo: `java.util.ResourceBundle` em Java
+
+Este guia detalha o uso da classe `ResourceBundle` para externalizar textos e internacionalizar uma aplicação, com base na aula 130 da playlist do curso DevDojo.
+
+---
+
+## 1. O que é `ResourceBundle`?
+
+Até agora, vimos como formatar datas e números para diferentes localidades. Mas e o texto da aplicação, como "Olá", "Bem-vindo" ou "Adeus"? Colocar esse texto diretamente no código (`System.out.println("Olá");`) é uma má prática, pois torna a tradução impossível sem alterar o código-fonte.
+
+`ResourceBundle` é a solução do Java para isso. É uma classe que carrega textos e outros objetos de arquivos externos com base em um `Locale`. A ideia é ter um conjunto de arquivos de propriedades (`.properties`), cada um contendo as traduções para uma língua específica.
+
+**Conceito Chave:** O código Java se refere a um texto através de uma **chave** (ex: "login.welcome"), e o `ResourceBundle` se encarrega de encontrar o valor (a tradução) correspondente àquela chave no arquivo de propriedades do `Locale` atual.
+
+---
+
+## 2. Estrutura dos Arquivos de Propriedades
+
+Os textos são armazenados em arquivos `.properties` no formato `chave=valor`. Esses arquivos devem seguir um padrão de nomenclatura:
+
+`basename_language_COUNTRY.properties`
+
+* **`basename`**: O nome base do conjunto de arquivos (ex: `messages`).
+* **`language`**: O código da língua (ex: `pt`).
+* **`COUNTRY`**: O código do país (ex: `BR`).
+
+**Exemplo de Estrutura de Arquivos:**
+
+Imagine que nosso nome base é `messages`. Teríamos os seguintes arquivos no nosso `resources` path:
+
+**`messages.properties` (Arquivo Padrão/Default)**
+```properties
+hello=Hello
+good.morning=Good morning
+good.afternoon=Good afternoon
+```
+
+**`messages_pt_BR.properties` (Português do Brasil)**
+```properties
+hello=Olá
+good.morning=Bom dia
+good.afternoon=Boa tarde
+```
+
+**`messages_en_US.properties` (Inglês dos EUA)**
+```properties
+hello=Howdy
+good.morning=Good morning
+good.afternoon=Good afternoon
+```
+
+---
+
+## 3. Carregando e Usando o `ResourceBundle`
+
+Para carregar o conjunto de traduções, usamos o método estático `ResourceBundle.getBundle(basename, locale)`.
+
+**Exemplo Básico:**
+
+```java
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+public class ResourceBundleTest {
+    public static void main(String[] args) {
+        System.out.println("Executando com o Locale padrão da JVM...");
+        ResourceBundle bundleDefault = ResourceBundle.getBundle("messages");
+        System.out.println(bundleDefault.getString("hello"));
+
+        System.out.println("\n--- Mudando o Locale para pt-BR ---");
+        Locale localeBR = new Locale("pt", "BR");
+        ResourceBundle bundleBR = ResourceBundle.getBundle("messages", localeBR);
+        System.out.println(bundleBR.getString("hello"));
+        System.out.println(bundleBR.getString("good.morning"));
+
+        System.out.println("\n--- Mudando o Locale para en-US ---");
+        Locale localeUS = new Locale("en", "US");
+        ResourceBundle bundleUS = ResourceBundle.getBundle("messages", localeUS);
+        System.out.println(bundleUS.getString("hello")); // Pega o "Howdy" específico do en_US
+    }
+}
+```
+
+---
+
+## 4. O Mecanismo de Fallback
+
+A grande vantagem do `ResourceBundle` é sua busca inteligente pelos arquivos, conhecida como *fallback*.
+
+Quando você pede um bundle para `pt_BR` (`new Locale("pt", "BR")`), a busca acontece na seguinte ordem:
+
+1.  Procura por `messages_pt_BR.properties`.
+2.  Se não encontrar, procura por `messages_pt.properties` (apenas a língua).
+3.  Se não encontrar, procura pelo `Locale` padrão da JVM (ex: `messages_en_US.properties`).
+4.  Se não encontrar, procura pelo arquivo base `messages.properties`.
+5.  Se nem o arquivo base existir, lança uma `MissingResourceException`.
+
+**Exemplo Avançado (Demonstrando o Fallback):**
+
+Vamos supor que não temos a chave `good.afternoon` no arquivo `messages_pt_BR.properties`.
+
+```java
+// messages_pt_BR.properties
+hello=Olá
+good.morning=Bom dia
+// a chave good.afternoon está faltando
+
+// messages.properties (default em inglês)
+hello=Hello
+good.morning=Good morning
+good.afternoon=Good afternoon
+```java
+public class FallbackTest {
+    public static void main(String[] args) {
+        Locale localeBR = new Locale("pt", "BR");
+        ResourceBundle bundle = ResourceBundle.getBundle("messages", localeBR);
+
+        // Esta chave existe em messages_pt_BR.properties
+        System.out.println(bundle.getString("hello")); // Imprime "Olá"
+
+        // Esta chave NÃO existe em messages_pt_BR, então ele busca no arquivo padrão (messages.properties)
+        System.out.println(bundle.getString("good.afternoon")); // Imprime "Good afternoon"
+    }
+}
+```
+
+---
+
+## Melhores Práticas (O que FAZER)
+
+1.  ✅ **Externalize TODO o Texto Visível ao Usuário:** Nunca deixe textos como "Erro:", "Sucesso", nomes de botões, etc., "hardcoded" no seu código Java.
+2.  ✅ **Sempre Forneça um Arquivo Padrão:** O arquivo base (ex: `messages.properties`), geralmente em inglês, é essencial. Ele serve como fallback e garante que sua aplicação não quebre se for executada em um sistema com um `Locale` para o qual você não tem uma tradução específica.
+3.  ✅ **Use Chaves Descritivas:** Use um padrão de nomenclatura para suas chaves, como `componente.acao.texto` (ex: `login.button.submit`), para mantê-las organizadas.
+4.  ✅ **Armazene o Nome Base em uma Constante:** Evite repetir a string "messages" por todo o código. Coloque-a em uma constante `public static final String BUNDLE_NAME = "messages";`.
+
+## Piores Práticas (O que EVITAR)
+
+1.  ❌ **"Hardcoding" de Textos:** A pior prática de todas. `System.out.println("Usuário não encontrado");` torna a internacionalização impossível.
+2.  ❌ **Criar Lógica de `if/else` para Idiomas:**
+    ```java
+    // NUNCA FAÇA ISSO!
+    if (locale.getLanguage().equals("pt")) {
+        System.out.println("Olá");
+    } else {
+        System.out.println("Hello");
+    }
+    ```
+    O `ResourceBundle` foi criado exatamente para evitar esse tipo de código.
+3.  ❌ **Esquecer o Arquivo Padrão:** Se você não fornecer um `messages.properties` e a aplicação rodar em um `Locale` não suportado (ex: `fr_FR`), ela lançará uma `MissingResourceException` e irá quebrar.
+4.  ❌ **Colocar Lógica de Negócio nos Arquivos de Propriedades:** Eles são para textos. A lógica deve permanecer no código Java.
 
 
 [Voltar ao Índice](#indice)
