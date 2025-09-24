@@ -14493,7 +14493,120 @@ public class FallbackTest {
 
 ## <a name="parte134">134 - 131 - Classes Utilitárias - Regex pt 01 - Pattern e Matcher</a>
 
+### REsumo ai AI GEMINI
 
+A solicitação é idêntica à anterior. Vou fornecer a mesma explicação detalhada sobre a vídeo aula de Regex, incluindo exemplos, melhores e piores práticas de código, formatado em Markdown.
+
+### Conceitos sobre Regex
+
+O professor aborda que Expressões Regulares são uma linguagem desenvolvida que utiliza metacaracteres (símbolos) para encontrar padrões em textos. Ele destaca a utilidade das Regex para:
+
+* **Encontrar links:** Localizar todos os links que começam com "http", por exemplo.
+* **Identificar frases com padrões específicos:** Encontrar frases que iniciam com números.
+* **Extrair informações de arquivos:** Como e-mails de um arquivo com vários nomes de funcionários.
+* **Validação:** Validar a sintaxe de um e-mail, por exemplo, verificando se ele está sintaticamente correto.
+
+### Classes `Pattern` e `Matcher`
+
+Para trabalhar com Expressões Regulares em Java, são utilizadas as classes `Pattern` e `Matcher`.
+
+* **`Pattern`:** É responsável por compilar a expressão regular.
+    * Exemplo: `Pattern pattern = Pattern.compile("AB");`
+* **`Matcher`:** É responsável por encontrar o padrão compilado pelo `Pattern` dentro de um texto.
+    * Exemplo: `Matcher matcher = pattern.matcher(texto);`
+
+O método `matcher.find()` é utilizado para buscar as ocorrências da expressão regular no texto. Ele retorna `true` enquanto houver um padrão correspondente e avança para a próxima ocorrência.
+
+O método `matcher.start()` retorna o índice inicial da ocorrência encontrada.
+
+### Exemplos da Vídeo Aula
+
+**Exemplo Básico - Buscando "AB"**
+
+O professor demonstra a busca simples pelo padrão "AB" em um texto:
+
+```java
+String texto = "AB AABB a ba ba ba ba";
+// Índices:   0123456789...
+// Texto:     A B   A A B B   a   b a   b a   b a
+Pattern pattern = Pattern.compile("AB");
+Matcher matcher = pattern.matcher(texto);
+
+System.out.println("Texto: " + texto);
+System.out.println("Índices: 0123456789..."); // Para visualização
+System.out.println("Expressão Regular: AB");
+System.out.println("Posições encontradas:");
+
+while (matcher.find()) {
+    System.out.println("Posição: " + matcher.start());
+}
+```
+
+**Saída esperada:**
+
+```
+Texto: AB AABB a ba ba ba ba
+Índices: 0123456789...
+Expressão Regular: AB
+Posições encontradas:
+Posição: 0
+Posição: 3
+```
+
+**Exemplo Avançado - Comportamento do `Matcher` com sobreposição (Buscando "aba")**
+
+O professor demonstra como o `Matcher` se comporta quando há padrões sobrepostos. Ao buscar "aba" em "ababa", ele encontra a primeira "aba" e, em seguida, continua a busca a partir do índice seguinte ao final da primeira ocorrência, ignorando a sobreposição.
+
+```java
+String texto2 = "abaaba";
+// Índices:   012345
+// Texto:     a b a a b a
+Pattern pattern2 = Pattern.compile("aba");
+Matcher matcher2 = pattern2.matcher(texto2);
+
+System.out.println("Texto: " + texto2);
+System.out.println("Expressão Regular: aba");
+System.out.println("Posições encontradas:");
+
+while (matcher2.find()) {
+    System.out.println("Posição: " + matcher2.start());
+}
+```
+
+**Saída esperada:**
+
+```
+Texto: abaaba
+Expressão Regular: aba
+Posições encontradas:
+Posição: 0
+Posição: 3
+```
+
+**Explicação do comportamento:**
+
+1.  A primeira ocorrência de "aba" é encontrada na posição `0`.
+2.  O `Matcher` avança a busca a partir da posição `3` (depois do "a" final da primeira "aba").
+3.  A segunda ocorrência de "aba" é encontrada na posição `3`.
+
+### Melhores Práticas (de código)
+
+* **Compilar o `Pattern` apenas uma vez:** Se você for usar a mesma expressão regular várias vezes, compile-a uma vez e reutilize o objeto `Pattern`. A compilação é uma operação relativamente cara.
+* **Utilizar `Matcher` para cada texto:** Para cada novo texto que você deseja pesquisar com o mesmo `Pattern`, crie um novo objeto `Matcher` usando `pattern.matcher(novoTexto)`.
+* **Comentários claros:** Expressões regulares podem ser complexas e difíceis de ler. Use comentários para explicar o que cada parte da sua regex faz.
+* **Testar suas Regex:** Teste suas expressões regulares com uma variedade de entradas válidas e inválidas para garantir que elas funcionem como esperado.
+* **Preferir expressões mais legíveis:** Embora a concisão seja uma característica das regex, priorize a clareza sempre que possível. Às vezes, uma regex um pouco mais longa e fácil de entender é melhor do que uma muito compacta e obscura.
+
+### Piores Práticas (evitar fazer)
+
+* **Recompilar o `Pattern` repetidamente:** Não compile a mesma expressão regular dentro de um loop se você for usá-la em vários textos. Isso impactará negativamente a performance.
+* **Regex excessivamente complexas:** Evite construir expressões regulares que se tornam muito longas e difíceis de depurar. Em alguns casos, pode ser melhor usar métodos de manipulação de string ou uma combinação de regex e lógica de programação para obter o resultado desejado.
+* **Não validar a entrada:** Sempre valide a entrada antes de aplicar uma expressão regular, especialmente se a entrada vier de usuários.
+* **Confiar apenas em Regex para validação de formato (ex: e-mail):** Como o professor menciona, uma regex pode validar a *sintaxe* de um e-mail, mas não garante que o domínio exista ou que o e-mail seja válido em um servidor real. Para validações mais robustas, combine regex com outras verificações.
+
+-----
+
+Para mais detalhes, você pode acessar a vídeo aula completa: [131 - Classes Utilitárias - Regex pt 01 - Pattern e Matcher](https://www.youtube.com/watch?v=8hhYE4y0iMM)
 
 [Voltar ao Índice](#indice)
 
