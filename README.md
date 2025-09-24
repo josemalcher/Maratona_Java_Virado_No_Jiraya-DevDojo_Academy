@@ -14615,6 +14615,259 @@ Para mais detalhes, você pode acessar a vídeo aula completa: [131 - Classes Ut
 
 ## <a name="parte135">135 - 132 - Classes Utilitárias - Regex pt 02 - Pattern e Matcher - Meta caracteres</a>
 
+### Reusmo AI GEMINI
+
+O vídeo "132 - Classes Utilitárias - Regex pt 02 - Pattern e Matcher - Meta caracteres" do canal DevDojo, publicado em 8 de julho de 2021, com 4.617 visualizações e 500 curtidas, aprofunda o conceito de Expressões Regulares em Java, focando nos metacaracteres.
+
+### Conceitos sobre Metacaracteres em Regex
+
+Metacaracteres são caracteres especiais que atuam como atalhos para representar conjuntos de caracteres ou posições específicas em um texto. Eles são essenciais para criar expressões regulares mais poderosas e flexíveis, permitindo encontrar padrões que não seriam possíveis apenas com caracteres literais. [[01:33](http://www.youtube.com/watch?v=LvLGE9ryafg&t=93)]
+
+O professor inicia a aula mostrando como obter o valor do grupo capturado pelo `Matcher` usando `matcher.group()`. [[00:42](http://www.youtube.com/watch?v=LvLGE9ryafg&t=42)]
+
+```java
+// Exemplo inicial da aula, complementando a aula anterior para pegar o valor encontrado
+String texto = "AB AABB a ba ba ba ba";
+Pattern pattern = Pattern.compile("AB");
+Matcher matcher = pattern.matcher(texto);
+
+System.out.println("Texto: " + texto);
+System.out.println("Expressão Regular: AB");
+System.out.println("Posições e valores encontrados:");
+
+while (matcher.find()) {
+    System.out.println("Posição: " + matcher.start() + " - Valor: " + matcher.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Texto: AB AABB a ba ba ba ba
+Expressão Regular: AB
+Posições e valores encontrados:
+Posição: 0 - Valor: AB
+Posição: 3 - Valor: AB
+```
+
+A aula então se concentra nos seguintes metacaracteres:
+
+* **`\d` (dígitO):** Encontra todos os dígitos (números de 0 a 9). [[01:54](http://www.youtube.com/watch?v=LvLGE9ryafg&t=114)]
+    * No Java, devido ao caractere de escape da barra invertida, é necessário usar `\\d`.
+* **`\D` (NÃO dígitO):** Encontra tudo o que não for um dígito. [[03:08](http://www.youtube.com/watch?v=LvLGE9ryafg&t=188)]
+    * No Java, é necessário usar `\\D`.
+* **`\s` (espaçO):** Encontra todos os caracteres de espaço em branco (espaço, tabulação (`\t`), quebra de linha (`\n`), retorno de carro (`\r`), form feed (`\f`)). [[03:46](http://www.youtube.com/watch?v=LvLGE9ryafg&t=226)]
+    * No Java, é necessário usar `\\s`.
+* **`\S` (NÃO espaçO):** Encontra tudo o que não for um caractere de espaço em branco. [[04:47](http://www.youtube.com/watch?v=LvLGE9ryafg&t=287)]
+    * No Java, é necessário usar `\\S`.
+* **`\w` (palavrA):** Encontra todos os caracteres que compõem uma palavra (letras de a-z, A-Z, dígitos de 0-9 e o underscore `_`). [[05:27](http://www.youtube.com/watch?v=LvLGE9ryafg&t=327)]
+    * No Java, é necessário usar `\\w`.
+* **`\W` (NÃO palavrA):** Encontra tudo o que não for um caractere de palavra (ou seja, caracteres especiais e espaços). [[06:17](http://www.youtube.com/watch?v=LvLGE9ryafg&t=377)]
+    * No Java, é necessário usar `\\W`.
+
+### Exemplos da Vídeo Aula
+
+O professor usa um texto base para demonstrar a aplicação de cada metacaractere.
+
+**Texto de exemplo:**
+
+```java
+String texto = "23 AB 12 c a b 4567 89ab";
+// Índices:   01234567890123456789
+// Texto:     2 3   A B   1 2   c   a   b   4 5 6 7   8 9 a b
+```
+
+**1. `\d` (Dígitos):** [[02:06](http://www.youtube.com/watch?v=LvLGE9ryafg&t=126)]
+
+```java
+Pattern patternD = Pattern.compile("\\d");
+Matcher matcherD = patternD.matcher(texto);
+
+System.out.println("Expressão Regular: \\d (Dígitos)");
+while (matcherD.find()) {
+    System.out.println("Posição: " + matcherD.start() + " - Valor: " + matcherD.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: \d (Dígitos)
+Posição: 0 - Valor: 2
+Posição: 1 - Valor: 3
+Posição: 6 - Valor: 1
+Posição: 7 - Valor: 2
+Posição: 12 - Valor: 4
+Posição: 13 - Valor: 5
+Posição: 14 - Valor: 6
+Posição: 15 - Valor: 7
+Posição: 17 - Valor: 8
+Posição: 18 - Valor: 9
+```
+
+**2. `\D` (Não Dígitos):** [[03:08](http://www.youtube.com/watch?v=LvLGE9ryafg&t=188)]
+
+```java
+Pattern patternBigD = Pattern.compile("\\D");
+Matcher matcherBigD = patternBigD.matcher(texto);
+
+System.out.println("Expressão Regular: \\D (Não Dígitos)");
+while (matcherBigD.find()) {
+    System.out.println("Posição: " + matcherBigD.start() + " - Valor: " + matcherBigD.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: \D (Não Dígitos)
+Posição: 2 - Valor:  
+Posição: 3 - Valor: A
+Posição: 4 - Valor: B
+Posição: 5 - Valor:  
+Posição: 8 - Valor:  
+Posição: 9 - Valor: c
+Posição: 10 - Valor:  
+Posição: 11 - Valor: a
+Posição: 16 - Valor:  
+Posição: 19 - Valor: a
+Posição: 20 - Valor: b
+```
+
+**3. `\s` (Espaços em Branco):** [[03:46](http://www.youtube.com/watch?v=LvLGE9ryafg&t=226)]
+
+```java
+String textoComTab = "23 AB 12\tcab 4567 89ab"; // Adicionado um \t
+Pattern patternS = Pattern.compile("\\s");
+Matcher matcherS = patternS.matcher(textoComTab);
+
+System.out.println("Expressão Regular: \\s (Espaços em Branco)");
+while (matcherS.find()) {
+    System.out.println("Posição: " + matcherS.start() + " - Valor: '" + matcherS.group() + "'");
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: \s (Espaços em Branco)
+Posição: 2 - Valor: ' '
+Posição: 5 - Valor: ' '
+Posição: 8 - Valor: '	' // Este é o tab
+Posição: 12 - Valor: ' '
+Posição: 16 - Valor: ' '
+```
+
+**4. `\S` (Não Espaços em Branco):** [[04:47](http://www.youtube.com/watch?v=LvLGE9ryafg&t=287)]
+
+```java
+Pattern patternBigS = Pattern.compile("\\S");
+Matcher matcherBigS = patternBigS.matcher(textoComTab);
+
+System.out.println("Expressão Regular: \\S (Não Espaços em Branco)");
+while (matcherBigS.find()) {
+    System.out.println("Posição: " + matcherBigS.start() + " - Valor: " + matcherBigS.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: \S (Não Espaços em Branco)
+Posição: 0 - Valor: 2
+Posição: 1 - Valor: 3
+Posição: 3 - Valor: A
+Posição: 4 - Valor: B
+Posição: 6 - Valor: 1
+Posição: 7 - Valor: 2
+Posição: 9 - Valor: c
+Posição: 10 - Valor: a
+Posição: 11 - Valor: b
+Posição: 13 - Valor: 4
+Posição: 14 - Valor: 5
+Posição: 15 - Valor: 6
+Posição: 17 - Valor: 7
+Posição: 18 - Valor: 8
+Posição: 19 - Valor: 9
+Posição: 20 - Valor: a
+Posição: 21 - Valor: b
+```
+
+**5. `\w` (Caracteres de Palavra):** [[05:27](http://www.youtube.com/watch?v=LvLGE9ryafg&t=327)]
+
+```java
+Pattern patternW = Pattern.compile("\\w");
+Matcher matcherW = patternW.matcher(texto);
+
+System.out.println("Expressão Regular: \\w (Caracteres de Palavra)");
+while (matcherW.find()) {
+    System.out.println("Posição: " + matcherW.start() + " - Valor: " + matcherW.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: \w (Caracteres de Palavra)
+Posição: 0 - Valor: 2
+Posição: 1 - Valor: 3
+Posição: 3 - Valor: A
+Posição: 4 - Valor: B
+Posição: 6 - Valor: 1
+Posição: 7 - Valor: 2
+Posição: 9 - Valor: c
+Posição: 10 - Valor: a
+Posição: 11 - Valor: b
+Posição: 12 - Valor: 4
+Posição: 13 - Valor: 5
+Posição: 14 - Valor: 6
+Posição: 15 - Valor: 7
+Posição: 17 - Valor: 8
+Posição: 18 - Valor: 9
+Posição: 19 - Valor: a
+Posição: 20 - Valor: b
+```
+
+**6. `\W` (Não Caracteres de Palavra):** [[06:17](http://www.youtube.com/watch?v=LvLGE9ryafg&t=377)]
+
+```java
+Pattern patternBigW = Pattern.compile("\\W");
+Matcher matcherBigW = patternBigW.matcher(texto);
+
+System.out.println("Expressão Regular: \\W (Não Caracteres de Palavra)");
+while (matcherBigW.find()) {
+    System.out.println("Posição: " + matcherBigW.start() + " - Valor: '" + matcherBigW.group() + "'");
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: \W (Não Caracteres de Palavra)
+Posição: 2 - Valor: ' '
+Posição: 5 - Valor: ' '
+Posição: 8 - Valor: ' '
+Posição: 16 - Valor: ' '
+```
+
+### Melhores Práticas (de código)
+
+* **Escapar a barra invertida:** Lembre-se sempre de que a barra invertida (`\`) é um caractere de escape tanto para strings Java quanto para expressões regulares. Portanto, para usar um metacaractere como `\d`, você deve escrevê-lo como `\\d` na sua string de expressão regular.
+* **Comentários para Regex complexas:** Metacaracteres podem tornar as expressões mais concisas, mas também menos legíveis. Adicione comentários para explicar o propósito de cada parte da sua regex, especialmente quando combiná-los.
+* **Utilize grupos para extração:** Use `matcher.group()` para extrair a parte do texto que corresponde à expressão regular encontrada, o que é fundamental para a maioria dos casos de uso de regex.
+* **Conheça os metacaracteres mais comuns:** Familiarizar-se com `\d`, `\s`, `\w` e suas versões maiúsculas (`\D`, `\S`, `\W`) cobrirá a maioria dos cenários básicos de busca de padrões.
+
+### Piores Práticas (evitar fazer)
+
+* **Ignorar o escape da barra invertida:** Esquecer de escapar a barra invertida para metacaracteres resultará em erros de compilação ou expressões regulares que não funcionam como esperado.
+* **Usar literais onde metacaracteres seriam mais eficientes:** Por exemplo, usar `[0-9]` em vez de `\d` para dígitos não é necessariamente uma "pior prática", mas `\d` é mais conciso e geralmente mais legível para esse propósito.
+* **Regex com metacaracteres excessivamente longas sem quebra:** Para expressões muito grandes, considere dividir o problema em partes menores ou usar comentários inline, se a linguagem permitir, para melhorar a clareza.
+
+-----
+
+Para mais detalhes, você pode acessar a vídeo aula completa: [132 - Classes Utilitárias - Regex pt 02 - Pattern e Matcher - Meta caracteres](https://www.youtube.com/watch?v=LvLGE9ryafg)
+http://googleusercontent.com/youtube_content/1
+
 
 
 [Voltar ao Índice](#indice)
