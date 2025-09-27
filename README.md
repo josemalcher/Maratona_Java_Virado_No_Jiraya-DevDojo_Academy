@@ -15047,6 +15047,117 @@ Para mais detalhes, você pode acessar a vídeo aula completa: [133 - Classes Ut
 
 ## <a name="parte137">137 - 134 - Classes Utilitárias - Regex pt 04 - Pattern e Matcher - Quantificadores pt 01</a>
 
+### Resumo AI GEMINI
+
+O vídeo "134 - Classes Utilitárias - Regex pt 04 - Pattern e Matcher - Quantificadores pt 01" do canal DevDojo continua o estudo de Expressões Regulares em Java, introduzindo os quantificadores, que são metacaracteres usados para definir o número de ocorrências de um caractere ou grupo de caracteres.
+
+### Conceitos sobre Quantificadores em Regex
+
+Quantificadores permitem especificar a frequência com que um padrão deve aparecer para que uma correspondência seja encontrada. Eles são aplicados ao caractere, grupo ou classe de caracteres que os precede imediatamente. [[00:52](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=52)]
+
+Os principais quantificadores abordados na aula são:
+
+* **`?` (Interrogação):** Corresponde a **zero ou uma** ocorrência. É útil para padrões que podem ou não estar presentes. [[01:05](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=65)]
+* **`*` (Asterisco):** Corresponde a **zero ou mais** ocorrências. O padrão pode não existir ou pode se repetir várias vezes. [[01:15](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=75)]
+* **`+` (Mais):** Corresponde a **uma ou mais** ocorrências. Exige que o padrão apareça pelo menos uma vez. [[01:21](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=81)]
+* **`{n,m}` (Chaves):** É o quantificador mais flexível, permitindo especificar um intervalo exato de ocorrências. [[01:27](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=87)]
+    * `{n}`: Exatamente `n` ocorrências.
+    * `{n,}`: No mínimo `n` ocorrências.
+    * `{n,m}`: De `n` a `m` ocorrências.
+
+A aula também menciona rapidamente outros metacaracteres importantes que são frequentemente usados com quantificadores:
+
+* **`()` (Parênteses):** Agrupa uma expressão para que o quantificador se aplique a todo o grupo. [[01:51](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=111)]
+* **`|` (Pipe/OU):** Define uma alternância, permitindo a correspondência de uma entre várias expressões (ex: `(gato|cachorro)`). [[01:59](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=119)]
+* **`$` (Cifrão):** É uma âncora que corresponde ao final da linha/string. [[02:41](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=161)]
+
+### Exemplos da Vídeo Aula
+
+**Exemplo Básico - Entendendo os Quantificadores**
+
+Para ilustrar, o professor usa a string "ovo" como exemplo:
+
+```java
+String texto = "ovo";
+Pattern pattern = Pattern.compile("o+"); // Busca uma ou mais ocorrências de 'o'
+Matcher matcher = pattern.matcher(texto);
+
+// Saída esperada: Encontraria "o" na posição 0 e "o" na posição 2.
+```
+
+**Exemplo Avançado - Finalizando a Validação de Números Hexadecimais**
+
+Este exemplo retoma o desafio da aula anterior: extrair todos os números hexadecimais válidos de uma string.
+
+**Texto de exemplo:**
+
+```java
+String textoHex = "12 0x 0X 0xFFFC 0X10G 0X1";
+// Válidos: 0xFFFC, 0X1
+// Inválidos: 0x, 0X, 0X10G
+```
+
+**Evolução da Expressão Regular:**
+
+1.  **Regex da aula anterior:** `0[xX][0-9a-fA-F]`
+
+    * **Problema:** Encontra apenas o primeiro caractere após o prefixo `0x`. [[03:15](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=195)]
+
+2.  **Adicionando o quantificador `+`:** `0[xX][0-9a-fA-F]+`
+
+    * **Melhoria:** Agora busca por **um ou mais** caracteres hexadecimais após o prefixo. [[04:23](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=263)]
+    * **Problema:** Ele captura `0X10G`, que é inválido porque contém 'G'. Isso acontece porque a regex não tem um delimitador para saber onde o número termina.
+
+3.  **Adicionando um delimitador de fim:** `0[xX][0-9a-fA-F]+(\s|$)`
+
+    * **Solução:** O professor introduz um grupo `(\s|$)` no final da expressão. [[05:50](http://www.youtube.com/watch?v=9IFY_aHlDl0&t=350)]
+        * `\s`: Corresponde a um caractere de espaço em branco.
+        * `|`: Atua como "OU".
+        * `$`: Corresponde ao final da linha.
+    * **Lógica:** Esta regex agora busca um padrão que comece com `0x` ou `0X`, seguido de um ou mais caracteres hexadecimais, e que termine com um **espaço em branco OU com o final da linha**. Isso isola corretamente os números válidos.
+
+**Código final:**
+
+```java
+String textoHex = "12 0x 0X 0xFFFC 0X10G 0X1";
+Pattern patternHex = Pattern.compile("0[xX][0-9a-fA-F]+(\\s|$)");
+Matcher matcherHex = patternHex.matcher(textoHex);
+
+System.out.println("Expressão Regular: 0[xX][0-9a-fA-F]+(\\s|$)");
+while (matcherHex.find()) {
+    System.out.println("Posição: " + matcherHex.start() + " - Valor: " + matcherHex.group().trim()); // .trim() para remover o espaço
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: 0[xX][0-9a-fA-F]+(\s|$)
+Posição: 9 - Valor: 0xFFFC
+Posição: 23 - Valor: 0X1
+```
+
+### Melhores Práticas (de código)
+
+* **Escolha o quantificador correto:**
+    * Use `?` para partes opcionais de um padrão.
+    * Use `+` quando você tem certeza de que o padrão deve aparecer pelo menos uma vez.
+    * Use `*` com cautela, pois pode levar a correspondências inesperadas (incluindo correspondências vazias).
+    * Use `{n,m}` para ter controle preciso sobre o número de repetições.
+* **Use delimitadores:** Como visto no exemplo do hexadecimal, definir o que vem *depois* do seu padrão (usando `\s`, `$`, `\b` - âncora de borda, não mostrada no vídeo) é crucial para evitar correspondências parciais ou incorretas.
+* **Agrupe com parênteses:** Quando um quantificador precisar se aplicar a uma sequência de caracteres (e não apenas ao último), agrupe-a com `()`.
+
+### Piores Práticas (evitar fazer)
+
+* **Usar quantificadores "gulosos" (`*`, `+`) sem delimitadores:** Por padrão, os quantificadores são "gulosos" (greedy), ou seja, tentam corresponder ao maior número de caracteres possível. Sem um delimitador claro, eles podem "consumir" mais texto do que o desejado, como visto na tentativa de capturar `0X10G`.
+* **Criar Regex muito complexas:** Regex podem se tornar difíceis de ler e manter. Se uma expressão se tornar excessivamente complicada, considere quebrar a lógica em várias etapas ou usar código Java para complementar a validação.
+* **Esquecer que `?`, `*`, `+`, `{}` são caracteres especiais:** Se você precisar corresponder literalmente a um desses caracteres no texto, deve escapá-los com uma barra invertida (ex: `\\?` para encontrar um ponto de interrogação).
+
+-----
+
+Para mais detalhes, você pode acessar a vídeo aula completa: [134 - Classes Utilitárias - Regex pt 04 - Pattern e Matcher - Quantificadores pt 01](https://www.google.com/search?q=https://youtu.be/9IFY_aHlDl0)
+http://googleusercontent.com/youtube_content/3
+
 
 
 [Voltar ao Índice](#indice)
