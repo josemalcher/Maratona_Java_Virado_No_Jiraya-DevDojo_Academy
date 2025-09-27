@@ -14877,7 +14877,168 @@ http://googleusercontent.com/youtube_content/1
 
 ## <a name="parte136">136 - 133 - Classes Utilitárias - Regex pt 03 - Pattern e Matcher - Range</a>
 
+### Resumo AI GEMINI
 
+O vídeo "133 - Classes Utilitárias - Regex pt 03 - Pattern e Matcher - Range" do canal DevDojo, publicado em 8 de julho de 2021, com 3.952 visualizações e 447 curtidas, continua a série sobre Expressões Regulares em Java, focando no uso dos colchetes `[]` para definir "Ranges" de caracteres.
+
+### Conceitos sobre Range em Regex (`[]`)
+
+O caractere de "Range" (`[]`) é um metacaractere que permite especificar um conjunto de caracteres dos quais você deseja encontrar uma correspondência. Tudo o que está dentro dos colchetes é considerado uma opção válida para aquela posição na expressão regular.
+
+* **Listar caracteres:** Você pode listar caracteres específicos que deseja corresponder. Por exemplo, `[abc]` corresponde a 'a', 'b' ou 'c'.
+* **Definir intervalos (ranges):** Você pode usar o hífen (`-`) para definir um intervalo de caracteres.
+    * `[a-z]` corresponde a qualquer letra minúscula de 'a' a 'z'.
+    * `[A-Z]` corresponde a qualquer letra maiúscula de 'A' a 'Z'.
+    * `[0-9]` corresponde a qualquer dígito de '0' a '9'.
+* **Combinar ranges:** Você pode combinar múltiplos ranges e caracteres literais dentro do mesmo conjunto. Por exemplo, `[a-zA-Z0-9]` corresponde a qualquer letra (maiúscula ou minúscula) ou dígito.
+
+### Exemplos da Vídeo Aula
+
+O professor utiliza o seguinte texto de exemplo:
+
+```java
+String texto = "cafeBABE";
+// Índices:   01234567
+// Texto:     c a f e B A B E
+```
+
+**1. Buscando caracteres específicos (`[abc]`)**
+
+A expressão `[abc]` procura por ocorrências de 'a', 'b' ou 'c'.
+
+```java
+String texto = "cafeBABE";
+Pattern pattern = Pattern.compile("[abc]"); // Busca 'a', 'b' ou 'c' minúsculos
+Matcher matcher = pattern.matcher(texto);
+
+System.out.println("Expressão Regular: [abc]");
+while (matcher.find()) {
+    System.out.println("Posição: " + matcher.start() + " - Valor: " + matcher.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: [abc]
+Posição: 0 - Valor: c
+Posição: 1 - Valor: a
+```
+
+Note que 'B' e 'A' maiúsculos não foram encontrados, pois a regex foi definida para minúsculas.
+
+**2. Buscando caracteres específicos (incluindo maiúsculas `[abcABC]`)**
+
+Para incluir letras maiúsculas, basta adicioná-las ao range:
+
+```java
+String texto = "cafeBABE";
+Pattern pattern = Pattern.compile("[abcABC]"); // Busca 'a', 'b', 'c', 'A', 'B' ou 'C'
+Matcher matcher = pattern.matcher(texto);
+
+System.out.println("Expressão Regular: [abcABC]");
+while (matcher.find()) {
+    System.out.println("Posição: " + matcher.start() + " - Valor: " + matcher.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: [abcABC]
+Posição: 0 - Valor: c
+Posição: 1 - Valor: a
+Posição: 4 - Valor: B
+Posição: 5 - Valor: A
+Posição: 6 - Valor: B
+```
+
+**3. Buscando caracteres em um Range (`[a-z]`)**
+
+Para simplificar a busca por um intervalo de letras, utiliza-se o hífen.
+
+```java
+String texto = "cafeBABE";
+Pattern pattern = Pattern.compile("[a-z]"); // Busca qualquer letra minúscula de 'a' a 'z'
+Matcher matcher = pattern.matcher(texto);
+
+System.out.println("Expressão Regular: [a-z]");
+while (matcher.find()) {
+    System.out.println("Posição: " + matcher.start() + " - Valor: " + matcher.group());
+}
+```
+
+**Saída esperada:**
+
+```
+Expressão Regular: [a-z]
+Posição: 0 - Valor: c
+Posição: 1 - Valor: a
+Posição: 2 - Valor: f
+Posição: 3 - Valor: e
+```
+
+**Exemplo Avançado - Validação de Números Hexadecimais**
+
+O professor propõe um exercício para encontrar números hexadecimais válidos em um texto. Um número hexadecimal válido em Java começa com `0x` ou `0X`, seguido de dígitos (0-9) ou letras de 'a' a 'f' (maiúsculas ou minúsculas).
+
+**Texto de exemplo para o exercício:**
+
+```java
+String textoHex = "12 0x 0X 0xFFFC 0X10G 0X1";
+// 0xFFFC é válido
+// 0X10G não é válido (tem 'G')
+// 0X1 é válido
+```
+
+**Expressão regular construída na aula:**
+`0[xX][0-9a-fA-F]`
+
+* `0`: Corresponde ao caractere literal '0'.
+* `[xX]`: Corresponde a 'x' minúsculo ou 'X' maiúsculo.
+* `[0-9a-fA-F]`: Corresponde a qualquer dígito de 0 a 9, ou qualquer letra de 'a' a 'f' (maiúscula ou minúscula). Este é o "range" principal para os caracteres hexadecimais.
+
+<!-- end list -->
+
+```java
+String textoHex = "12 0x 0X 0xFFFC 0X10G 0X1";
+Pattern patternHex = Pattern.compile("0[xX][0-9a-fA-F]");
+Matcher matcherHex = patternHex.matcher(textoHex);
+
+System.out.println("Expressão Regular: 0[xX][0-9a-fA-F]");
+while (matcherHex.find()) {
+    System.out.println("Posição: " + matcherHex.start() + " - Valor: " + matcherHex.group());
+}
+```
+
+**Saída esperada (baseado na aula, que indica que esta regex ainda não é completa):**
+
+```
+Expressão Regular: 0[xX][0-9a-fA-F]
+Posição: 9 - Valor: 0xF
+Posição: 10 - Valor: FF
+Posição: 11 - Valor: FC
+Posição: 23 - Valor: 0X1
+```
+
+**Observação da aula:** O professor menciona que esta expressão ainda não é completa, pois ela só busca um único caractere hexadecimal após o `0x`. Para buscar sequências completas de hexadecimais, seriam necessários quantificadores, que serão abordados em aulas futuras. Por exemplo, `0[xX][0-9a-fA-F]+` usaria o quantificador `+` para indicar uma ou mais ocorrências.
+
+### Melhores Práticas (de código)
+
+* **Use `[]` para conjuntos de caracteres:** Sempre que precisar corresponder a um de vários caracteres em uma única posição, use os colchetes. Isso é mais conciso e legível do que usar múltiplas condições de "ou" (`|`).
+* **Utilize ranges (`-`) para sequências:** Para caracteres em sequência (como letras do alfabeto ou dígitos), use o hífen para definir o intervalo (`[a-z]`, `[0-9]`). Isso é muito mais limpo do que listar todos os caracteres individualmente.
+* **Combine metacaracteres e ranges:** Para maior flexibilidade, combine os metacaracteres aprendidos na aula anterior (`\d`, `\s`, `\w`) com os ranges. Por exemplo, `[\\da-fA-F]` é uma forma de expressar um caractere hexadecimal.
+* **Clareza vs. Consciência:** Balanceie a concisão da regex com a legibilidade. Para expressões muito complexas, considere dividi-las ou adicionar comentários explicativos.
+
+### Piores Práticas (evitar fazer)
+
+* **Listar caracteres exaustivamente:** Evite listar todos os caracteres um por um quando um range pode ser usado (ex: `[0123456789]` em vez de `[0-9]`).
+* **Regex com complexidade desnecessária:** Não crie ranges excessivamente complicados se um metacaractere simples já serve. Por exemplo, `[0-9]` é preferível a `\\d` apenas se você tiver um motivo específico para não usar o metacaractere.
+* **Assumir case-insensitivity:** Lembre-se que, por padrão, as expressões regulares são case-sensitive. Se precisar ignorar o caso, você deve incluir tanto as letras maiúsculas quanto minúsculas no seu range (`[a-zA-Z]`) ou usar a flag `Pattern.CASE_INSENSITIVE` ao compilar o `Pattern`.
+
+-----
+
+Para mais detalhes, você pode acessar a vídeo aula completa: [133 - Classes Utilitárias - Regex pt 03 - Pattern e Matcher - Range](https://www.google.com/search?q=https://youtu.be/v_ZsEZLHKjk)
 
 [Voltar ao Índice](#indice)
 
